@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-<title>Open-ended Template</title>
+    <title>Open-ended Template</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -11,10 +11,9 @@
 
 
 <body class="g-sidenav-show bg-gray-100">
-    <main
-        class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
+    <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <!-- Navbar -->
-        <nav class="px-0 mb-6 shadow-none border-radius-xl" navbar-scroll="true">
+        <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
             <nav aria-label="breadcrumb">
                 <h6 class="font-weight-bolder mb-0">Open Ended Template</h6>
             </nav>
@@ -29,8 +28,7 @@
                         <label for="surveyTitle" class="form-label">Add new question</label>
                         <div class="d-flex align-items-center gap-2">
                             <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
-                            <button id="addQuestion"
-                                class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
+                            <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
                                 <i class="fas fa-plus text-sm p-0" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -40,24 +38,21 @@
         </div>
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-            <input type="text" class="form-control p-2 border rounded-1"
-                placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
+            <input type="text" class="form-control p-2 border rounded-1" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
 
             <div id="questionsGroup" class="flex flex-column gap-2 w-100">
                 <div class="d-flex justify-content-between align-items-center w-100 mb-3"></div>
             </div>
         </div>
 
-        <button disabled id="save_button" type="button"
-            class="align-self-start text-white btn bg-primary col-lg-3 col-md-4 col-4 text-sm font-weight-bold mb-0 mb-5 mt-2">
+        <button disabled id="save_button" type="button" class="align-self-start text-white btn bg-primary col-lg-3 col-md-4 col-4 text-sm font-weight-bold mb-0 mb-5 mt-2">
             Save
         </button>
 
     </main>
 
     <!-- Fixed plugin settings ICON -->
-    <div data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer"
-        class="position-fixed bottom-4 end-2 px-3 py-2 bg-white shadow-sm rounded-circle text-dark">
+    <div data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-white shadow-sm rounded-circle text-dark">
         <i class="fa fa-cog py-2"> </i>
     </div>
 
@@ -78,26 +73,22 @@
 
                         <div class="d-flex align-items-center px-2 gap-2">
                             <span class="text-sm fw-bold"> Bg color</span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2"
-                                id="bg_color" value="#F00" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#F00" />
                             <span class="text-sm fw-bold"> Text color </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10"
-                                id="text_color" value="#006600" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="#006600" />
                         </div>
                     </div>
 
                     <div class="d-flex flex-column gap-2 mt-2 mb-2 px-2">
                         <div>
                             <label class="m-0">Starts</label>
-                            <input type="datetime-local" class="form-control" id="start_date"
-                                placeholder="Select a date" />
+                            <input type="datetime-local" class="form-control" id="start_date" placeholder="Select a date" />
                         </div>
 
                         <div>
                             <label class="m-0">Ends</label>
 
-                            <input type="datetime-local" class="form-control" id="end_date"
-                                placeholder="Select a date" />
+                            <input type="datetime-local" class="form-control" id="end_date" placeholder="Select a date" />
                         </div>
                     </div>
 
@@ -125,20 +116,17 @@
                                     </label>
                                 </div>
 
-                                <input type="text" class="form-control mt-2" placeholder="Add your results title"
-                                    id="show_results_input" />
+                                <input type="text" class="form-control mt-2" placeholder="Add your results title" id="show_results_input" />
                             </div>
 
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
                                     Show results after</label>
-                                <input type="number" class="form-control w-55" placeholder="Number of votes"
-                                    id="min_votes_input" value="10" />
+                                <input type="number" class="form-control w-55" placeholder="Number of votes" id="min_votes_input" value="10" />
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                                <input type="text" class="form-control" placeholder="Add CTA button title"
-                                    id="cta_input" value="CTA title" />
+                                <input type="text" class="form-control" placeholder="Add CTA button title" id="cta_input" value="CTA title" />
                                 <button id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     CTA Title
                                 </button>
@@ -151,45 +139,45 @@
     </div>
 
     <script>
-    const save_button = document.getElementById("save_button");
-    const pullTitle = document.getElementById("pullTitle");
-    const addQuestionButton = document.getElementById("addQuestion");
-    const questionInput = document.getElementById("questionInput");
-    const questionsGroup = document.getElementById("questionsGroup");
-    const questionsArray = [];
-    let counter = 1;
-    let finalObj = {};
+        const save_button = document.getElementById("save_button");
+        const pullTitle = document.getElementById("pullTitle");
+        const addQuestionButton = document.getElementById("addQuestion");
+        const questionInput = document.getElementById("questionInput");
+        const questionsGroup = document.getElementById("questionsGroup");
+        const questionsArray = [];
+        let counter = 1;
+        let finalObj = {};
 
-    // Plugin Settings variables
-    const bg_color = document.getElementById("bg_color");
-    const text_color = document.getElementById("text_color");
-    const start_date = document.getElementById("start_date");
-    const end_date = document.getElementById("end_date");
-    const active_plugin = document.getElementById("active_plugin");
-    const share_plugin = document.getElementById("share_plugin");
-    const show_results = document.getElementById("show_results");
-    const show_results_input = document.getElementById("show_results_input");
-    const min_votes_input = document.getElementById("min_votes_input");
-    const cta_input = document.getElementById("cta_input");
+        // Plugin Settings variables
+        const bg_color = document.getElementById("bg_color");
+        const text_color = document.getElementById("text_color");
+        const start_date = document.getElementById("start_date");
+        const end_date = document.getElementById("end_date");
+        const active_plugin = document.getElementById("active_plugin");
+        const share_plugin = document.getElementById("share_plugin");
+        const show_results = document.getElementById("show_results");
+        const show_results_input = document.getElementById("show_results_input");
+        const min_votes_input = document.getElementById("min_votes_input");
+        const cta_input = document.getElementById("cta_input");
 
-    function addQuestion() {
-        const questionTitle = questionInput.value.trim();
-        if (questionTitle !== "") {
-            questionsArray.push({
-                questionTitle: questionTitle,
-                id: counter,
-            });
-            questionInput.value = "";
-            console.log(questionsArray);
-            
+        function addQuestion() {
+            const questionTitle = questionInput.value.trim();
+            if (questionTitle !== "") {
+                questionsArray.push({
+                    questionTitle: questionTitle,
+                    id: counter,
+                });
+                questionInput.value = "";
+                console.log(questionsArray);
 
-            // Create the new HTML element
-            const newQuestionDiv = document.createElement("div");
-            newQuestionDiv.className =
-                "d-flex justify-content-between align-items-center w-100 mb-3";
-            newQuestionDiv.setAttribute("data-card-id", counter);
 
-            newQuestionDiv.innerHTML = `
+                // Create the new HTML element
+                const newQuestionDiv = document.createElement("div");
+                newQuestionDiv.className =
+                    "d-flex justify-content-between align-items-center w-100 mb-3";
+                newQuestionDiv.setAttribute("data-card-id", counter);
+
+                newQuestionDiv.innerHTML = `
               <div class="d-flex align-items-center w-100 gap-3">
                 <i onclick="deleteQuestion(${counter})" style="cursor: pointer" class="fas fa-trash text-danger"></i>
                 <textarea
@@ -202,120 +190,124 @@
               </div>       
           `;
 
-            questionsGroup.appendChild(newQuestionDiv);
-            counter++;
+                questionsGroup.appendChild(newQuestionDiv);
+                counter++;
+            }
+
+            if (questionsArray.length > 0) {
+                save_button.disabled = false
+
+            }
         }
 
-        if(questionsArray.length > 0){
-            save_button.disabled = false
-    
-        }
-    }
+        // Add option on button click
+        addQuestionButton.addEventListener("click", addQuestion);
 
-    // Add option on button click
-    addQuestionButton.addEventListener("click", addQuestion);
+        // Add option on Enter key press in questionInput
+        questionInput.addEventListener("keydown", function(event) {
+            if (event.keyCode === 13) {
+                addQuestion();
+            }
+        });
 
-    // Add option on Enter key press in questionInput
-    questionInput.addEventListener("keydown", function(event) {
-        if (event.keyCode === 13) {
-            addQuestion();
-        }
-    });
+        // Update questionsArray on input change
+        questionsGroup.addEventListener("input", function(event) {
+            const inputElement = event.target;
 
-    // Update questionsArray on input change
-    questionsGroup.addEventListener("input", function(event) {
-        const inputElement = event.target;
+            if (
+                inputElement.tagName === "TEXTAREA" &&
+                inputElement.dataset.cardId
+            ) {
+                const cardId = parseInt(inputElement.dataset.cardId, 10);
+                const questionIndex = questionsArray.findIndex(
+                    (question) => question.id === cardId
+                );
 
-        if (
-            inputElement.tagName === "TEXTAREA" &&
-            inputElement.dataset.cardId
-        ) {
-            const cardId = parseInt(inputElement.dataset.cardId, 10);
-            const questionIndex = questionsArray.findIndex(
+                if (questionIndex !== -1) {
+                    questionsArray[questionIndex].questionTitle = inputElement.value;
+                }
+            }
+
+            finalObj = {
+                surveyTitle: pullTitle.value,
+                questions: questionsArray,
+            };
+            console.log(finalObj);
+        });
+
+        function deleteQuestion(cardId) {
+            const index = questionsArray.findIndex(
                 (question) => question.id === cardId
             );
+            if (index !== -1) {
+                questionsArray.splice(index, 1);
+                const questionElement = document.querySelector(
+                    `[data-card-id="${cardId}"]`
+                );
 
-            if (questionIndex !== -1) {
-                questionsArray[questionIndex].questionTitle = inputElement.value;
+                if (questionElement) {
+                    questionElement.remove();
+                }
+
+                if (questionsArray.length <= 0) {
+                    save_button.disabled = true
+                }
+
+
             }
+
         }
 
-        finalObj = {
-            surveyTitle: pullTitle.value,
-            questions: questionsArray,
-        };
+        save_button.addEventListener("click", () => {
+            settingObj = {
+                cta_Text: cta_input.value,
+                start_date: start_date.value,
+                end_date: end_date.value,
+                status: active_plugin.checked,
+                color: text_color.value,
+                bgcolor: bg_color.value,
+                sharing: share_plugin.checked,
+                real_time_result_text: show_results_input.value,
+                real_time_check: show_results.checked,
+                min_votes: min_votes_input.value,
+            };
+
+            finalObj = {
+                surveyTitle: pullTitle.value,
+                questions: questionsArray,
+                settings: settingObj,
+                template: "Open Ended",
+            };
+            jQuery.ajax({
+                type: "POST",
+                url: my_ajax_object.ajaxurl,
+                data: {
+                    action: "save_poll_open_ended_data",
+                    poll_data: JSON.stringify(finalObj),
+                },
+                success: function(shortcode) {
+                    console.log("Done");
+                    location.reload();
+                },
+                error: function(error) {
+                    console.error("Error:", error);
+                },
+            });
+        })
         console.log(finalObj);
-    });
-
-    function deleteQuestion(cardId) {
-        const index = questionsArray.findIndex(
-            (question) => question.id === cardId
-        );
-        if (index !== -1) {
-            questionsArray.splice(index, 1);
-            const questionElement = document.querySelector(
-                `[data-card-id="${cardId}"]`
-            );
-            if (questionElement) {
-                questionElement.remove();
-            }
-        }
-
-        if(questionsArray.length <= 0){
-            save_button.disabled = true
-        }
-    }
-
-    save_button.addEventListener("click", () => {
-        settingObj = {
-            cta_Text: cta_input.value,
-            start_date: start_date.value,
-            end_date: end_date.value,
-            status: active_plugin.checked,
-            color: text_color.value,
-            bgcolor: bg_color.value,
-            sharing: share_plugin.checked,
-            real_time_result_text: show_results_input.value,
-            real_time_check: show_results.checked,
-            min_votes: min_votes_input.value,
-        };
-
-        finalObj = {
-            surveyTitle: pullTitle.value,
-            questions: questionsArray,
-            settings: settingObj,
-            template: "Open Ended",
-        };
-        jQuery.ajax({
-            type: "POST",
-            url: my_ajax_object.ajaxurl,
-            data: {
-                action: "save_poll_open_ended_data",
-                poll_data: JSON.stringify(finalObj),
-            },
-            success: function(shortcode) {
-                console.log("Done");
-                location.reload();
-            },
-            error: function(error) {
-                console.error("Error:", error);
-            },
-        });
-    })
-    console.log(finalObj);
     </script>
 
     <!-- Disable vote Input -->
     <script>
-    const voteCheckbox = document.getElementById("show_results");
-    const limitsInput = document.getElementById("show_results_input");
-    voteCheckbox.addEventListener("change", function() {
-        if (!voteCheckbox.checked) {
-            limitsInput.disabled = false;
-        } else {
-            limitsInput.disabled = true;
-        }
-    });
+        const voteCheckbox = document.getElementById("show_results");
+        const limitsInput = document.getElementById("show_results_input");
+        voteCheckbox.addEventListener("change", function() {
+            if (!voteCheckbox.checked) {
+                limitsInput.disabled = false;
+            } else {
+                limitsInput.disabled = true;
+            }
+        });
     </script>
 
     <!-- Github buttons -->

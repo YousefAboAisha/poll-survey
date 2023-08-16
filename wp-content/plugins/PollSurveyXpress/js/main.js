@@ -1,5 +1,26 @@
 jQuery(document).ready(function (jQuery) {
-  let save_button = document.getElementById("save_button");
+  const ctaInput = document.getElementById("cta_input");
+  const ctaButton = document.getElementById("cta_button");
+
+  ctaInput.addEventListener("keyup", () => {
+    if (ctaInput.value == "") {
+      ctaButton.innerText = "CTA Title";
+    } else {
+      ctaButton.innerText = ctaInput.value;
+    }
+  });
+
+  const voteCheckbox = document.getElementById("show_results");
+  const limitsInput = document.getElementById("show_results_input");
+  voteCheckbox.addEventListener("change", function () {
+    if (voteCheckbox.checked) {
+      limitsInput.disabled = true;
+    } else {
+      limitsInput.disabled = false;
+    }
+  });
+
+  // Add Pol cards variables
   let addOptionButton = document.getElementById("addOption");
   let optionInput = document.getElementById("optionInput");
   let optionsGroup = document.getElementById("optionsGroup");
@@ -7,7 +28,6 @@ jQuery(document).ready(function (jQuery) {
   let questionTitle = document.getElementById("questionTitle");
   let cardsContainer = document.getElementById("cardsContainer");
   let surveyTitleValue = document.getElementById("surveyTitleValue");
-  let pollCardCounter = 1;
   let optionsHTMLArray = [];
   // Data will be sent
   let optionsArray = [];
@@ -28,6 +48,7 @@ jQuery(document).ready(function (jQuery) {
   const show_results_input = document.getElementById("show_results_input");
   const min_votes_input = document.getElementById("min_votes_input");
   const cta_input = document.getElementById("cta_input");
+  const save_button = document.getElementById("save_button");
 
   function createOption(optionTitle) {
     const newOption = document.createElement("div");
@@ -43,6 +64,12 @@ jQuery(document).ready(function (jQuery) {
     optionsHTMLArray.push(newOption);
   }
 
+  optionInput.addEventListener("keydown", function (event) {
+    if (event.key === 13) {
+      createOption();
+    }
+  });
+
   // Function to enable or disable the createPollButton
   function updateCreatePollButton() {
     const questionTitleValue = questionTitle.value.trim();
@@ -51,7 +78,6 @@ jQuery(document).ready(function (jQuery) {
       questionTitleValue !== "" && optionsHTMLArray.length >= 2;
     createPollButton.disabled = !enableButton;
   }
-
   // Event listener for questionTitle change
   questionTitle.addEventListener("change", updateCreatePollButton);
 
@@ -92,8 +118,6 @@ jQuery(document).ready(function (jQuery) {
   });
 
   function createPollCard() {
-    const optionTitle = optionInput.value.trim();
-
     const newPollCard = document.createElement("div");
     newPollCard.className =
       "position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4";
@@ -126,7 +150,6 @@ jQuery(document).ready(function (jQuery) {
           ];
           newOptionsArray[index] = event.target.value; // Update the corresponding option
           finalObj.pollCards[targetCardIndex].options = newOptionsArray;
-          console.log(finalObj);
         }
       });
 
@@ -159,12 +182,13 @@ jQuery(document).ready(function (jQuery) {
       const targetCardIndex = finalObj.pollCards.findIndex(
         (elem) => elem.id == cardId
       );
-      console.log(targetCardIndex);
-      console.log(finalObj);
 
       if (targetCardIndex !== -1) {
         finalObj.pollCards[targetCardIndex].questionTitle = e.target.value;
-        console.log(finalObj);
+      }
+      if (pollsCardsArray.length <= 0) {
+        save_button.disabled = true;
+        createPollButton.disabled = true;
       }
     });
 
@@ -199,7 +223,6 @@ jQuery(document).ready(function (jQuery) {
         // If the card was found in the array, remove it
         if (cardIndex !== -1) {
           pollsCardsArray.splice(cardIndex, 1);
-          console.log(pollsCardsArray);
         }
       }
 
@@ -214,20 +237,43 @@ jQuery(document).ready(function (jQuery) {
     newPollCard.setAttribute("data-card-id", newPollCardObj.id);
     cardsContainer.appendChild(newPollCard);
     pollsCardsArray.push(newPollCardObj);
-    console.log(pollsCardsArray);
     if (pollsCardsArray.length > 0) {
       save_button.disabled = false;
     }
 
+    // Reset Input fields
+    optionsHTMLArray = [];
+    optionsArray = [];
+    optionsGroup.innerHTML = "";
+    questionTitle.value = "";
+  }
+
+  createPollButton.addEventListener("click", () => {
+    if (questionTitle.value !== "" && optionsHTMLArray.length >= 2) {
+      createPollCard();
+    }
+  });
+
+  save_button.addEventListener("click", () => {
     settingObj = {
       cta_Text: cta_input.value,
-      start_date: start_date.value,
-      end_date: end_date.value,
+      start_date: start_date.value || new Date().toISOString(),
+      end_date:
+        end_date.value ||
+        new Date(
+          new Date().getFullYear() + 100,
+          11,
+          31,
+          23,
+          59,
+          59
+        ).toISOString(),
       status: active_plugin.checked,
       color: text_color.value,
       bgcolor: bg_color.value,
       sharing: share_plugin.checked,
-      real_time_result_text: show_results.checked,
+      real_time_result_text: show_results_input.value,
+      real_time_check: show_results.checked,
       min_votes: min_votes_input.value,
     };
 
@@ -235,26 +281,11 @@ jQuery(document).ready(function (jQuery) {
       surveyTitle: surveyTitleValue.value,
       pollCards: pollsCardsArray,
       settings: settingObj,
+      template: "Multiple Choice",
     };
 
-    // Reset Input fields
-    optionsHTMLArray = [];
-    optionsArray = [];
-    optionsGroup.innerHTML = "";
-    questionTitle.value = "";
+    console.log(finalObj);
 
-    // Increment the poll card counter for the next card
-    pollCardCounter++;
-  }
-
-  createPollButton.addEventListener("click", () => {
-    if (questionTitle.value !== "" && optionsHTMLArray.length >= 2) {
-      createPollCard();
-      console.log("Final Object", finalObj);
-    }
-  });
-
-  save_button.addEventListener("click", () => {
     if (pollsCardsArray.length > 0) {
       jQuery.ajax({
         type: "POST",
@@ -265,7 +296,7 @@ jQuery(document).ready(function (jQuery) {
         },
         success: function (shortcode) {
           console.log("Done");
-          location.reload();
+          window.location.reload();
         },
         error: function (error) {
           console.error("Error:", error);
