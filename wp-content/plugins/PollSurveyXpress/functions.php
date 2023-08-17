@@ -519,9 +519,6 @@ class PollSurveyXpress
     public function poll_shortcode_handler($atts)
     {
         global $wpdb;
-        var_dump(
-            $atts[0] . "<br>" . 'fafasfasfa'
-        );
         // Extract the poll ID from the shortcode
         $components = explode("_", $atts[0]);
         $poll_id = $components[2];
@@ -534,13 +531,43 @@ class PollSurveyXpress
         // Process and display the poll data
         $output = '<div class="poll">';
         if ($poll_data) {
-            $output .= '<h2>' . $poll_data[0]['title'] . '</h2>';
-            // Add other poll data here
-        } else {
-            $output .= '<p>Poll not found.</p>';
+            if ($poll_data[0]['status'] === 'active') {
+                if ($poll_data[0]['template'] === 'Multiple Choice') {
+                    $output .= '<div class="poll-description">' . $poll_data[0]['title'] . '</div>';
+                    $output .= ' <div class="row mx-auto row-cols-1 row-cols-lg-2 g-3">';
+                    $output .= ' <div class="col">
+                    <div class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0">
+                        <h6 class="mt-2"> ';
+                    $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                    $questions = $wpdb->get_results($query, ARRAY_A);
+                    foreach ($questions as $question) {
+                        $output .= '<h6>';
+                        $output .= $question['question_text'];
+                        $output .= '</h6>';
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id =  %d", $poll_id, $question['question_id']);
+                        $answers = $wpdb->get_results($query, ARRAY_A);
+                        foreach ($answers as $answer) {
+                            $output .= '<div class="poll-answer">';
+                            $output .= '<input type="radio" name="poll_answer" value="' . $question['question_id'] . '"
+                                id="poll_answer_' . $question['question_id'] . '">';
+                            $output .= '<label for="poll_answer_' . $question['question_id'] . '">' . $answer['answer_text'] . '</label>';
+                            $output .= '</div>';
+                        }
+                    }
+                    $output .= '<input type="hidden" name="poll_id" value="' . $poll_id . '">';
+                    $output .= '<input type="submit" value="Submit" class="poll-submit">';
+                    $output .= '</form>';
+                } else if ($poll_data[0]['template'] === 'Open Ended') {
+                } else if ($poll_data[0]['template'] === 'Rating') {
+                }
+            } else {
+                $output .= '<p>Poll not found.</p>';
+            }
+            $output .= '</div>';
+            return $output;
         }
-        $output .= '</div>';
-        return $output;
     }
 }
 $survey_plugin = new PollSurveyXpress();
