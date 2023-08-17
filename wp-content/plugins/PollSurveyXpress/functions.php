@@ -24,11 +24,10 @@ class PollSurveyXpress
         add_action("wp_ajax_nopriv_restore_poll", array($this, "restore_poll")); // For non-logged-in users
         add_action("wp_ajax_permenant_delete", array($this, "permenant_delete"));
         add_action("wp_ajax_nopriv_permenant_delete", array($this, "permenant_delete")); // For non-logged-in users
-
+        add_shortcode('poll', array($this, 'poll_shortcode_handler'));
     }
+
     // Enqueue scripts and styles for the admin area
-
-
     public function enqueue_admin_scripts()
     {
         //enqueue Script files
@@ -221,9 +220,6 @@ class PollSurveyXpress
             array($this, 'view_template_page_callback') // Callback function
         );
     }
-
-
-
     //render pages of templates
     public function view_template_page_callback()
     {
@@ -235,7 +231,6 @@ class PollSurveyXpress
             include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template.php');
         }
     }
-
     public function edit_templates_action()
     {
         add_submenu_page(
@@ -247,8 +242,6 @@ class PollSurveyXpress
             array($this, 'view_edit_template_page_callback') // Callback function
         );
     }
-
-
     public function view_edit_template_page_callback()
     {
         if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'edit_template_page') {
@@ -258,10 +251,9 @@ class PollSurveyXpress
             $pollId = isset($_GET['poll_id']) ? intval($_GET['poll_id']) : 0;
 
             // Include the edit template file
-            include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template_edit.php');
+            include(plugin_dir_path(__FILE__) . 'templates/surveys_template_edit.php');
         }
     }
-
     public function show_templates_action()
     {
         add_submenu_page(
@@ -273,8 +265,6 @@ class PollSurveyXpress
             array($this, 'show_templates_action_callback') // Callback function
         );
     }
-
-
     public function show_templates_action_callback()
     {
         if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'show_template_page') {
@@ -299,9 +289,6 @@ class PollSurveyXpress
             $pollCards = $poll_data_array['pollCards'];
             $settings = $poll_data_array['settings'];
             $template = $poll_data_array['template'];
-
-            error_log('Status Value: ' . var_export($settings['status'], true));
-
 
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
@@ -372,7 +359,7 @@ class PollSurveyXpress
                 'cta_Text' => $settings['cta_Text'],
                 'start_date' => empty($settings['start_date']) ? current_time('mysql') : $settings['start_date'],
                 'end_date' => empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : $settings['end_date'],
-                'status' => $settings['status'] ? 'active' : 'inactive',
+                'status' => 'archived',
                 'template' => $template,
                 'Short_Code' => '',
                 'color' => $settings['color'],
@@ -526,6 +513,34 @@ class PollSurveyXpress
         }
 
         wp_die();
+    }
+
+    // Add shortcode
+    public function poll_shortcode_handler($atts)
+    {
+        global $wpdb;
+        var_dump(
+            $atts[0] . "<br>" . 'fafasfasfa'
+        );
+        // Extract the poll ID from the shortcode
+        $components = explode("_", $atts[0]);
+        $poll_id = $components[2];
+
+        // Query the database
+        $table_name = $wpdb->prefix . 'polls_psx_polls';
+        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+        $poll_data = $wpdb->get_results($query, ARRAY_A);
+
+        // Process and display the poll data
+        $output = '<div class="poll">';
+        if ($poll_data) {
+            $output .= '<h2>' . $poll_data[0]['title'] . '</h2>';
+            // Add other poll data here
+        } else {
+            $output .= '<p>Poll not found.</p>';
+        }
+        $output .= '</div>';
+        return $output;
     }
 }
 $survey_plugin = new PollSurveyXpress();

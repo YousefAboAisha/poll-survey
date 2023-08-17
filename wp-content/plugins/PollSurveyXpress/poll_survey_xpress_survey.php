@@ -89,7 +89,7 @@
 
                                                     <td class="align-middle">
                                                         <span class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
-                                                            <?php echo ($poll->status); ?>
+                                                            <?php echo ucfirst($poll->status); ?>
                                                         </span>
                                                     </td>
 
@@ -117,7 +117,7 @@
                                                             <i class="fas fa-eye text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=edit_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                            <i class="fas fa-pen text-sm text-body" aria-hidden="true" style="cursor: pointer"></i>
+                                                            <i class="fas fa-pen text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
                                                         </a>
 
                                                         <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>

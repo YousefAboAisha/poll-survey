@@ -24,13 +24,13 @@ $templateCount = count($previewFiles);
 </head>
 
 <style>
-    .top-neg-20 {
-        top: -20px;
-    }
+.top-neg-20 {
+    top: -20px;
+}
 
-    .end-neg-20 {
-        right: -20px;
-    }
+.end-neg-20 {
+    right: -20px;
+}
 </style>
 
 <body class="bg-gray-100">
@@ -65,7 +65,7 @@ $templateCount = count($previewFiles);
                 ]; ?>
 
                 <?php foreach ($previewFiles as $index => $previewFile) : ?>
-                    <?php
+                <?php
                     // Extract the template name from the filename
                     $fileName = basename($previewFile, '_template.php');
                     $templateName = str_replace('_', ' ', $fileName);
@@ -76,30 +76,31 @@ $templateCount = count($previewFiles);
                     $templateAdminLink = admin_url('admin.php?page=poll-survey-xpress-add&view_template=' . $fileName);
                     ?>
 
-                    <div class="col">
-                        <div class="p-4 border position-relative shadow-lg rounded-3 ">
-                            <div class="bg-black text-white m-0 p-2 px-3 rounded-3 shadow-sm position-absolute top-3 end-3">
-                                <i class="<?php echo ($icon); ?> "></i>
-                            </div>
-                            <div class="overflow-hidden position-relative">
-                                <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-0">
-                                    <h5 class="text-dark font-weight-bolder m-0 mt-2">
-                                        <?php echo ucwords($templateName); ?>
-                                    </h5>
-
-                                    <p class="my-3">
-                                        <?php echo ($details); ?>
-                                    </p>
-
-                                    <a class="text-white btn bg-primary text-sm font-weight-bold mb-0 icon-move-right" href="<?php echo admin_url('admin.php?page=view_template_page&template=' . $fileName); ?>">
-                                        View Template
-                                        <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-                            </div>
-
+                <div class="col">
+                    <div class="p-4 border position-relative shadow-lg rounded-3 ">
+                        <div class="bg-black text-white m-0 p-2 px-3 rounded-3 shadow-sm position-absolute top-3 end-3">
+                            <i class="<?php echo ($icon); ?> "></i>
                         </div>
+                        <div class="overflow-hidden position-relative">
+                            <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-0">
+                                <h5 class="text-dark font-weight-bolder m-0 mt-2">
+                                    <?php echo ucwords($templateName); ?>
+                                </h5>
+
+                                <p class="my-3">
+                                    <?php echo ($details); ?>
+                                </p>
+
+                                <a class="text-white btn bg-primary text-sm font-weight-bold mb-0 icon-move-right"
+                                    href="<?php echo admin_url('admin.php?page=view_template_page&template=' . $fileName); ?>">
+                                    View Template
+                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
+                </div>
                 <?php endforeach; ?>
             </div>
         </div>
