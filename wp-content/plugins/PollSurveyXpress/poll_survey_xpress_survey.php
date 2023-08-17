@@ -15,6 +15,21 @@
         <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     </head>
 
+    <style>
+        .gray-row:nth-child(even) {
+            background-color: rgba(250, 250, 250, 0.9) !important;
+        }
+
+        thead {
+            background-color: #EEE !important;
+        }
+
+        thead tr th {
+            font-weight: 900;
+            color: #111 !important;
+        }
+    </style>
+
 
     <body class="g-sidenav-show bg-gray-100">
 
@@ -25,11 +40,11 @@
             <div class="container-fluid py-4">
                 <div class="py-4">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-lg-12 col-xxl-10 mx-auto">
                             <div class="card-header w-100 pb-0 d-flex align-items-center justify-content-between mb-6">
-                                <h6 class="fw-bolder col-4 m-0 p-0">Recent Surveys</h6>
-                                <div class="d-flex gap-2 align-items-center m-0 p-0">
+                                <h4 class="fw-bolder col-4 m-0 p-0">Recent Surveys</h4>
 
+                                <div class="d-flex gap-2 align-items-center m-0 p-0">
                                     <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0">New Survey
                                         <i style="cursor: pointer" class="fas fa-add text-white ms-2 text-lg"></i>
                                     </a>
@@ -37,35 +52,35 @@
                                 </div>
                             </div>
 
-                            <div class="p-0 pt-0 border rounded-3">
+                            <div class="p-0 pt-0 border rounded-3 w-100">
                                 <div class="table-responsive p-0 bg-white rounded-3">
-                                    <table class="table align-items-center mb-0 w-100 rounded-3">
-                                        <thead>
+                                    <table class="table align-items-center mb-0 col-lg-12 col-xxl-10 mx-auto rounded-3">
+                                        <thead class="p-4 ">
                                             <tr>
-                                                <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7 w-fit">
+                                                <th class="text-uppercase text-center text-xxs font-weight-bolder opacity-7 p-4 w-fit">
                                                     ID
                                                 </th>
 
-                                                <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                                <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4 ps-2">
                                                     Title
                                                 </th>
 
-                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                <th class="text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
                                                     Status
                                                 </th>
 
-                                                <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
                                                     Shortcode
                                                 </th>
 
-                                                <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
                                                     End Date
                                                 </th>
 
-                                                <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
                                                     Template
                                                 </th>
-                                                <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 p-0">
+                                                <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4 p-0">
                                                     Actions
                                                 </th>
                                             </tr>
@@ -73,7 +88,7 @@
 
                                         <tbody>
                                             <?php foreach ($polls as $poll) { ?>
-                                                <tr id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
+                                                <tr class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
                                                     <td>
                                                         <p class="text-xs mb-0 m-0 text-center align-middle ">
                                                             <?php echo $poll->poll_id; ?>
@@ -95,7 +110,7 @@
 
                                                     <td class="align-middle">
                                                         <p class="text-xs mb-0">
-                                                            <?php echo $poll->Short_Code; ?>
+                                                            [poll <?php echo $poll->Short_Code; ?>]
                                                         </p>
                                                     </td>
 

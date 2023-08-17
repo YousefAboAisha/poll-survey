@@ -33,7 +33,7 @@ $poll_data_json = json_encode($poll_data);
 <body class="g-sidenav-show bg-gray-100">
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <nav aria-label="breadcrumb">
-            <h6 class="font-weight-bolder mb-0">Template Settings</h6>
+            <h6 class="font-weight-bolder mb-0">Survey Settings</h6>
         </nav>
 
 
