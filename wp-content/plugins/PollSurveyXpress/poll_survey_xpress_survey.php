@@ -109,9 +109,7 @@
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p class="text-xs mb-0">
-                                                            [poll <?php echo $poll->Short_Code; ?>]
-                                                        </p>
+                                                        <input type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
                                                     </td>
 
                                                     <td class="align-middle">
@@ -150,6 +148,37 @@
             </div>
         </main>
 
+        <!-- Copy shortcode -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var pollInputs = document.querySelectorAll(".pollInput");
+
+                pollInputs.forEach(input => {
+                    input.addEventListener("click", function() {
+                        input.select(); // Select the input content
+                        document.execCommand("copy"); // Copy the selected content to clipboard
+
+                        // Create a new toast element
+                        var toast = document.createElement("div");
+                        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                        toast.className = "position-fixed p-3 px-4 bg-primary border shadow-sm rounded-2";
+                        toast.innerHTML = `
+                    <p class="m-0 fw-bold text-xs text-white">
+                       Shortcode copied successfully!
+                    </p>
+                `;
+
+                        // Append the toast to the document
+                        document.body.appendChild(toast);
+
+                        // Initialize the Bootstrap toast
+                        var bootstrapToast = new bootstrap.Toast(toast);
+                        bootstrapToast.show();
+                    });
+                });
+            });
+        </script>
+
         <!-- Delete Modal -->
         <div class="modal fade" id="deleteModal">
             <div class="modal-dialog modal-dialog-centered">
@@ -174,6 +203,7 @@
                 </div>
             </div>
         </div>
+
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
