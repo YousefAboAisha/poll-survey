@@ -326,7 +326,7 @@
                 type: "POST",
                 url: my_ajax_object.ajaxurl,
                 data: {
-                    action: "save_poll_rating_data",
+                    action: "PSX_save_poll_rating_data",
                     poll_data: JSON.stringify(finalObj),
                 },
                 success: function(shortcode) {

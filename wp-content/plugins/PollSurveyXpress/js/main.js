@@ -284,12 +284,14 @@ jQuery(document).ready(function (jQuery) {
       template: "Multiple Choice",
     };
 
+    console.log(finalObj);
+
     if (pollsCardsArray.length > 0) {
       jQuery.ajax({
         type: "POST",
         url: my_ajax_object.ajaxurl,
         data: {
-          action: "save_poll_Multiple_data",
+          action: "PSX_save_poll_Multiple_data",
           poll_data: JSON.stringify(finalObj),
         },
         success: function (shortcode) {
@@ -320,7 +322,7 @@ jQuery(document).ready(function (jQuery) {
       type: "POST",
       url: my_ajax_object.ajaxurl,
       data: {
-        action: "archive_poll",
+        action: "PSX_archive_poll",
         poll_id: id,
       },
       success: function (response) {

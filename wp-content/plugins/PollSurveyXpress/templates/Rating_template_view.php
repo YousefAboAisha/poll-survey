@@ -1,50 +1,50 @@
 <?php
-global $wpdb;
+    global $wpdb;
 
-$poll_id = $_GET['poll_id']; // Get the poll ID from the URL parameter
+    $poll_id = $_GET['poll_id']; // Get the poll ID from the URL parameter
 
-// Query to fetch poll data
-$query = $wpdb->prepare("
-        SELECT * FROM {$wpdb->prefix}polls_psx_polls
-        WHERE poll_id = %d
-    ", $poll_id);
-$poll_data = $wpdb->get_row($query);
+    // Query to fetch poll data
+    $query = $wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}polls_psx_polls
+            WHERE poll_id = %d
+        ", $poll_id);
+    $poll_data = $wpdb->get_row($query);
 
-$query = $wpdb->prepare("
-    SELECT * FROM {$wpdb->prefix}polls_psx_survey_responses
-    WHERE poll_id = %d
-", $poll_id);
-
-$responses_data = $wpdb->get_row($query);
-
-if (!$poll_data) {
-    echo "Poll not found";
-    return;
-}
-
-$questions_query = $wpdb->prepare("
-        SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
+    $query = $wpdb->prepare("
+        SELECT * FROM {$wpdb->prefix}polls_psx_survey_responses
         WHERE poll_id = %d
     ", $poll_id);
 
-$questions = $wpdb->get_results($questions_query);
+    $responses_data = $wpdb->get_row($query);
+
+    if (!$poll_data) {
+        echo "Poll not found";
+        return;
+    }
+
+    $questions_query = $wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
+            WHERE poll_id = %d
+        ", $poll_id);
+
+    $questions = $wpdb->get_results($questions_query);
 
 
-$questions_with_answers = array();
+    $questions_with_answers = array();
 
-foreach ($questions as &$question) {
-    $answers_query = $wpdb->prepare("
-        SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
-        WHERE question_id = %d and poll_id = %d
-        ", $question->question_id, $poll_id);
+    foreach ($questions as &$question) {
+        $answers_query = $wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
+            WHERE question_id = %d and poll_id = %d
+            ", $question->question_id, $poll_id);
 
-    $question->answers = $wpdb->get_results($answers_query);
-    $questions_with_answers[] = $question;
-}
+        $question->answers = $wpdb->get_results($answers_query);
+        $questions_with_answers[] = $question;
+    }
 
-$poll_data_json = json_encode($poll_data);
-$questions_json = json_encode($questions);
-$questions_with_answers_json = json_encode($questions_with_answers);
+    $poll_data_json = json_encode($poll_data);
+    $questions_json = json_encode($questions);
+    $questions_with_answers_json = json_encode($questions_with_answers);
 ?>
 
 <!DOCTYPE html>

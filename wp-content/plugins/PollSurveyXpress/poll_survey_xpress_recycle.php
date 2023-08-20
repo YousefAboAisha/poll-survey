@@ -151,7 +151,7 @@
                     url: my_ajax_object.ajaxurl,
                     type: 'POST',
                     data: {
-                        action: 'restore_poll',
+                        action: 'PSX_restore_poll',
                         poll_id: dataCardId
                     },
                     success: function() {
@@ -187,7 +187,7 @@
                 url: my_ajax_object.ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'permenant_delete',
+                    action: 'PSX_permenant_delete',
                     poll_id: id
                 },
                 success: function() {

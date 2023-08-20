@@ -1,4 +1,4 @@
-    <?php
+<?php
     global $wpdb;
     $table_name = $wpdb->prefix . 'polls_psx_polls';
     $statuses = array('active', 'inactive'); // List of statuses to display
@@ -224,7 +224,7 @@
                         url: my_ajax_object.ajaxurl,
                         type: 'POST',
                         data: {
-                            action: 'archive_poll',
+                            action: 'PSX_archive_poll',
                             poll_id: id
                         },
                         success: function() {

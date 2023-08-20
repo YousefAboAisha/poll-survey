@@ -11,7 +11,7 @@ Author URI:   http://localhost/wordpress/
 
 require_once(plugin_dir_path(__FILE__) . 'functions.php');
 
-register_activation_hook(__FILE__, array($survey_plugin, 'add_database_tables'));
+register_activation_hook(__FILE__, array($survey_plugin, 'PSX_add_database_tables'));
 
 $plugin_name = plugin_basename(__FILE__);
 add_filter('plugin_action_links_' . $plugin_name, 'nc_settings_link');

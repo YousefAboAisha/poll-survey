@@ -153,24 +153,24 @@ $poll_data_json = json_encode($poll_data);
 
             console.log(settingObj);
 
-            // if (settingObj != {} || !settingObj) {
-            //     jQuery.ajax({
-            //         type: "POST",
-            //         url: my_ajax_object.ajaxurl,
-            //         data: {
-            //             action: "save_poll_Multiple_data",
-            //             poll_data: JSON.stringify(settingObj),
-            //         },
-            //         success: function(shortcode) {
-            //             console.log("Done");
-            //             // window.location.reload();
-            //         },
-            //         error: function(error) {
-            //             console.error("Error:", error);
-            //         },
-            //     });
-            // }
-        });
+        if (settingObj != {} || !settingObj) {
+            jQuery.ajax({
+                type: "POST",
+                url: my_ajax_object.ajaxurl,
+                data: {
+                    action: "PSX_update_poll_settings",
+                    poll_data: JSON.stringify(settingObj),
+                },
+                success: function() {
+                    console.log("Done");
+                    window.location.reload();
+                },
+                error: function(error) {
+                    console.error("Error:", error);
+                },
+            });
+        }
+    });
     </script>
 
 </body>
