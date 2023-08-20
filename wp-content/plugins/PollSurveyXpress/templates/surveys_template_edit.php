@@ -30,14 +30,12 @@ $poll_data_json = json_encode($poll_data);
 </head>
 
 
-<body class="g-sidenav-show bg-gray-100">
-    <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <nav aria-label="breadcrumb">
-            <h6 class="font-weight-bolder mb-0">Survey Settings</h6>
-        </nav>
+<body>
+    <main class="col-xl-5 col-lg-8 col-md-9 col-10 mx-auto main-content position-relative d-flex flex-column justify-content-center align-items-center max-height-vh-100 h-100 mt-4 border-radius-lg">
+        <h6 class="font-weight-bolder mb-4 align-self-start">Survey Settings</h6>
 
 
-        <form id="update_form" data-form-id=<?php echo ($poll_id) ?> class="d-flex flex-column card p-4 rounded-3 border">
+        <form id="update_form" data-form-id=<?php echo ($poll_id) ?> class="d-flex flex-column p-4 rounded-3 border w-100 bg-white">
             <div>
                 <label>Change plugin Theme</label>
 
@@ -80,13 +78,13 @@ $poll_data_json = json_encode($poll_data);
 
                     <div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> />
+                            <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> onchange="toggleInputState()" />
                             <label class="form-check-label" for="show_results">
                                 Show real-time results
                             </label>
                         </div>
 
-                        <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" />
+                        <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                     </div>
 
                     <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
@@ -109,6 +107,23 @@ $poll_data_json = json_encode($poll_data);
             </button>
         </form>
     </main>
+
+    <script>
+        // Function to toggle input state based on checkbox status
+        function toggleInputState() {
+            var inputField = document.getElementById("show_results_input");
+            var checkbox = document.getElementById("show_results");
+
+            if (checkbox.checked) {
+                inputField.setAttribute("disabled");
+            } else {
+                inputField.removeAttribute("disabled", "disabled");
+            }
+        }
+
+        // Call the function initially to set the input state based on checkbox status
+        toggleInputState();
+    </script>
 
 
     <script>
@@ -153,24 +168,24 @@ $poll_data_json = json_encode($poll_data);
 
             console.log(settingObj);
 
-        if (settingObj != {} || !settingObj) {
-            jQuery.ajax({
-                type: "POST",
-                url: my_ajax_object.ajaxurl,
-                data: {
-                    action: "PSX_update_poll_settings",
-                    poll_data: JSON.stringify(settingObj),
-                },
-                success: function() {
-                    console.log("Done");
-                    window.location.reload();
-                },
-                error: function(error) {
-                    console.error("Error:", error);
-                },
-            });
-        }
-    });
+            if (settingObj != {} || !settingObj) {
+                jQuery.ajax({
+                    type: "POST",
+                    url: my_ajax_object.ajaxurl,
+                    data: {
+                        action: "PSX_update_poll_settings",
+                        poll_data: JSON.stringify(settingObj),
+                    },
+                    success: function() {
+                        console.log("Done");
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                    },
+                });
+            }
+        });
     </script>
 
 </body>

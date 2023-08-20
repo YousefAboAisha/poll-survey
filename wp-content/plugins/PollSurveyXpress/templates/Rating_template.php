@@ -11,7 +11,7 @@
 </head>
 
 
-<body class="g-sidenav-show bg-gray-100">
+<body>
     <main class="col-lg-8 col-md-9 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <!-- Navbar -->
         <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
@@ -75,7 +75,7 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title">Plugin Settings</h5>
+                    <h5 class="modal-title">Survey Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 

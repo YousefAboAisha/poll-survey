@@ -341,8 +341,8 @@ jQuery(document).ready(function (jQuery) {
   }
 });
 
+// Multiple Choice Question collect handle
 jQuery(document).ready(function (jQuery) {
-  // Multiple Choice Question collect handle
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
@@ -380,11 +380,11 @@ jQuery(document).ready(function (jQuery) {
     });
 });
 
+// Open Ended collect data
 jQuery(document).ready(function (jQuery) {
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
-  // Open Ended collect data
   // Assume you have a button with ID "get_values_button" to trigger the action
   document.getElementById("save_2").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -406,6 +406,43 @@ jQuery(document).ready(function (jQuery) {
       };
       responses_arr.push(response_obj);
       // }
+    });
+
+    finalObj = {
+      poll_id: poll_id,
+      responses: responses_arr,
+    };
+
+    console.log(finalObj);
+  });
+});
+
+// Rating collect data
+jQuery(document).ready(function (jQuery) {
+  const poll_id = document
+    .getElementById("poll_card")
+    .getAttribute("data-card-id");
+
+  document.getElementById("save_3").addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Loop through all questions
+    let finalObj = {};
+    const responses_arr = [];
+    var questions = document.querySelectorAll(".poll-answer-radio");
+
+    questions.forEach(function (question) {
+      let response_obj = {};
+      const question_id = question.getAttribute("data-question-id");
+      const answer_id = question.getAttribute("data-answer-id");
+
+      if (question.checked) {
+        response_obj = {
+          question_id: question_id, // Use the question_id
+          answer_id: answer_id, // Use the answer_id for the selected answer
+        };
+        responses_arr.push(response_obj);
+      }
     });
 
     finalObj = {

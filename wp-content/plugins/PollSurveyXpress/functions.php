@@ -1,4 +1,6 @@
 <?php
+
+
 class PollSurveyXpress
 {
 
@@ -14,23 +16,23 @@ class PollSurveyXpress
 
 
         add_action('wp_ajax_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_data'));
-        add_action('wp_ajax_nopriv_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_dataa')); 
+        add_action('wp_ajax_nopriv_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_dataa'));
         add_action('wp_ajax_PSX_save_poll_rating_data', array($this, 'PSX_save_poll_rating_data'));
-        add_action('wp_ajax_nopriv_PSX_save_poll_rating_data', array($this, 'PSX_save_poll_rating_data')); 
+        add_action('wp_ajax_nopriv_PSX_save_poll_rating_data', array($this, 'PSX_save_poll_rating_data'));
         add_action('wp_ajax_PSX_save_poll_open_ended_data', array($this, 'PSX_save_poll_open_ended_data'));
-        add_action('wp_ajax_nopriv_PSX_save_poll_open_ended_data', array($this, 'PSX_save_poll_open_ended_data')); 
-        add_action("wp_ajax_PSX_archive_poll", array($this,"PSX_archive_poll"));
-        add_action("wp_ajax_nopriv_PSX_archive_poll", array($this,"PSX_archive_poll")); // For non-logged-in users
-        add_action("wp_ajax_PSX_restore_poll", array($this,"PSX_restore_poll"));
-        add_action("wp_ajax_nopriv_PSX_restore_poll", array($this,"PSX_restore_poll")); // For non-logged-in users
-        add_action("wp_ajax_PSX_permenant_delete", array($this,"PSX_permenant_delete"));
-        add_action("wp_ajax_nopriv_PSX_permenant_delete", array($this,"PSX_permenant_delete")); // For non-logged-in users
+        add_action('wp_ajax_nopriv_PSX_save_poll_open_ended_data', array($this, 'PSX_save_poll_open_ended_data'));
+        add_action("wp_ajax_PSX_archive_poll", array($this, "PSX_archive_poll"));
+        add_action("wp_ajax_nopriv_PSX_archive_poll", array($this, "PSX_archive_poll")); // For non-logged-in users
+        add_action("wp_ajax_PSX_restore_poll", array($this, "PSX_restore_poll"));
+        add_action("wp_ajax_nopriv_PSX_restore_poll", array($this, "PSX_restore_poll")); // For non-logged-in users
+        add_action("wp_ajax_PSX_permenant_delete", array($this, "PSX_permenant_delete"));
+        add_action("wp_ajax_nopriv_PSX_permenant_delete", array($this, "PSX_permenant_delete")); // For non-logged-in users
         add_shortcode('poll', array($this, 'PSX_poll_shortcode_handler'));
-        add_action("wp_ajax_PSX_update_poll_settings", array($this,"PSX_update_poll_settings"));
-        add_action("wp_ajax_nopriv_PSX_update_poll_settings", array($this,"PSX_update_poll_settings")); // For non-logged-in users
-        
+        add_action("wp_ajax_PSX_update_poll_settings", array($this, "PSX_update_poll_settings"));
+        add_action("wp_ajax_nopriv_PSX_update_poll_settings", array($this, "PSX_update_poll_settings")); // For non-logged-in users
+
     }
-    
+
     // Enqueue scripts and styles for the frontend
     public function PSX_enqueue_frontend_scripts()
     {
@@ -45,14 +47,19 @@ class PollSurveyXpress
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my_ajax_nonce'),
         ));
+
+
+        wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
+        wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
+        wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
     }
 
     // Enqueue scripts and styles for the admin area
     public function PSX_enqueue_admin_scripts()
     {
         //enqueue Script files
-        if (isset($_GET['page']) &&(($_GET['page'] === 'poll-survey-xpress-surveys' || $_GET['page'] === 'poll-survey-xpress-recycle' ||$_GET['page'] === 'poll-survey-xpress-add' || $_GET['page'] === 'poll-survey-xpress-settings' || $_GET['page'] === 'view_template_page' || $_GET['page'] === 'edit_template_page' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page']
-         === 'show_template_page'))) {   
+        if (isset($_GET['page']) && (($_GET['page'] === 'poll-survey-xpress-surveys' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page'] === 'poll-survey-xpress-add' || $_GET['page'] === 'poll-survey-xpress-settings' || $_GET['page'] === 'view_template_page' || $_GET['page'] === 'edit_template_page' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page']
+            === 'show_template_page'))) {
             wp_enqueue_script('jquery');
             wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.0', true);
             wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
@@ -63,7 +70,9 @@ class PollSurveyXpress
             wp_enqueue_script('fullcalendar-extension-script', plugin_dir_url(__FILE__) . 'js/fullcalendar.min.js');
             wp_enqueue_script('perfect-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/perfect-scrollbar.min.js');
             wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
-            
+            wp_enqueue_script('chartjs-extension-script', plugin_dir_url(__FILE__) . 'js/chartjs.min.js');
+
+
             wp_enqueue_script('smooth-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/smooth-scrollbar.min.js');
             wp_localize_script('plugin-custom', 'my_ajax_object', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
@@ -72,7 +81,7 @@ class PollSurveyXpress
 
             //enqueue Style files
             wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
-            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css');
+            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.3");
             wp_enqueue_style('nucleo-icons', plugin_dir_url(__FILE__) . 'css/nucleo-icons.css');
             wp_enqueue_style('nucleo-style', plugin_dir_url(__FILE__) . 'css/nucleo-svg.css');
             wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
@@ -80,7 +89,6 @@ class PollSurveyXpress
             wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
             wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
         }
-        
     }
 
     //Add database tables and option when activate plugin
@@ -88,18 +96,18 @@ class PollSurveyXpress
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-    
+
         $option_name = 'installation_time_of_PollSurveyXpress';
-    
+
         // Check if the option already exists
         $existing_option = get_option($option_name);
-    
+
         if (!$existing_option) {
             // Option doesn't exist, so add it with the current time
             $current_time = current_time('timestamp');
             add_option($option_name, $current_time);
         }
-    
+
         // Define your table structures
         $table_polls = "
             CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_polls (
@@ -120,7 +128,7 @@ class PollSurveyXpress
                 PRIMARY KEY (poll_id)
             ) $charset_collate;
         ";
-    
+
         $table_survey_questions = "
             CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_questions (
                 question_id int(11) NOT NULL AUTO_INCREMENT,
@@ -130,7 +138,7 @@ class PollSurveyXpress
                 FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
             ) $charset_collate;
         ";
-    
+
         $table_survey_answers = "
             CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_answers (
                 answer_id int(11) NOT NULL AUTO_INCREMENT,
@@ -142,7 +150,7 @@ class PollSurveyXpress
                 FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
             ) $charset_collate;
         ";
-    
+
         $table_survey_responses = "
         CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_responses (
             response_id int(11) NOT NULL AUTO_INCREMENT,
@@ -153,8 +161,8 @@ class PollSurveyXpress
             FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
         ) $charset_collate;
     ";
-    
-    $table_survey_responses_questions = "
+
+        $table_survey_responses_questions = "
         CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_response_questions (
             response_id int(11),
             question_id int(11),
@@ -162,8 +170,8 @@ class PollSurveyXpress
             FOREIGN KEY (question_id) REFERENCES {$wpdb->prefix}polls_psx_survey_questions(question_id)
         ) $charset_collate;
     ";
-    
-    $table_survey_responses_answers = "
+
+        $table_survey_responses_answers = "
         CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_response_answers (
             response_id int(11),
             answer_id int(11),
@@ -172,11 +180,11 @@ class PollSurveyXpress
             FOREIGN KEY (answer_id) REFERENCES {$wpdb->prefix}polls_psx_survey_answers(answer_id)
         ) $charset_collate;
     ";
-    
-    
+
+
         // Include the upgrade script
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-    
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
         // Create tables
         dbDelta($table_polls);
         dbDelta($table_survey_questions);
@@ -185,7 +193,7 @@ class PollSurveyXpress
         dbDelta($table_survey_responses_questions);
         dbDelta($table_survey_responses_answers);
     }
-    
+
     // Add main menu page (PollSurveyXpress)
     public function PSX_add_admin_menu_link()
     {
@@ -223,7 +231,7 @@ class PollSurveyXpress
     // Callback method for the Add page
     public function PSX_poll_survey_xpress_add_callback()
     {
-        if (!isset($_GET['view_template'])){
+        if (!isset($_GET['view_template'])) {
             include 'poll_survey_xpress_add.php';
         }
     }
@@ -262,12 +270,12 @@ class PollSurveyXpress
     }
 
     //render pages of templates
-    public function PSX_view_template_page_callback() 
+    public function PSX_view_template_page_callback()
     {
         if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'view_template_page') {
             // Get the template slug from the query parameter
             $templateSlug = sanitize_text_field($_GET['template']);
-    
+
             // Include the template file
             include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template.php');
         }
@@ -277,7 +285,7 @@ class PollSurveyXpress
     public function PSX_edit_templates_action()
     {
         add_submenu_page(
-            null, 
+            null,
             'Edit Template', // Page title
             'Edit Template', // Menu title
             'manage_options', // Capability
@@ -301,10 +309,10 @@ class PollSurveyXpress
     }
 
     //hidden menu to show pages of templates
-    public function PSX_show_templates_action() 
+    public function PSX_show_templates_action()
     {
         add_submenu_page(
-            null, 
+            null,
             'Show Template', // Page title
             'Edit Template', // Menu title
             'manage_options', // Capability
@@ -321,7 +329,7 @@ class PollSurveyXpress
             $templateSlug = sanitize_text_field($_GET['template']);
             // Get the poll ID from the query parameter
             $pollId = isset($_GET['poll_id']) ? intval($_GET['poll_id']) : 0;
-    
+
             // Include the edit template file
             include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template_view.php');
         }
@@ -333,13 +341,13 @@ class PollSurveyXpress
         global $wpdb;
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-    
+
             // Extract necessary data from $poll_data_array
             $surveyTitle = $poll_data_array['surveyTitle'];
             $pollCards = $poll_data_array['pollCards'];
             $settings = $poll_data_array['settings'];
             $template = $poll_data_array['template'];
-    
+
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
@@ -352,7 +360,7 @@ class PollSurveyXpress
                 'color' => $settings['color'],
                 'bgcolor' => $settings['bgcolor'],
                 'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check']? '' : $settings['real_time_result_text'],
+                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
                 'min_votes' => $settings['min_votes']
             );
 
@@ -361,14 +369,14 @@ class PollSurveyXpress
             $poll_id = $wpdb->insert_id;
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
-    
+
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
                 $wpdb->prefix . 'polls_psx_polls',
                 array('Short_Code' => $shortcode),
                 array('poll_id' => $poll_id)
             );
-    
+
             foreach ($pollCards as $pollCard) {
                 $question_data = array(
                     'poll_id' => $poll_id,
@@ -376,7 +384,7 @@ class PollSurveyXpress
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
-    
+
                 // Insert data into polls_psx_survey_answers table
                 foreach ($pollCard['options'] as $option) {
                     $answer_data = array(
@@ -393,19 +401,19 @@ class PollSurveyXpress
 
     //Method to save poll (Rating) data
 
-    public function PSX_save_poll_rating_data() 
+    public function PSX_save_poll_rating_data()
     {
         global $wpdb;
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-    
+
             // Extract necessary data from $poll_data_array
             $surveyTitle = $poll_data_array['surveyTitle'];
             $questions = $poll_data_array['questions'];
             $ratesArray = $poll_data_array['ratesArray'];
             $settings = $poll_data_array['settings'];
             $template = $poll_data_array['template'];
-    
+
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
@@ -418,24 +426,24 @@ class PollSurveyXpress
                 'color' => $settings['color'],
                 'bgcolor' => $settings['bgcolor'],
                 'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check']? '' : $settings['real_time_result_text'],
+                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
                 'min_votes' => $settings['min_votes']
             );
-    
+
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-    
+
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
-    
+
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
                 $wpdb->prefix . 'polls_psx_polls',
                 array('Short_Code' => $shortcode),
                 array('poll_id' => $poll_id)
             );
-    
+
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
@@ -443,7 +451,7 @@ class PollSurveyXpress
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
-    
+
                 // Insert data into polls_psx_survey_answers table
                 foreach ($ratesArray as $otion) {
                     $answer_data = array(
@@ -464,13 +472,13 @@ class PollSurveyXpress
         global $wpdb;
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-    
+
             // Extract necessary data from $poll_data_array
             $surveyTitle = $poll_data_array['surveyTitle'];
             $questions = $poll_data_array['questions'];
             $settings = $poll_data_array['settings'];
             $template = $poll_data_array['template'];
-    
+
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
@@ -483,24 +491,24 @@ class PollSurveyXpress
                 'color' => $settings['color'],
                 'bgcolor' => $settings['bgcolor'],
                 'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check']? '' : $settings['real_time_result_text'],
+                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
                 'min_votes' => $settings['min_votes']
             );
-    
+
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-    
+
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
-    
+
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
                 $wpdb->prefix . 'polls_psx_polls',
                 array('Short_Code' => $shortcode),
                 array('poll_id' => $poll_id)
             );
-    
+
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
@@ -508,7 +516,7 @@ class PollSurveyXpress
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 //Add an answer for each question
-                
+
                 $question_id = $wpdb->insert_id;
                 $answer_data = array(
                     'poll_id' => $poll_id,
@@ -522,11 +530,11 @@ class PollSurveyXpress
     }
 
     //Method to change poll status (active/inactive to archived)
-    public function PSX_archive_poll() 
+    public function PSX_archive_poll()
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
-            
+
             // Update the poll status in the database
             global $wpdb;
             $table_name = $wpdb->prefix . "polls_psx_polls";
@@ -535,7 +543,6 @@ class PollSurveyXpress
                 array("status" => "archived"),
                 array("poll_id" => $poll_id)
             );
-            
         }
         wp_die();
     }
@@ -545,7 +552,7 @@ class PollSurveyXpress
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
-            
+
             // Update the poll status in the database
             global $wpdb;
             $table_name = $wpdb->prefix . "polls_psx_polls";
@@ -554,7 +561,6 @@ class PollSurveyXpress
                 array("status" => "inactive"),
                 array("poll_id" => $poll_id)
             );
-            
         }
         wp_die();
     }
@@ -564,29 +570,29 @@ class PollSurveyXpress
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
-    
+
             global $wpdb;
             $table_polls = $wpdb->prefix . "polls_psx_polls";
             $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
             $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
             $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
-    
+
             // Delete from survey responses
             $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
-    
+
             // Delete from survey answers
             $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
-    
+
             // Delete from survey questions
             $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
-    
+
             // Delete from polls
             $wpdb->delete($table_polls, array("poll_id" => $poll_id));
         }
-    
+
         wp_die();
     }
-    
+
     // Add shortcode form to the frontend of the website
     public function PSX_poll_shortcode_handler($atts)
     {
@@ -600,10 +606,10 @@ class PollSurveyXpress
         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
         $poll_data = $wpdb->get_results($query, ARRAY_A);
 
-        $output = '<div class="mt-4 container-fluid bg-transparent">';
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
                 if ($poll_data[0]['template'] === 'Multiple Choice') {
+                    $output = '<div class="mt-4 container-fluid bg-transparent">';
                     // Start generating the poll structure
                     // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -646,6 +652,8 @@ class PollSurveyXpress
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                     $questions = $wpdb->get_results($query, ARRAY_A);
 
+                    $output = '<div class="mt-4 container-fluid bg-transparent">';
+
                     $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
 
                     $output .= '<div class="col">';
@@ -662,6 +670,7 @@ class PollSurveyXpress
             class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
             Save
         </button>';
+
                     $output .= '</div>'; // Close the container-fluid div
 
                 } else if ($poll_data[0]['template'] === 'Rating') {
@@ -670,34 +679,78 @@ class PollSurveyXpress
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                     $questions = $wpdb->get_results($query, ARRAY_A);
 
-                    $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                    // Start White background list
+                    $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
 
-                    $output .= '<div class="col">';
-                    foreach ($questions as $question) {
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
-                        $output .= '<h6 data-question-id="' . $question['question_id'] . '" class="mb-3">' . $question['question_text'] . '</h6>';
-                        $output .= '</div>'; // Close the poll structure div
+                    $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
+
+                    $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+
+                    $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                    $ratings = $wpdb->get_results($query, ARRAY_A);
+
+                    // Start of rating buttons div
+                    $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
+                    $flag = false;
+                    $flag_text = $ratings[0]["answer_text"];
+
+                    foreach ($ratings as $rating) {
+                        if ($flag_text === $rating["answer_text"] && $flag) {
+                            break;
+                        }
+                        $output .= '<p class="m-0 text-sm ">' . $rating["answer_text"] . '</p>';
+                        $flag = true;
                     }
 
-                    $output .= '</div>'; // Close the col div
+                    $output .= '</div>';
 
-                    $output .= '<button type="submit" id="save_2"
-            class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-            Save
-        </button>';
-                    $output .= '</div>'; // Close the container-fluid div
+                    $output .= '</div>'; // Close the Rating space-between div
+
+                    $output .= '<div class="p-4">';
+                    foreach ($questions as $question) {
+                        // Start of the rating card
+                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="d-flex justify-content-between align-items-center mb-4">';
+                        $output .= '<h6 class="m-0 text-break" data-question-id="' . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
+
+                        // Fetch answers for each question
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
+                        $answers = $wpdb->get_results($query, ARRAY_A);
+
+                        $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+
+                        foreach ($answers as $answer) {
+                            $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                        }
+
+                        $output .= '</div>'; // End the answers container
+
+                        // End of the rating card
+                        $output .= "</div>";
+                    }
+                    $output .= '</div>';
+
+                    $output .= '</div>';
+
+                    $output .= '<div>';
+                    $output .= '<button type="submit" id="save_3"
+                    class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
+                    Save
+                </button>';
+                    $output .= '</div>';
                 }
             } else {
                 $output .= '<p>Poll not found.</p>';
             }
-            $output .= '</div>'; // Close the container-fluid div
             return $output;
         }
     }
 
     // Function to update poll settings                                                                            
-    public function PSX_update_poll_settings(){
-        
+    public function PSX_update_poll_settings()
+    {
+
         global $wpdb;
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
@@ -724,15 +777,12 @@ class PollSurveyXpress
                     "bgcolor" => $bgcolor,
                     "sharing" => $sharing,
                     "real_time_result_text" => $real_time_check ? '' : $real_time_result_text,
-                    "min_votes" => $min_votes ,
+                    "min_votes" => $min_votes,
                     "cta_Text" => $cta_text
                 ),
                 array("poll_id" => $poll_id)
             );
-
-        } 
-
+        }
     }
-
 }
 $survey_plugin = new PollSurveyXpress();
