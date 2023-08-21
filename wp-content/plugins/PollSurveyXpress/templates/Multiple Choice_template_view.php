@@ -41,6 +41,12 @@ $questions_with_answers_json = json_encode($questions_with_answers);
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 </head>
 
+<style>
+    ul li {
+        list-style: upper-alpha;
+    }
+</style>
+
 
 <body>
     <main class="container-fluid main-content position-relative max-height-vh-100 h-100">
@@ -220,11 +226,14 @@ $questions_with_answers_json = json_encode($questions_with_answers);
                                 $answers = $wpdb->get_results($answers_query);
                                 $questions_with_answers_json = json_encode($answers);
                                 $answers = json_decode(stripslashes($questions_with_answers_json), true); ?>
-                                <?php foreach ($answers as $answer) { ?>
-                                    <p class="m-0 text-sm ">
-                                        - <?php echo $answer['answer_text']; ?>
-                                    </p>
-                                <?php } ?>
+                                <ul>
+
+                                    <?php foreach ($answers as $answer) { ?>
+                                        <li class="m-0 text-sm ">
+                                            <?php echo $answer['answer_text']; ?>
+                                        </li>
+                                    <?php } ?>
+                                </ul>
                             </div>
                         </div>
                 <?php

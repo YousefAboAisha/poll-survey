@@ -48,7 +48,7 @@ class PollSurveyXpress
             'nonce' => wp_create_nonce('my_ajax_nonce'),
         ));
 
-
+        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.4");
         wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
         wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
@@ -81,7 +81,7 @@ class PollSurveyXpress
 
             //enqueue Style files
             wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
-            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.3");
+            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.4");
             wp_enqueue_style('nucleo-icons', plugin_dir_url(__FILE__) . 'css/nucleo-icons.css');
             wp_enqueue_style('nucleo-style', plugin_dir_url(__FILE__) . 'css/nucleo-svg.css');
             wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
@@ -612,7 +612,6 @@ class PollSurveyXpress
                     $output = '<form id="poll_form" method="post" action="your_action_url">';
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
-                    // Start generating the poll structure
                     // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -647,7 +646,10 @@ class PollSurveyXpress
                             Save
                         </button>';
                     $output .= '</div>'; // Close the container-fluid div
+                    // Add the modal HTML structure
                     $output .= '</form>';
+
+
 
                     $output .= '<script>
                     const form = document.getElementById("poll_form");
@@ -740,7 +742,7 @@ class PollSurveyXpress
 
                     $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                    $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+                    $output .= '<h5 class="m-0">' . $poll_data[0]['title'] . '</h5>';
 
                     $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);

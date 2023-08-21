@@ -74,7 +74,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                 Shortcode
                                             </th>
 
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
+                                            <th class="text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
                                                 End Date
                                             </th>
 
@@ -90,17 +90,12 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <tbody>
                                         <?php foreach ($polls as $poll) { ?>
                                             <tr class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
-                                                <td>
-                                                    <p class="text-xs mb-0 m-0 text-center align-middle ">
-                                                        <?php echo $poll->poll_id; ?>
-                                                    </p>
-
+                                                <td class="text-xs mb-0 m-0 text-center align-middle ">
+                                                    <?php echo $poll->poll_id; ?>
                                                 </td>
 
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->title; ?>
-                                                    </p>
+                                                <td class="align-middle text-xs mb-0">
+                                                    <?php echo $poll->title; ?>
                                                 </td>
 
                                                 <td class="align-middle">
@@ -113,16 +108,12 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     <input type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
                                                 </td>
 
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->end_date; ?>
-                                                    </p>
+                                                <td class="align-middle text-xs mb-0">
+                                                    <?php echo $poll->end_date; ?>
                                                 </td>
 
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->template; ?>
-                                                    </p>
+                                                <td class="align-middle text-xs mb-0">
+                                                    <?php echo $poll->template; ?>
                                                 </td>
                                                 <!-- Other dynamic data columns here -->
 
