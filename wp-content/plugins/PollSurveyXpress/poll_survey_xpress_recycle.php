@@ -82,26 +82,30 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <tbody>
                                         <?php foreach ($polls as $poll) { ?>
                                             <tr class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
-                                                <td class="text-xs mb-0 m-0 text-center align-middle ">
-                                                    <?php echo $poll->poll_id; ?>
+                                                <td class="align-middle text-center"><?php echo $poll->poll_id; ?></td>
+
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0 m-0">
+                                                        <?php echo $poll->title; ?>
+                                                    </p>
                                                 </td>
 
-                                                <td class="align-middle text-xs mb-0">
-                                                    <?php echo $poll->title; ?>
-                                                </td>
-
-                                                <td class="mb-0 m-0 text-center align-middle ">
-                                                    <span class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
+                                                <td class="align-middle text-sm text-center">
+                                                    <p class="badge badge-sm m-0 bg-gradient-warning">
                                                         <?php echo ucfirst($poll->status); ?>
-                                                    </span>
+                                                    </p>
                                                 </td>
 
-                                                <td class="text-xs mb-0 m-0 text-center align-middle ">
-                                                    <?php echo $poll->end_date; ?>
+                                                <td class="align-middle text-sm text-center">
+                                                    <p class="text-xs font-weight-bold mb-0 m-0">
+                                                        <?php echo $poll->end_date; ?>
+                                                    </p>
                                                 </td>
 
-                                                <td class="text-xs mb-0 m-0 text-center align-middle ">
-                                                    <?php echo $poll->template; ?>
+                                                <td class="align-middle text-sm text-center">
+                                                    <p class="text-xs font-weight-bold mb-0 m-0 text-center">
+                                                        <?php echo $poll->template; ?>
+                                                    </p>
                                                 </td>
 
                                                 <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">

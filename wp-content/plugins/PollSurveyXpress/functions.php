@@ -30,6 +30,8 @@ class PollSurveyXpress
         add_shortcode('poll', array($this, 'PSX_poll_shortcode_handler'));
         add_action("wp_ajax_PSX_update_poll_settings", array($this, "PSX_update_poll_settings"));
         add_action("wp_ajax_nopriv_PSX_update_poll_settings", array($this, "PSX_update_poll_settings")); // For non-logged-in users
+        add_action('wp_ajax_PSX_save_poll_response', array($this, 'PSX_save_poll_response'));
+        add_action('wp_ajax_nopriv_PSX_save_poll_response', array($this, 'PSX_save_poll_response')); // For non-logged-in users
 
     }
 
@@ -51,7 +53,7 @@ class PollSurveyXpress
         wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.4");
         wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
         wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
-        wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
+        wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css', array(), "1.4");
     }
 
     // Enqueue scripts and styles for the admin area
@@ -81,7 +83,7 @@ class PollSurveyXpress
 
             //enqueue Style files
             wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
-            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.4");
+            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.3");
             wp_enqueue_style('nucleo-icons', plugin_dir_url(__FILE__) . 'css/nucleo-icons.css');
             wp_enqueue_style('nucleo-style', plugin_dir_url(__FILE__) . 'css/nucleo-svg.css');
             wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
@@ -162,24 +164,18 @@ class PollSurveyXpress
         ) $charset_collate;
     ";
 
-        $table_survey_responses_questions = "
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_response_questions (
-            response_id int(11),
+        $table_survey_responses_data = "
+        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_responses_data (
+            response_id int(11) NOT NULL,
             question_id int(11),
-            FOREIGN KEY (response_id) REFERENCES {$wpdb->prefix}polls_psx_survey_responses(response_id),
-            FOREIGN KEY (question_id) REFERENCES {$wpdb->prefix}polls_psx_survey_questions(question_id)
-        ) $charset_collate;
-    ";
-
-        $table_survey_responses_answers = "
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_response_answers (
-            response_id int(11),
             answer_id int(11),
             open_text_response varchar(255),
             FOREIGN KEY (response_id) REFERENCES {$wpdb->prefix}polls_psx_survey_responses(response_id),
+            FOREIGN KEY (question_id) REFERENCES {$wpdb->prefix}polls_psx_survey_questions(question_id),
             FOREIGN KEY (answer_id) REFERENCES {$wpdb->prefix}polls_psx_survey_answers(answer_id)
         ) $charset_collate;
     ";
+
 
 
         // Include the upgrade script
@@ -190,8 +186,7 @@ class PollSurveyXpress
         dbDelta($table_survey_questions);
         dbDelta($table_survey_answers);
         dbDelta($table_survey_responses);
-        dbDelta($table_survey_responses_questions);
-        dbDelta($table_survey_responses_answers);
+        dbDelta($table_survey_responses_data);
     }
 
     // Add main menu page (PollSurveyXpress)
@@ -268,7 +263,6 @@ class PollSurveyXpress
             array($this, 'PSX_view_template_page_callback') // Callback function
         );
     }
-
     //render pages of templates
     public function PSX_view_template_page_callback()
     {
@@ -298,10 +292,6 @@ class PollSurveyXpress
     public function PSX_view_edit_template_page_callback()
     {
         if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'edit_template_page') {
-            // Get the template slug from the query parameter
-            $templateSlug = sanitize_text_field($_GET['template']);
-            // Get the poll ID from the query parameter
-            $pollId = isset($_GET['poll_id']) ? intval($_GET['poll_id']) : 0;
 
             // Include the edit template file
             include(plugin_dir_path(__FILE__) . 'templates/surveys_template_edit.php');
@@ -572,10 +562,19 @@ class PollSurveyXpress
             $poll_id = intval($_POST["poll_id"]);
 
             global $wpdb;
+
             $table_polls = $wpdb->prefix . "polls_psx_polls";
             $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
             $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
             $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
+            $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+
+            $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = $poll_id", ARRAY_A);
+
+            foreach ($responses_id as $response) {
+                $response_id = $response['response_id'];
+                $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
+            }
 
             // Delete from survey responses
             $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
@@ -612,6 +611,7 @@ class PollSurveyXpress
                     $output = '<form id="poll_form" method="post" action="your_action_url">';
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
+                    // Start generating the poll structure
                     // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -623,7 +623,7 @@ class PollSurveyXpress
                     foreach ($questions as $question) {
                         $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
 
-                        $output .= '<h6 class="mb-3">' . $question['question_text'] . '</h6>';
+                        $output .= '<h6 class="mb-4">' . $question['question_text'] . '</h6>';
 
                         // Fetch answers for each question
                         $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -631,59 +631,30 @@ class PollSurveyXpress
                         $answers = $wpdb->get_results($query, ARRAY_A);
 
                         foreach ($answers as $answer) {
-                            $output .= '<div class="poll-answer">';
+                            $output .= '<div class="poll-answer position-relative w-full d-flex align-items-center justify-content-between mb-2 p-2">';
+                            $output .= '<div style="width:30%" class="position-absolute pe-2 d-flex align-items-center justify-content-end left-10 h-100 bg-info border rounded-2">
+                                <p class="text-white m-0 fw-bolder text-xs" >35%</p>
+                            </div>';
+                            $output .= '<div class="d-flex align-items-center">';
                             $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
-                            $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">' . $answer['answer_text'] . '</label>';
+                            $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] . '</label>';
+                            $output .= '</div>';
                             $output .= '</div>';
                         }
 
                         $output .= '</div>'; // Close the poll structure div
+                        $output .= '<div class="spinner-border text-primary d-none" role="status">
+                      </div>'; // Close the poll structure div
                     }
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button type="submit" id="save_button" disabled
-                            class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-                            Save
-                        </button>';
+                    $output .= '<button type="submit" id="mcq_save_button" disabled
+                        class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        Save
+                    </button>';
                     $output .= '</div>'; // Close the container-fluid div
-                    // Add the modal HTML structure
                     $output .= '</form>';
 
-
-
-                    $output .= '<script>
-                    const form = document.getElementById("poll_form");
-                    const saveButton = document.getElementById("save_button");
-                    const questionContainers = document.querySelectorAll(".poll-question-container");
-                
-                    // Function to check if all questions are answered
-                    function areAllQuestionsAnswered() {
-                        for (const questionContainer of questionContainers) {
-                            const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
-                            let answered = false;
-                            for (const radioButton of questionRadioButtons) {
-                                if (radioButton.checked) {
-                                    answered = true;
-                                    break;
-                                }
-                            }
-                            if (!answered) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                
-                    // Update "Save" button state when radio buttons change
-                    for (const questionContainer of questionContainers) {
-                        const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
-                        for (const radioButton of questionRadioButtons) {
-                            radioButton.addEventListener("change", function() {
-                                saveButton.disabled = !areAllQuestionsAnswered();
-                            });
-                        }
-                    }
-                </script>';
                     // Fetch questions from the database
                 } else if ($poll_data[0]['template'] === 'Open ended') {
                     // Start generating the poll structure
@@ -705,32 +676,12 @@ class PollSurveyXpress
 
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button disabled type="submit" id="save_2"
-                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-                        Save
-                    </button>';
+                    $output .= '<button disabled type="submit" id="open_ended_save_button"
+                    class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                    Save
+                </button>';
                     $output .= '</div>'; // Close the container-fluid div
-                    $output .= '<script>
-                    const saveButton = document.getElementById("save_2");
-                    const textareas = document.querySelectorAll(".poll-question-textarea");
 
-                    // Function to check if all textareas have content
-                    function areAllTextareasFilled() {
-                        for (const textarea of textareas) {
-                            if (textarea.value.trim() === "") {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-
-                    // Update "Save" button state when textareas change
-                    for (const textarea of textareas) {
-                        textarea.addEventListener("input", function() {
-                            saveButton.disabled = !areAllTextareasFilled();
-                        });
-                    }
-                 </script>';
                 } else if ($poll_data[0]['template'] === 'Rating') {
                     // Code for the 'Rating' template
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -742,7 +693,7 @@ class PollSurveyXpress
 
                     $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                    $output .= '<h5 class="m-0">' . $poll_data[0]['title'] . '</h5>';
+                    $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
 
                     $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -792,46 +743,14 @@ class PollSurveyXpress
                     $output .= '</div>';
 
                     $output .= '<div>';
-                    $output .= '<button disabled type="submit" id="save_3"
+                    $output .= '<button disabled type="submit" id="rating_save_button"
                     class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
                     Save
-                </button>';
+                    </button>';
                     $output .= '</div>';
-                    $output .= '<script>
-                    const saveButton = document.getElementById("save_3");
-                    const questionContainers = document.querySelectorAll(".poll_card");
-
-                    // Function to check if all questions have a radio button selected
-                    function areAllQuestionsAnswered() {
-                        for (const questionContainer of questionContainers) {
-                            const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
-                            let answered = false;
-                            for (const radioButton of questionRadioButtons) {
-                                if (radioButton.checked) {
-                                    answered = true;
-                                    break;
-                                }
-                            }
-                            if (!answered) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-
-                    // Update "Save" button state when radio buttons change
-                    for (const questionContainer of questionContainers) {
-                        const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
-                        for (const radioButton of questionRadioButtons) {
-                            radioButton.addEventListener("change", function() {
-                                saveButton.disabled = !areAllQuestionsAnswered();
-                            });
-                        }
-                    }
-                </script>';
                 }
             } else {
-                $output .= '<p>Poll not found.</p>';
+                $output = '<p>Poll not found.</p>';
             }
             return $output;
         }
@@ -873,6 +792,49 @@ class PollSurveyXpress
                 array("poll_id" => $poll_id)
             );
         }
+    }
+
+    //Function to save poll response
+    public function PSX_save_poll_response()
+    {
+        global $wpdb;
+
+        if (isset($_POST['poll_response'])) {
+            $poll_response = json_decode(stripslashes($_POST['poll_response']), true);
+
+            // Extract data from the poll_response object
+            $poll_id = $poll_response['poll_id'];
+            $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+            if (!isset($_SESSION['my_session_id'])) {
+                $_SESSION['my_session_id'] = uniqid(); // Generate a unique session ID
+            }
+            $session_id = isset($_SESSION['my_session_id']) ? $_SESSION['my_session_id'] : '';
+
+            $responses = $poll_response['responses'];
+
+            // Insert poll response data into the database
+            $response_table = $wpdb->prefix . 'polls_psx_survey_responses';
+            $wpdb->insert($response_table, array(
+                'poll_id' => $poll_id,
+                'user_id' => $user_id,
+                'session_id' => $session_id,
+            ));
+            $response_id = $wpdb->insert_id;
+
+            $responses_data_table = $wpdb->prefix . 'polls_psx_survey_responses_data';
+            foreach ($responses as $response) {
+                $wpdb->insert($responses_data_table, array(
+                    'response_id' => $response_id,
+                    'question_id' => $response['question_id'],
+                    'answer_id' => $response['answer_id'],
+                    'open_text_response' => $response['answer_text'],
+                ));
+            }
+            echo 'User id :' . $user_id;
+            echo $session_id;
+        }
+
+        wp_die();
     }
 }
 $survey_plugin = new PollSurveyXpress();

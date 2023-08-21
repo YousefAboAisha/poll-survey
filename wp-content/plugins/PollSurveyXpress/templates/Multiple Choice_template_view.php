@@ -42,7 +42,7 @@ $questions_with_answers_json = json_encode($questions_with_answers);
 </head>
 
 <style>
-    ul li {
+    .alpha-numeric {
         list-style: upper-alpha;
     }
 </style>
@@ -226,10 +226,11 @@ $questions_with_answers_json = json_encode($questions_with_answers);
                                 $answers = $wpdb->get_results($answers_query);
                                 $questions_with_answers_json = json_encode($answers);
                                 $answers = json_decode(stripslashes($questions_with_answers_json), true); ?>
+
                                 <ul>
 
                                     <?php foreach ($answers as $answer) { ?>
-                                        <li class="m-0 text-sm ">
+                                        <li class="alpha-numeric m-0 text-sm ">
                                             <?php echo $answer['answer_text']; ?>
                                         </li>
                                     <?php } ?>

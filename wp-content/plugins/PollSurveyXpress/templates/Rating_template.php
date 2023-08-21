@@ -16,7 +16,7 @@
         <!-- Navbar -->
         <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
             <nav aria-label="breadcrumb">
-                <h6 class="font-weight-bolder mb-0">Open Ended Template</h6>
+                <h6 class="font-weight-bolder mb-0">Rating Template</h6>
             </nav>
         </nav>
 
@@ -302,6 +302,9 @@
 
 
         save_button.addEventListener("click", () => {
+            save_button.disabled = true;
+            save_button.innerHTML =
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
             settingObj = {
                 cta_Text: cta_input.value,
                 start_date: start_date.value,
@@ -330,11 +333,15 @@
                     poll_data: JSON.stringify(finalObj),
                 },
                 success: function(shortcode) {
+                    window.location.reload();
                     console.log("Done");
-                    // location.reload();
+                    save_button.textContent = "Save";
+                    save_button.disabled = false;
                 },
                 error: function(error) {
                     console.error("Error:", error);
+                    save_button.textContent = "Save";
+                    save_button.disabled = false;
                 },
             });
         })
