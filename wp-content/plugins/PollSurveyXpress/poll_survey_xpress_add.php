@@ -77,7 +77,7 @@ $templateCount = count($previewFiles);
                     ?>
 
                     <div class="col">
-                        <div class="p-4 border position-relativ rounded-3 bg-white">
+                        <div class="p-4 border position-relative rounded-3 bg-white">
                             <div class="bg-black text-white m-0 p-2 px-3 rounded-3 position-absolute top-3 end-3">
                                 <i class="<?php echo ($icon); ?> "></i>
                             </div>

@@ -609,6 +609,8 @@ class PollSurveyXpress
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
                 if ($poll_data[0]['template'] === 'Multiple Choice') {
+                    $output = '<form id="poll_form" method="post" action="your_action_url">';
+
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
                     // Start generating the poll structure
                     // Fetch questions from the database
@@ -620,7 +622,7 @@ class PollSurveyXpress
 
                     $output .= '<div class="col">';
                     foreach ($questions as $question) {
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
 
                         $output .= '<h6 class="mb-3">' . $question['question_text'] . '</h6>';
 
@@ -640,14 +642,49 @@ class PollSurveyXpress
                     }
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button type="submit" id="save_button"
-            class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-            Save
-        </button>';
+                    $output .= '<button type="submit" id="save_button" disabled
+                            class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                            Save
+                        </button>';
                     $output .= '</div>'; // Close the container-fluid div
+                    $output .= '</form>';
+
+                    $output .= '<script>
+                    const form = document.getElementById("poll_form");
+                    const saveButton = document.getElementById("save_button");
+                    const questionContainers = document.querySelectorAll(".poll-question-container");
+                
+                    // Function to check if all questions are answered
+                    function areAllQuestionsAnswered() {
+                        for (const questionContainer of questionContainers) {
+                            const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
+                            let answered = false;
+                            for (const radioButton of questionRadioButtons) {
+                                if (radioButton.checked) {
+                                    answered = true;
+                                    break;
+                                }
+                            }
+                            if (!answered) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                
+                    // Update "Save" button state when radio buttons change
+                    for (const questionContainer of questionContainers) {
+                        const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
+                        for (const radioButton of questionRadioButtons) {
+                            radioButton.addEventListener("change", function() {
+                                saveButton.disabled = !areAllQuestionsAnswered();
+                            });
+                        }
+                    }
+                </script>';
+                    // Fetch questions from the database
                 } else if ($poll_data[0]['template'] === 'Open ended') {
                     // Start generating the poll structure
-                    // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                     $questions = $wpdb->get_results($query, ARRAY_A);
@@ -660,19 +697,38 @@ class PollSurveyXpress
                     foreach ($questions as $question) {
                         $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
                         $output .= '<h6 class="mb-3">' . $question['question_text'] . '</h6>';
-                        $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="form-control mb-2 w-100 border rounded-1" placeholder="Edit the poll question title"></textarea>';
+                        $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Edit the poll question title"></textarea>';
                         $output .= '</div>'; // Close the poll structure div
                     }
 
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button type="submit" id="save_2"
-            class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-            Save
-        </button>';
-
+                    $output .= '<button disabled type="submit" id="save_2"
+                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        Save
+                    </button>';
                     $output .= '</div>'; // Close the container-fluid div
+                    $output .= '<script>
+                    const saveButton = document.getElementById("save_2");
+                    const textareas = document.querySelectorAll(".poll-question-textarea");
 
+                    // Function to check if all textareas have content
+                    function areAllTextareasFilled() {
+                        for (const textarea of textareas) {
+                            if (textarea.value.trim() === "") {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    // Update "Save" button state when textareas change
+                    for (const textarea of textareas) {
+                        textarea.addEventListener("input", function() {
+                            saveButton.disabled = !areAllTextareasFilled();
+                        });
+                    }
+                 </script>';
                 } else if ($poll_data[0]['template'] === 'Rating') {
                     // Code for the 'Rating' template
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -710,7 +766,7 @@ class PollSurveyXpress
                     $output .= '<div class="p-4">';
                     foreach ($questions as $question) {
                         // Start of the rating card
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="d-flex justify-content-between align-items-center mb-4">';
+                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
                         $output .= '<h6 class="m-0 text-break" data-question-id="' . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
 
                         // Fetch answers for each question
@@ -734,11 +790,43 @@ class PollSurveyXpress
                     $output .= '</div>';
 
                     $output .= '<div>';
-                    $output .= '<button type="submit" id="save_3"
+                    $output .= '<button disabled type="submit" id="save_3"
                     class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
                     Save
                 </button>';
                     $output .= '</div>';
+                    $output .= '<script>
+                    const saveButton = document.getElementById("save_3");
+                    const questionContainers = document.querySelectorAll(".poll_card");
+
+                    // Function to check if all questions have a radio button selected
+                    function areAllQuestionsAnswered() {
+                        for (const questionContainer of questionContainers) {
+                            const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
+                            let answered = false;
+                            for (const radioButton of questionRadioButtons) {
+                                if (radioButton.checked) {
+                                    answered = true;
+                                    break;
+                                }
+                            }
+                            if (!answered) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    // Update "Save" button state when radio buttons change
+                    for (const questionContainer of questionContainers) {
+                        const questionRadioButtons = questionContainer.querySelectorAll(".poll-answer-radio");
+                        for (const radioButton of questionRadioButtons) {
+                            radioButton.addEventListener("change", function() {
+                                saveButton.disabled = !areAllQuestionsAnswered();
+                            });
+                        }
+                    }
+                </script>';
                 }
             } else {
                 $output .= '<p>Poll not found.</p>';

@@ -251,12 +251,8 @@ $questions_with_answers_json = json_encode($questions_with_answers);
                     echo "Error decoding JSON.";
                 }
                 ?>
-
-
             </div>
         </div>
-
-
     </main>
 
     <!-- Edit title -->
