@@ -41,7 +41,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
         <div class="container-fluid py-4">
             <div class="py-4">
                 <div class="row">
-                    <div class="col-lg-12 col-xxl-10 mx-auto">
+                    <div class="col-lg-12 col-xxl-10">
 
                         <div class=" w-100 pb-0 d-flex align-items-center justify-content-between mb-6">
                             <h4 class="fw-bolder col-4 m-0 p-0">Recent Surveys</h4>
@@ -56,33 +56,33 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                         <div class="p-0 pt-0 border rounded-3 w-100">
                             <div class="table-responsive p-0 bg-white rounded-3">
-                                <table class="table align-items-center mb-0 col-lg-12 col-xxl-10 mx-auto rounded-3">
+                                <table class="table align-items-center mb-0 col-lg-12 col-xxl-10 rounded-3">
                                     <thead class="p-4 ">
                                         <tr>
-                                            <th class="text-uppercase text-center text-xxs font-weight-bolder opacity-7 p-4 w-fit">
+                                            <th class="text-uppercase text-center text-xxs p-4">
                                                 ID
                                             </th>
 
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4 ps-2">
+                                            <th class="text-uppercase text-xxs p-4">
                                                 Title
                                             </th>
 
-                                            <th class="text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
+                                            <th class="text-uppercase text-xxs p-4">
                                                 Status
                                             </th>
 
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
+                                            <th class=" text-uppercase text-xxs p-4">
                                                 Shortcode
                                             </th>
 
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
+                                            <th class=" text-uppercase text-xxs p-4">
                                                 End Date
                                             </th>
 
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4">
+                                            <th class=" text-uppercase text-xxs p-4">
                                                 Template
                                             </th>
-                                            <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4 p-0">
+                                            <th class=" text-uppercase text-xxs p-4">
                                                 Actions
                                             </th>
                                         </tr>
@@ -91,7 +91,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <tbody>
                                         <?php if (empty($polls)) { ?>
                                             <tr>
-                                                <td colspan="7" class=" text-xss text-center p-4">No records found,<a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>">add new record</a></td>
+                                                <td colspan="7" class=" text-xss text-center p-4">No surveys found,<a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>">add new record</a></td>
                                             </tr>
                                         <?php } else { ?>
                                             <?php foreach ($polls as $poll) { ?>
@@ -103,7 +103,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p class="text-xs mb-0">
+                                                        <p title=<?php echo $poll->title; ?> style="width: 120px;" class="text-xs mb-0 text-truncate">
                                                             <?php echo $poll->title; ?>
                                                         </p>
                                                     </td>
@@ -115,7 +115,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <input type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
+                                                        <input style="width: 150px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
                                                     </td>
 
                                                     <td class="align-middle">

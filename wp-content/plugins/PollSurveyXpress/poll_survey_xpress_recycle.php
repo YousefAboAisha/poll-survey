@@ -36,7 +36,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
         <div class="container-fluid py-4">
             <div class="py-4">
                 <div class="row">
-                    <div class="col-lg-12 col-xxl-10 mx-auto">
+                    <div class="col-lg-12 col-xxl-10">
 
                         <div class="w-100 pb-0 d-flex align-items-center justify-content-between mb-6">
                             <h4 class="fw-bolder m-0 p-0">Archived Surveys</h4>
@@ -51,7 +51,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                         <div class="p-0 pt-0 border rounded-3">
                             <div class="table-responsive p-0 bg-white rounded-3">
-                                <table class="table align-items-center mb-0 col-lg-12 col-xxl-10 mx-auto rounded-3">
+                                <table class="table align-items-center mb-0 col-lg-12 col-xxl-10 rounded-3">
                                     <thead class="p-4 ">
                                         <tr>
                                             <th class="text-uppercase text-center text-xxs font-weight-bolder opacity-7 p-4 w-fit">
