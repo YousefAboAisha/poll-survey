@@ -102,7 +102,7 @@ $poll_data_json = json_encode($poll_data);
                 </div>
             </div>
 
-            <button type="submit" id="save_button" class="text-white btn bg-primary col-12 mx-auto text-sm font-weight-bold m-0 mt-3">
+            <button id="save_button" class="text-white btn bg-primary col-12 mx-auto text-sm font-weight-bold m-0 mt-3">
                 Save
             </button>
         </form>
@@ -127,64 +127,90 @@ $poll_data_json = json_encode($poll_data);
 
 
     <script>
-        // Plugin Settings variables
-        const update_form_id = document.getElementById("update_form").getAttribute("data-form-id");
-        const bg_color = document.getElementById("bg_color");
-        const text_color = document.getElementById("text_color");
-        const start_date = document.getElementById("start_date");
-        const end_date = document.getElementById("end_date");
-        const active_plugin = document.getElementById("active_plugin");
-        const share_plugin = document.getElementById("share_plugin");
-        const show_results = document.getElementById("show_results");
-        const show_results_input = document.getElementById("show_results_input");
-        const min_votes_input = document.getElementById("min_votes_input");
-        const cta_input = document.getElementById("cta_input");
-        const save_button = document.getElementById("save_button");
-        let settingObj = {}
+        jQuery(document).ready(function(jQuery) {
 
-        save_button.addEventListener("click", (e) => {
-            e.preventDefault();
-            settingObj = {
-                poll_id: update_form_id,
-                cta_Text: cta_input.value,
-                start_date: start_date.value || new Date().toISOString(),
-                end_date: end_date.value ||
-                    new Date(
-                        new Date().getFullYear() + 100,
-                        11,
-                        31,
-                        23,
-                        59,
-                        59
-                    ).toISOString(),
-                status: active_plugin.checked,
-                color: text_color.value,
-                bgcolor: bg_color.value,
-                sharing: share_plugin.checked,
-                real_time_result_text: show_results_input.value,
-                real_time_check: show_results.checked,
-                min_votes: min_votes_input.value,
-            };
+            // Plugin Settings variables
+            const update_form_id = document.getElementById("update_form").getAttribute("data-form-id");
+            const bg_color = document.getElementById("bg_color");
+            const text_color = document.getElementById("text_color");
+            const start_date = document.getElementById("start_date");
+            const end_date = document.getElementById("end_date");
+            const active_plugin = document.getElementById("active_plugin");
+            const share_plugin = document.getElementById("share_plugin");
+            const show_results = document.getElementById("show_results");
+            const show_results_input = document.getElementById("show_results_input");
+            const min_votes_input = document.getElementById("min_votes_input");
+            const cta_input = document.getElementById("cta_input");
+            const save_button = document.getElementById("save_button");
+            let settingObj = {}
 
-            console.log(settingObj);
+            save_button.addEventListener("click", (e) => {
+                e.preventDefault();
+                save_button.disabled = true;
+                save_button.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
-            if (settingObj != {} || !settingObj) {
-                jQuery.ajax({
-                    type: "POST",
-                    url: my_ajax_object.ajaxurl,
-                    data: {
-                        action: "PSX_update_poll_settings",
-                        poll_data: JSON.stringify(settingObj),
-                    },
-                    success: function() {
-                        console.log("Done");
-                        window.location.reload();
-                    },
-                    error: function(error) {
-                        console.error("Error:", error);
-                    },
-                });
-            }
+                settingObj = {
+                    poll_id: update_form_id,
+                    cta_Text: cta_input.value,
+                    start_date: start_date.value || new Date().toISOString(),
+                    end_date: end_date.value ||
+                        new Date(
+                            new Date().getFullYear() + 100,
+                            11,
+                            31,
+                            23,
+                            59,
+                            59
+                        ).toISOString(),
+                    status: active_plugin.checked,
+                    color: text_color.value,
+                    bgcolor: bg_color.value,
+                    sharing: share_plugin.checked,
+                    real_time_result_text: show_results_input.value,
+                    real_time_check: show_results.checked,
+                    min_votes: min_votes_input.value,
+                };
+
+                console.log(settingObj);
+
+                if (settingObj != {} || !settingObj) {
+                    jQuery.ajax({
+                        type: "POST",
+                        url: my_ajax_object.ajaxurl,
+                        data: {
+                            action: "PSX_update_poll_settings",
+                            poll_data: JSON.stringify(settingObj),
+                        },
+                        success: function() {
+                            console.log("Done");
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+
+                            // Create a new toast element
+                            var toast = document.createElement("div");
+                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                            toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                            toast.innerHTML = `
+                            <p class="m-0 fw-bold text-xs text-white">
+                            Updated survey settings successfully!
+                            </p>
+                        `;
+                            // Append the toast to the document
+                            document.body.appendChild(toast);
+
+                            // Initialize the Bootstrap toast
+                            var bootstrapToast = new bootstrap.Toast(toast);
+                            bootstrapToast.show();
+                        },
+                        error: function(error) {
+                            console.error("Error:", error);
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+                        },
+                    });
+                }
+            });
         });
     </script>
 

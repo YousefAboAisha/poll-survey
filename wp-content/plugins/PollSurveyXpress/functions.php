@@ -38,19 +38,24 @@ class PollSurveyXpress
     // Enqueue scripts and styles for the frontend
     public function PSX_enqueue_frontend_scripts()
     {
+
+        wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
+        wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
+        wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
+
         //enqueue Style files
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.0', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.5', true);
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my_ajax_nonce'),
         ));
 
-        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.4");
+        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.5");
         wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
         wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css', array(), "1.4");
@@ -157,6 +162,7 @@ class PollSurveyXpress
         CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_responses (
             response_id int(11) NOT NULL AUTO_INCREMENT,
             poll_id int(10),
+            ip_address varchar(255),
             user_id int(11),
             session_id varchar(255),
             PRIMARY KEY (response_id),
@@ -623,6 +629,10 @@ class PollSurveyXpress
                     foreach ($questions as $question) {
                         $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
 
+                        // Show results button
+                        $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
+
+                        // Poll title     
                         $output .= '<h6 class="mb-4">' . $question['question_text'] . '</h6>';
 
                         // Fetch answers for each question
@@ -632,10 +642,7 @@ class PollSurveyXpress
 
                         foreach ($answers as $answer) {
                             $output .= '<div class="poll-answer position-relative w-full d-flex align-items-center justify-content-between mb-2 p-2">';
-                            $output .= '<div style="width:30%" class="position-absolute pe-2 d-flex align-items-center justify-content-end left-10 h-100 bg-info border rounded-2">
-                                <p class="text-white m-0 fw-bolder text-xs" >35%</p>
-                            </div>';
-                            $output .= '<div class="d-flex align-items-center">';
+                            $output .= '<div id="disable_text_questions" class="d-flex align-items-center">';
                             $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
                             $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] . '</label>';
                             $output .= '</div>';
@@ -648,7 +655,7 @@ class PollSurveyXpress
                     }
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button type="submit" id="mcq_save_button" disabled
+                    $output .= '<button id="mcq_save_button" disabled
                         class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
                         Save
                     </button>';
@@ -676,7 +683,7 @@ class PollSurveyXpress
 
                     $output .= '</div>'; // Close the col div
 
-                    $output .= '<button disabled type="submit" id="open_ended_save_button"
+                    $output .= '<button disabled id="open_ended_save_button"
                     class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
                     Save
                 </button>';
@@ -810,12 +817,26 @@ class PollSurveyXpress
             }
             $session_id = isset($_SESSION['my_session_id']) ? $_SESSION['my_session_id'] : '';
 
+            if (get_option('gdpr') === '0') {
+                if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    // Check if multiple IP addresses are provided via proxies
+                    $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                    $userIP = $ipList[0];
+                } else {
+                    $userIP = $_SERVER['REMOTE_ADDR'];
+                }
+            } else {
+                $userIP = '';
+            }
+
+
             $responses = $poll_response['responses'];
 
             // Insert poll response data into the database
             $response_table = $wpdb->prefix . 'polls_psx_survey_responses';
             $wpdb->insert($response_table, array(
                 'poll_id' => $poll_id,
+                'ip_address' => $userIP,
                 'user_id' => $user_id,
                 'session_id' => $session_id,
             ));
@@ -830,10 +851,73 @@ class PollSurveyXpress
                     'open_text_response' => $response['answer_text'],
                 ));
             }
-            echo 'User id :' . $user_id;
-            echo $session_id;
-        }
 
+            $response_ids = $wpdb->get_col(
+                $wpdb->prepare(
+                    "SELECT response_id FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d",
+                    $poll_id
+                )
+            );
+            $responses_data = array();
+            foreach ($response_ids as $id) {
+                $response_data = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT question_id, answer_id FROM {$wpdb->prefix}polls_psx_survey_responses_data WHERE response_id = %s",
+                        $id
+                    )
+                );
+                $responses_data[] = $response_data;
+            }
+
+            $answerCounts = array();
+            foreach ($responses_data as $response) {
+                foreach ($response as $answer) {
+                    $questionId = $answer->question_id;
+                    $answerId = $answer->answer_id;
+
+                    if (!isset($answerCounts[$questionId])) {
+                        $answerCounts[$questionId] = array();
+                    }
+
+                    if (!isset($answerCounts[$questionId][$answerId])) {
+                        $answerCounts[$questionId][$answerId] = 0;
+                    }
+
+                    $answerCounts[$questionId][$answerId]++;
+                }
+            }
+
+            // Step 2: Calculate total response count
+            $totalResponses = count($responses_data);
+
+            // Step 3: Calculate percentages
+            $percentages = array();
+            foreach ($answerCounts as $questionId => $answerData) {
+                $percentages[$questionId] = array();
+                foreach ($answerData as $answerId => $count) {
+                    $percentage = ($count / $totalResponses) * 100;
+                    $formattedPercentage = number_format($percentage, 2);
+                    $percentages[$questionId][$answerId] = $formattedPercentage;
+                }
+            }
+
+            // Calculate the total percentage for each question
+            $totalPercentages = array();
+            foreach ($percentages as $questionId => $answerData) {
+                $totalPercentage = array_sum($answerData);
+                $totalPercentages[$questionId] = $totalPercentage;
+            }
+
+            $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; // Replace 'prefix' with your database table prefix
+            $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE session_id = %s", $session_id);
+            $count = $wpdb->get_var($query);
+
+            // If the count is greater than 0, the session ID is found in the table
+            $isSessionSaved = ($count > 0);
+            $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"isSessionSaved":' . json_encode($isSessionSaved) . '}';
+
+            echo json_encode($jsonResponse);
+        }
         wp_die();
     }
 }

@@ -299,10 +299,28 @@ jQuery(document).ready(function (jQuery) {
           poll_data: JSON.stringify(finalObj),
         },
         success: function (shortcode) {
-          window.location.reload();
           console.log("Done");
           save_button.textContent = "Save";
           save_button.disabled = false;
+
+          // Create a new toast element
+          var toast = document.createElement("div");
+          toast.style = "z-index:1000; right: 10px; bottom: 10px";
+          toast.className =
+            "position-fixed p-2 px-4 bg-primary border rounded-2";
+          toast.innerHTML = `
+                    <p class="m-0 fw-bold text-xs text-white">
+                    New survey has been added successfully!
+                    </p>
+                `;
+          // Append the toast to the document
+          document.body.appendChild(toast);
+
+          // Initialize the Bootstrap toast
+          var bootstrapToast = new bootstrap.Toast(toast);
+          bootstrapToast.show();
+
+          window.location.reload();
         },
         error: function (error) {
           console.error("Error:", error);
@@ -387,6 +405,11 @@ jQuery(document).ready(function (jQuery) {
       responses: responses_arr,
     };
 
+    const show_results_buttons = document.querySelectorAll(
+      "#percentage_result_btn"
+    );
+    const radio_buttons = document.querySelectorAll(".poll-answer-radio");
+
     jQuery.ajax({
       type: "POST",
       url: my_ajax_object.ajaxurl,
@@ -395,8 +418,72 @@ jQuery(document).ready(function (jQuery) {
         poll_response: JSON.stringify(finalObj),
       },
       success: function (response) {
-        console.log(response);
-        window.location.reload();
+        const jsonData = JSON.parse(JSON.parse(response));
+        // Access the 'percentages' and 'isSessionSaved' properties
+        const percentages = jsonData.percentages;
+        const isSessionSaved = jsonData.isSessionSaved;
+
+        save_button.textContent = "Done!";
+        save_button.disabled = jsonData.isSessionSaved;
+
+        // Now you can work with the decoded data
+        console.log("JSON data:", jsonData);
+        console.log("Percentages:", percentages);
+        console.log("Is Session Saved:", isSessionSaved);
+
+        show_results_buttons.forEach((button) => {
+          button.disabled = false;
+          var popoverInstance = null; // Initialize the popover instance
+
+          button.addEventListener("click", function () {
+            var questionId = button.getAttribute("data-question-id");
+
+            if (popoverInstance && popoverInstance._popper) {
+              popoverInstance.hide(); // Hide the popover if it's already open
+              popoverInstance = null; // Reset the popover instance
+            } else {
+              // Customize the popover content with a <div>
+              var question_data = percentages[questionId];
+              console.log("Question Data", question_data);
+
+              var popoverContent = document.createElement("div");
+              popoverContent.className =
+                "position-relative d-flex flex-column gap-2 "; // Customize the class
+
+              // Iterate over the questionData object and create HTML elements
+              for (var key in question_data) {
+                if (question_data.hasOwnProperty(key)) {
+                  var percentageValue = question_data[key];
+
+                  var element = document.createElement("div");
+                  element.className =
+                    "d-flex align-items-center justify-content-between gap-2 w-100";
+                  element.style.cssText = "min-width:200px";
+                  element.innerHTML = `
+                  <p style="width:${percentageValue}%; height:2px" class="m-0 bg-primary text-primary rounded-2"></p>
+                  <p style="font-size:10px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
+                `;
+                  popoverContent.appendChild(element);
+                }
+              }
+
+              popoverInstance = new bootstrap.Popover(this, {
+                content: popoverContent,
+                trigger: "focus",
+                html: true, // Enable HTML content in the popover
+              });
+
+              popoverInstance.show(); // Show the popover
+            }
+          });
+        });
+        // window.location.reload();
+        radio_buttons.forEach((radio) => {
+          radio.disabled = true;
+        });
+      },
+      error: function (error) {
+        console.error("Error:", error);
         save_button.textContent = "Save";
         save_button.disabled = false;
       },
@@ -453,10 +540,21 @@ jQuery(document).ready(function (jQuery) {
         action: "PSX_save_poll_response",
         poll_response: JSON.stringify(finalObj),
       },
-      success: function (shortcode) {
-        console.log("Done");
-        window.location.reload();
+      success: function (response) {
         save_button.textContent = "Save";
+        save_button.disabled = false;
+
+        console.log("Done");
+        // window.location.reload();
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      complete: function () {
+        // Reset button state whether the request succeeded or failed
+        save_button.innerHTML = "Save";
         save_button.disabled = false;
       },
     });
@@ -514,10 +612,18 @@ jQuery(document).ready(function (jQuery) {
         action: "PSX_save_poll_response",
         poll_response: JSON.stringify(finalObj),
       },
-      success: function (user_id, session_id) {
-        console.log([user_id, session_id]);
-        window.location.reload();
+      success: function (response) {
         save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      complete: function () {
+        // Reset button state whether the request succeeded or failed
+        save_button.innerHTML = "Save";
         save_button.disabled = false;
       },
     });

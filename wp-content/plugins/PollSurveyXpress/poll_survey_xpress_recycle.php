@@ -80,41 +80,48 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     </thead>
 
                                     <tbody>
-                                        <?php foreach ($polls as $poll) { ?>
-                                            <tr class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
-                                                <td class="align-middle text-center"><?php echo $poll->poll_id; ?></td>
-
-                                                <td>
-                                                    <p class="text-xs font-weight-bold mb-0 m-0">
-                                                        <?php echo $poll->title; ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="align-middle text-sm text-center">
-                                                    <p class="badge badge-sm m-0 bg-gradient-warning">
-                                                        <?php echo ucfirst($poll->status); ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="align-middle text-sm text-center">
-                                                    <p class="text-xs font-weight-bold mb-0 m-0">
-                                                        <?php echo $poll->end_date; ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="align-middle text-sm text-center">
-                                                    <p class="text-xs font-weight-bold mb-0 m-0 text-center">
-                                                        <?php echo $poll->template; ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
-                                                    <i id="restore_btn" class="restoreButton fas fa-undo text-sm text-dark" style="cursor: pointer"></i>
-
-                                                    <i id="delete_btn" style="cursor: pointer" class="deleteButton fas fa-trash text-sm text-danger" data-card-id=<?php echo $poll->poll_id; ?> data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
-                                                </td>
+                                        <?php if (empty($polls)) { ?>
+                                            <tr>
+                                                <td colspan="7" class=" text-xss text-center p-4">No archived surveys found!</td>
                                             </tr>
+                                        <?php } else { ?>
+                                            <?php foreach ($polls as $poll) { ?>
+                                                <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
+                                                    <td class="align-middle text-center"><?php echo $poll->poll_id; ?></td>
+
+                                                    <td>
+                                                        <p class="text-xs font-weight-bold mb-0 m-0">
+                                                            <?php echo $poll->title; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle text-sm text-center">
+                                                        <p class="badge badge-sm m-0 bg-gradient-warning">
+                                                            <?php echo ucfirst($poll->status); ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle text-sm text-center">
+                                                        <p class="text-xs font-weight-bold mb-0 m-0">
+                                                            <?php echo $poll->end_date; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle text-sm text-center">
+                                                        <p class="text-xs font-weight-bold mb-0 m-0 text-center">
+                                                            <?php echo $poll->template; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
+                                                        <i id="restore_btn" class="restoreButton fas fa-undo text-sm text-dark" style="cursor: pointer"></i>
+
+                                                        <i id="delete_btn" style="cursor: pointer" class="deleteButton fas fa-trash text-sm text-danger" data-card-id=<?php echo $poll->poll_id; ?> data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
                                         <?php } ?>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -155,6 +162,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
             const restoreButtons = document.querySelectorAll(".restoreButton");
             const deleteButtons = document.querySelectorAll(".deleteButton");
             const confirm_delete = document.getElementById("confirm_delete");
+            let rowsCount = document.querySelector("tr[data-count]").getAttribute("data-count")
+            console.log(rowsCount);
 
             restoreButtons.forEach(button => {
                 button.addEventListener("click", function(event) {
@@ -173,7 +182,12 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                 `tr[data-card-id="${restoredPollId}"]`);
 
                             if (rowToRemove) {
+                                rowsCount--;
+                                if (rowsCount <= 0) {
+                                    window.location.reload()
+                                }
                                 rowToRemove.remove(); // Remove the row from the table
+
                             } else {
                                 console.log(
                                     `Row with data-card-id ${restoredPollId} not found.`
@@ -210,7 +224,11 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                             `tr[data-card-id="${deletePollId}"]`);
 
                         if (rowToRemove) {
-                            rowToRemove.remove(); // Remove the row from the table
+                            rowsCount--;
+                            if (rowsCount <= 0) {
+                                window.location.reload()
+                            }
+                            rowToRemove.remove(); // Remove element
                         } else {
                             console.log(
                                 `Row with data-card-id ${deletePollId} not found.`

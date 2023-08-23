@@ -288,10 +288,29 @@
                     poll_data: JSON.stringify(finalObj),
                 },
                 success: function(shortcode) {
-                    window.location.reload();
                     console.log("Done");
                     save_button.textContent = "Save";
                     save_button.disabled = false;
+
+
+                    // Create a new toast element
+                    var toast = document.createElement("div");
+                    toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                    toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                    toast.innerHTML = `
+                    <p class="m-0 fw-bold text-xs text-white">
+                    New survey has been added successfully!
+                    </p>
+                `;
+                    // Append the toast to the document
+                    document.body.appendChild(toast);
+
+                    // Initialize the Bootstrap toast
+                    var bootstrapToast = new bootstrap.Toast(toast);
+                    bootstrapToast.show();
+
+                    window.location.reload();
+
                 },
                 error: function(error) {
                     console.error("Error:", error);

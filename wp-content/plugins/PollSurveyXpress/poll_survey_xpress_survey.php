@@ -4,6 +4,7 @@ $table_name = $wpdb->prefix . 'polls_psx_polls';
 $statuses = array('active', 'inactive'); // List of statuses to display
 $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . implode("','", $statuses) . "')");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -88,56 +89,61 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     </thead>
 
                                     <tbody>
-                                        <?php foreach ($polls as $poll) { ?>
-                                            <tr class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
-                                                <td>
-                                                    <p class="text-xs mb-0 m-0 text-center align-middle ">
-                                                        <?php echo $poll->poll_id; ?>
-                                                    </p>
-
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->title; ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <span class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
-                                                        <?php echo ucfirst($poll->status); ?>
-                                                    </span>
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <input type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->end_date; ?>
-                                                    </p>
-                                                </td>
-
-                                                <td class="align-middle">
-                                                    <p class="text-xs mb-0">
-                                                        <?php echo $poll->template; ?>
-                                                    </p>
-                                                </td>
-                                                <!-- Other dynamic data columns here -->
-
-                                                <td class="d-flex align-items-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
-                                                    <a href="<?php echo admin_url('admin.php?page=show_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                        <i class="fas fa-eye text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
-                                                    </a>
-                                                    <a href="<?php echo admin_url('admin.php?page=edit_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                        <i class="fas fa-pen text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
-                                                    </a>
-
-                                                    <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
-
-                                                </td>
+                                        <?php if (empty($polls)) { ?>
+                                            <tr>
+                                                <td colspan="7" class=" text-xss text-center p-4">No records found,<a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>">add new record</a></td>
                                             </tr>
+                                        <?php } else { ?>
+                                            <?php foreach ($polls as $poll) { ?>
+                                                <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
+                                                    <td>
+                                                        <p class="text-xs mb-0 m-0 text-center align-middle ">
+                                                            <?php echo $poll->poll_id; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <p class="text-xs mb-0">
+                                                            <?php echo $poll->title; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <span class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
+                                                            <?php echo ucfirst($poll->status); ?>
+                                                        </span>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <input type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <p class="text-xs mb-0">
+                                                            <?php echo $poll->end_date; ?>
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <p class="text-xs mb-0">
+                                                            <?php echo $poll->template; ?>
+                                                        </p>
+                                                    </td>
+                                                    <!-- Other dynamic data columns here -->
+
+                                                    <td class="d-flex align-items-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
+                                                        <a href="<?php echo admin_url('admin.php?page=show_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
+                                                            <i class="fas fa-eye text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
+                                                        </a>
+                                                        <a href="<?php echo admin_url('admin.php?page=edit_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
+                                                            <i class="fas fa-pen text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
+                                                        </a>
+
+                                                        <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
+
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
                                         <?php } ?>
                                     </tbody>
                                 </table>
@@ -168,7 +174,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                        Shortcode copied successfully!
                     </p>
                 `;
-
                     // Append the toast to the document
                     document.body.appendChild(toast);
 
@@ -208,6 +213,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            let rowsCount = document.querySelector("tr[data-count]").getAttribute("data-count")
+            console.log(rowsCount);
+
             const archiveButtons = document.querySelectorAll(".archiveButton");
             let id;
             archiveButtons.forEach(button => {
@@ -229,16 +237,18 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         poll_id: id
                     },
                     success: function() {
-                        const archivedPollId = parseInt(
-                            id); // Parse the poll_id from the response
-                        const rowToRemove = document.querySelector(
-                            `tr[data-card-id="${archivedPollId}"]`);
+                        const archivedPollId = parseInt(id); // Parse the poll_id from the response
+                        const rowToRemove = document.querySelector(`tr[data-card-id="${archivedPollId}"]`);
 
                         if (rowToRemove) {
+                            rowsCount--;
+                            if (rowsCount <= 0) {
+                                window.location.reload()
+                            }
                             rowToRemove.remove(); // Remove the row from the table
+                            console.log("Minus count", rowsCount);
                         } else {
-                            console.log(
-                                `Row with data-card-id ${archivedPollId} not found.`);
+                            console.log(`Row with data-card-id ${archivedPollId} not found.`);
                         }
                     },
                     error: function(errorThrown) {
