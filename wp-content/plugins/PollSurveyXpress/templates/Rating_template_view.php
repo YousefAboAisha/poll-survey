@@ -60,8 +60,11 @@ $questions_with_answers_json = json_encode($questions_with_answers);
 
 <body>
     <main class="container-fluid main-content position-relative max-height-vh-100 h-100">
-        <h6 class="font-weight-bolder mb-0 p-0 mt-4">Rating Template View</h6>
-
+        <div class="d-flex align-items-center gap-2 mt-4">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">Rating Survey View</h6>
+        </div>
 
         <div class="bg-white mt-4 border rounded-3">
             <div class="row row-cols-1 row-cols-lg-2 g-4 ">
@@ -209,9 +212,8 @@ $questions_with_answers_json = json_encode($questions_with_answers);
         </div>
 
         <div class="mt-6 p-0 pb-4">
-            <h4 class="mb-4 align-self-start p-0">
+            <h4 class="mb-4 align-self-start p-0 w-75">
                 <?php echo ((json_decode(stripslashes($poll_data_json), true)['title'])); ?></h4>
-
             <div class="d-flex flex-column align-items-start mb-4 gap-3">
                 <?php
                 // Decode the JSON back to a PHP array
@@ -222,25 +224,23 @@ $questions_with_answers_json = json_encode($questions_with_answers);
                     foreach ($questions_decoded as $index => $question) {
                 ?>
                         <div class="d-flex justify-content-between align-items-center w-100 rounded-3 border bg-white p-4">
-                            <h6 class="mt-2">
+                            <h6 class="mt-2 ">
                                 <?php echo $index + 1 . ") " . $question['question_text']; ?>
                             </h6>
 
                             <div class="d-flex justify-content-around align-items-center col-8 gap-2">
-
                                 <?php
                                 $answers_query = $wpdb->prepare("
-                       SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
-                       WHERE question_id = %d and poll_id = %d
-                       ", $question['question_id'], (json_decode(stripslashes($poll_data_json), true)['poll_id']));
-
+                                SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
+                                WHERE question_id = %d and poll_id = %d
+                                ", $question['question_id'], (json_decode(stripslashes($poll_data_json), true)['poll_id']));
 
                                 $answers = $wpdb->get_results($answers_query);
                                 $questions_with_answers_json = json_encode($answers);
                                 $answers = json_decode(stripslashes($questions_with_answers_json), true); ?>
                                 <?php foreach ($answers as $answer) { ?>
                                     <p class="m-0 text-sm ">
-                                        <?php echo $index + 1 . ") " . $answer['answer_text']; ?>
+                                        <?php echo $answer['answer_text']; ?>
                                     </p>
                                 <?php } ?>
                             </div>

@@ -12,13 +12,12 @@
 
 <body>
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <!-- Navbar -->
-        <nav class="px-0 mb-4" navbar-scroll="true">
-            <nav aria-label="breadcrumb">
-                <h6 class="font-weight-bolder mb-0">Multiple Choice Template
-                </h6>
-            </nav>
-        </nav>
+
+        <div class="d-flex align-items-center gap-2 my-4">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">Multiple Choice Survey Add</h6>
+        </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
             <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Pull/Survey title" id="surveyTitleValue" value="Pull/Survey title" />

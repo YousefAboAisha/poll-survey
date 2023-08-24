@@ -12,15 +12,13 @@
 
 <body>
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <!-- Navbar -->
-        <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
-            <nav aria-label="breadcrumb">
-                <h6 class="font-weight-bolder mb-0">Open Ended Template</h6>
-            </nav>
-        </nav>
+        <div class="d-flex align-items-center gap-2 my-4">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey Add</h6>
+        </div>
 
         <!-- End Navbar -->
-
         <div class="d-flex flex-column justify-content-center align-items-center gap-3">
             <div class="d-flex w-100 flex-column gap-2 border rounded-3 bg-white">
                 <div class="p-4 pt-3">
