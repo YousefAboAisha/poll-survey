@@ -190,7 +190,7 @@ $poll_data_json = json_encode($poll_data);
                             // Create a new toast element
                             var toast = document.createElement("div");
                             toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                            toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                            toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
                             toast.innerHTML = `
                             <p class="m-0 fw-bold text-xs text-white">
                             Updated survey settings successfully!
@@ -200,7 +200,11 @@ $poll_data_json = json_encode($poll_data);
                             document.body.appendChild(toast);
 
                             // Initialize the Bootstrap toast
-                            var bootstrapToast = new bootstrap.Toast(toast);
+                            // Initialize the Bootstrap toast with custom options
+                            var bootstrapToast = new bootstrap.Toast(toast, {
+                                autohide: true, // Set to true to enable automatic hiding
+                                delay: 2000,
+                            });
                             bootstrapToast.show();
                         },
                         error: function(error) {

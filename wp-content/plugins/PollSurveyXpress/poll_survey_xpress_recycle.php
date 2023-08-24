@@ -181,6 +181,28 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                             const rowToRemove = document.querySelector(
                                 `tr[data-card-id="${restoredPollId}"]`);
 
+                            // Create a new toast element
+                            var toast = document.createElement("div");
+                            toast.style.cssText = "z-index:100000; right: 10px; bottom: 10px";
+                            toast.className =
+                                "position-fixed p-2 px-4 bg-success border rounded-2";
+                            toast.innerHTML = `
+                            <p class="m-0 fw-bold text-xs text-white">
+                                Survey has been restored successfully!
+                            </p>
+                            `;
+                            // Append the toast to the document
+                            document.body.appendChild(toast);
+
+                            // Initialize the Bootstrap toast
+                            // Initialize the Bootstrap toast with custom options
+                            var bootstrapToast = new bootstrap.Toast(toast, {
+                                autohide: true, // Set to true to enable automatic hiding
+                                delay: 2000,
+
+                            });
+                            bootstrapToast.show();
+
                             if (rowToRemove) {
                                 rowsCount--;
                                 if (rowsCount <= 0) {
@@ -222,6 +244,27 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         const deletePollId = parseInt(id);
                         const rowToRemove = document.querySelector(
                             `tr[data-card-id="${deletePollId}"]`);
+
+                        // Create a new toast element
+                        var toast = document.createElement("div");
+                        toast.style.cssText = "z-index:100000; right: 10px; bottom: 10px";
+                        toast.className =
+                            "position-fixed p-2 px-4 bg-danger border rounded-2";
+                        toast.innerHTML = `
+                            <p class="m-0 fw-bold text-xs text-white">
+                             Survey has been deleted permanently successfully!
+                            </p>
+                            `;
+                        // Append the toast to the document
+                        document.body.appendChild(toast);
+
+                        // Initialize the Bootstrap toast
+                        // Initialize the Bootstrap toast with custom options
+                        var bootstrapToast = new bootstrap.Toast(toast, {
+                            autohide: true, // Set to true to enable automatic hiding
+                            delay: 2000,
+                        });
+                        bootstrapToast.show();
 
                         if (rowToRemove) {
                             rowsCount--;
