@@ -38,17 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
 
 
 <body>
-    <main class="main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl">
-            <div class="container-fluid py-1 px-3">
-                <nav aria-label="breadcrumb">
-                    <h6 class="font-weight-bolder mb-0">Settings</h6>
-                </nav>
-            </div>
-        </nav>
+    <main class="main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg" >
 
-        <div class="container-fluid py-1 px-4 d-flex flex-column gap-3">
-            <form class="card-body pt-sm-3 pt-0" method="post">
+
+        <div class="container-fluid mx-auto ">
+            <div class="w-100 pb-0 d-flex align-items-center">
+                <h4 class="fw-bolder m-0 p-0">General settings</h4>
+            </div>
+
+            <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
                 <div class="form-group d-flex flex-column">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_checkbox_value('email') === '1') echo 'checked'; ?> />
@@ -72,11 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
                     </div>
                 </div>
 
-                <button type="submit" name="save_changes" class="btn btn-primary mt-4">
+                <button type="submit" name="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
                     Save changes
                 </button>
             </form>
         </div>
+
     </main>
 </body>
 

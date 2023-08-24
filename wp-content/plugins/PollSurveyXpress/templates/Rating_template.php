@@ -11,12 +11,12 @@
 </head>
 
 
-<body class="g-sidenav-show bg-gray-100">
+<body>
     <main class="col-lg-8 col-md-9 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <!-- Navbar -->
         <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
             <nav aria-label="breadcrumb">
-                <h6 class="font-weight-bolder mb-0">Open Ended Template</h6>
+                <h6 class="font-weight-bolder mb-0">Rating Template</h6>
             </nav>
         </nav>
 
@@ -75,7 +75,7 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title">Plugin Settings</h5>
+                    <h5 class="modal-title">Survey Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -302,6 +302,9 @@
 
 
         save_button.addEventListener("click", () => {
+            save_button.disabled = true;
+            save_button.innerHTML =
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
             settingObj = {
                 cta_Text: cta_input.value,
                 start_date: start_date.value,
@@ -331,10 +334,33 @@
                 },
                 success: function(shortcode) {
                     console.log("Done");
-                    // location.reload();
+                    save_button.textContent = "Save";
+                    save_button.disabled = false;
+
+
+                    // Create a new toast element
+                    var toast = document.createElement("div");
+                    toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                    toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                    toast.innerHTML = `
+                    <p class="m-0 fw-bold text-xs text-white">
+                    New survey has been added successfully!
+                    </p>
+                `;
+                    // Append the toast to the document
+                    document.body.appendChild(toast);
+
+                    // Initialize the Bootstrap toast
+                    var bootstrapToast = new bootstrap.Toast(toast);
+                    bootstrapToast.show();
+
+                    window.location.reload();
+
                 },
                 error: function(error) {
                     console.error("Error:", error);
+                    save_button.textContent = "Save";
+                    save_button.disabled = false;
                 },
             });
         })

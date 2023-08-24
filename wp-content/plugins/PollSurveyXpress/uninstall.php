@@ -14,7 +14,7 @@ global $wpdb;
 $clearDataOptionValue = get_option('clear_data');
 
 if ($clearDataOptionValue !== '0') {
-    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_response_data");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_survey_responses_data");
     $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_survey_responses");
     $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_survey_answers");
     $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_survey_questions");

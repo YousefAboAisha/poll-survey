@@ -3,7 +3,7 @@
 // Code from: https://codepen.io/jedtrow/full/ygRYgo
 //
 
-Chart.elements.Rectangle.prototype.draw = function() {
+Chart.elements.Rectangle.prototype.draw = function () {
 
   var ctx = this._chart.ctx;
   var vm = this._view;

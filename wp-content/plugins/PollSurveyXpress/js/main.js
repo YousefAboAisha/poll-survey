@@ -1,3 +1,4 @@
+// Multiple Choice Template Add Poll
 jQuery(document).ready(function (jQuery) {
   const ctaInput = document.getElementById("cta_input");
   const ctaButton = document.getElementById("cta_button");
@@ -255,6 +256,9 @@ jQuery(document).ready(function (jQuery) {
   });
 
   save_button.addEventListener("click", () => {
+    save_button.disabled = true;
+    save_button.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
     settingObj = {
       cta_Text: cta_input.value,
       start_date: start_date.value || new Date().toISOString(),
@@ -296,16 +300,39 @@ jQuery(document).ready(function (jQuery) {
         },
         success: function (shortcode) {
           console.log("Done");
+          save_button.textContent = "Save";
+          save_button.disabled = false;
+
+          // Create a new toast element
+          var toast = document.createElement("div");
+          toast.style = "z-index:1000; right: 10px; bottom: 10px";
+          toast.className =
+            "position-fixed p-2 px-4 bg-primary border rounded-2";
+          toast.innerHTML = `
+                    <p class="m-0 fw-bold text-xs text-white">
+                    New survey has been added successfully!
+                    </p>
+                `;
+          // Append the toast to the document
+          document.body.appendChild(toast);
+
+          // Initialize the Bootstrap toast
+          var bootstrapToast = new bootstrap.Toast(toast);
+          bootstrapToast.show();
+
           window.location.reload();
         },
         error: function (error) {
           console.error("Error:", error);
+          save_button.textContent = "Save";
+          save_button.disabled = false;
         },
       });
     }
   });
 });
 
+// Archive Poll
 jQuery(document).ready(function (jQuery) {
   const archiveButtons = document.querySelectorAll(".archiveButton");
 
@@ -347,37 +374,121 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("poll_card")
     .getAttribute("data-card-id");
 
-  document
-    .getElementById("save_button")
-    .addEventListener("click", function (event) {
-      event.preventDefault(); // Prevent the default form submission behavior
+  const save_button = document.getElementById("mcq_save_button");
 
-      // Loop through all questions
-      let finalObj = {};
-      const responses_arr = [];
-      var questions = document.querySelectorAll(".poll-answer-radio");
+  save_button.addEventListener("click", function (event) {
+    event.preventDefault();
 
-      questions.forEach(function (question) {
-        let response_obj = {};
-        const question_id = question.getAttribute("data-question-id");
-        const answer_id = question.getAttribute("data-answer-id");
+    // Disable the button and add spinner/loading text
+    save_button.disabled = true;
+    save_button.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
 
-        if (question.checked) {
-          response_obj = {
-            question_id: question_id, // Use the question_id
-            answer_id: answer_id, // Use the answer_id for the selected answer
-          };
-          responses_arr.push(response_obj);
-        }
-      });
+    const responses_arr = [];
+    const questions = document.querySelectorAll(".poll-answer-radio");
 
-      finalObj = {
-        poll_id: poll_id,
-        responses: responses_arr,
-      };
+    Array.from(questions).forEach(function (question) {
+      const question_id = question.getAttribute("data-question-id");
+      const answer_id = question.getAttribute("data-answer-id");
 
-      console.log(finalObj);
+      if (question.checked) {
+        responses_arr.push({
+          question_id: question_id,
+          answer_id: answer_id,
+          answer_text: "",
+        });
+      }
     });
+
+    const finalObj = {
+      poll_id: poll_id,
+      responses: responses_arr,
+    };
+
+    const show_results_buttons = document.querySelectorAll(
+      "#percentage_result_btn"
+    );
+    const radio_buttons = document.querySelectorAll(".poll-answer-radio");
+
+    jQuery.ajax({
+      type: "POST",
+      url: my_ajax_object.ajaxurl,
+      data: {
+        action: "PSX_save_poll_response",
+        poll_response: JSON.stringify(finalObj),
+      },
+      success: function (response) {
+        const jsonData = JSON.parse(JSON.parse(response));
+        // Access the 'percentages' and 'isSessionSaved' properties
+        const percentages = jsonData.percentages;
+        const isSessionSaved = jsonData.isSessionSaved;
+
+        save_button.textContent = "Done!";
+        save_button.disabled = jsonData.isSessionSaved;
+
+        // Now you can work with the decoded data
+        console.log("JSON data:", jsonData);
+        console.log("Percentages:", percentages);
+        console.log("Is Session Saved:", isSessionSaved);
+
+        show_results_buttons.forEach((button) => {
+          button.disabled = false;
+          var popoverInstance = null; // Initialize the popover instance
+
+          button.addEventListener("click", function () {
+            var questionId = button.getAttribute("data-question-id");
+
+            if (popoverInstance && popoverInstance._popper) {
+              popoverInstance.hide(); // Hide the popover if it's already open
+              popoverInstance = null; // Reset the popover instance
+            } else {
+              // Customize the popover content with a <div>
+              var question_data = percentages[questionId];
+              console.log("Question Data", question_data);
+
+              var popoverContent = document.createElement("div");
+              popoverContent.className =
+                "position-relative d-flex flex-column gap-2 "; // Customize the class
+
+              // Iterate over the questionData object and create HTML elements
+              for (var key in question_data) {
+                if (question_data.hasOwnProperty(key)) {
+                  var percentageValue = question_data[key];
+
+                  var element = document.createElement("div");
+                  element.className =
+                    "d-flex align-items-center justify-content-between gap-2 w-100";
+                  element.style.cssText = "min-width:200px";
+                  element.innerHTML = `
+                  <p style="width:${percentageValue}%; height:2px" class="m-0 bg-primary text-primary rounded-2"></p>
+                  <p style="font-size:10px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
+                `;
+                  popoverContent.appendChild(element);
+                }
+              }
+
+              popoverInstance = new bootstrap.Popover(this, {
+                content: popoverContent,
+                trigger: "focus",
+                html: true, // Enable HTML content in the popover
+              });
+
+              popoverInstance.show(); // Show the popover
+            }
+          });
+        });
+        // window.location.reload();
+        radio_buttons.forEach((radio) => {
+          radio.disabled = true;
+        });
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+    });
+  });
 });
 
 // Open Ended collect data
@@ -386,8 +497,16 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("poll_card")
     .getAttribute("data-card-id");
   // Assume you have a button with ID "get_values_button" to trigger the action
-  document.getElementById("save_2").addEventListener("click", function (event) {
+
+  const save_button = document.getElementById("open_ended_save_button");
+
+  save_button.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
+
+    // Disable the button and add spinner/loading text
+    save_button.disabled = true;
+    save_button.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
 
     const textareas = document.querySelectorAll("textarea[data-question-id]"); // Select textareas with the data-question-id attribute
     // Loop through all questions
@@ -414,6 +533,31 @@ jQuery(document).ready(function (jQuery) {
     };
 
     console.log(finalObj);
+    jQuery.ajax({
+      type: "POST",
+      url: my_ajax_object.ajaxurl,
+      data: {
+        action: "PSX_save_poll_response",
+        poll_response: JSON.stringify(finalObj),
+      },
+      success: function (response) {
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+
+        console.log("Done");
+        // window.location.reload();
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      complete: function () {
+        // Reset button state whether the request succeeded or failed
+        save_button.innerHTML = "Save";
+        save_button.disabled = false;
+      },
+    });
   });
 });
 
@@ -423,9 +567,18 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("poll_card")
     .getAttribute("data-card-id");
 
-  document.getElementById("save_3").addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+  const save_button = document.getElementById("rating_save_button");
+  // Disable the button and add spinner/loading text
 
+  save_button.addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    // Get the user ID if logged in
+    save_button.disabled = true;
+    save_button.innerHTML =
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+
+    // Get the session ID from the browser
+    const session_id = sessionStorage.getItem("my_session_id");
     // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
@@ -440,6 +593,7 @@ jQuery(document).ready(function (jQuery) {
         response_obj = {
           question_id: question_id, // Use the question_id
           answer_id: answer_id, // Use the answer_id for the selected answer
+          answer_text: "",
         };
         responses_arr.push(response_obj);
       }
@@ -449,7 +603,126 @@ jQuery(document).ready(function (jQuery) {
       poll_id: poll_id,
       responses: responses_arr,
     };
-
     console.log(finalObj);
+
+    jQuery.ajax({
+      type: "POST",
+      url: my_ajax_object.ajaxurl,
+      data: {
+        action: "PSX_save_poll_response",
+        poll_response: JSON.stringify(finalObj),
+      },
+      success: function (response) {
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      error: function (error) {
+        console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      complete: function () {
+        // Reset button state whether the request succeeded or failed
+        save_button.innerHTML = "Save";
+        save_button.disabled = false;
+      },
+    });
   });
+});
+
+// Validate that all questions have been answered for the Rating template
+jQuery(document).ready(function (jQuery) {
+  const saveButton = document.getElementById("rating_save_button");
+  const questionContainers = document.querySelectorAll(".poll_card");
+
+  // Function to check if all questions have a radio button selected
+  function areAllQuestionsAnswered() {
+    for (const questionContainer of questionContainers) {
+      const questionRadioButtons =
+        questionContainer.querySelectorAll(".poll-answer-radio");
+      let answered = false;
+      for (const radioButton of questionRadioButtons) {
+        if (radioButton.checked) {
+          answered = true;
+          break;
+        }
+      }
+      if (!answered) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Update "Save" button state when radio buttons change
+  for (const questionContainer of questionContainers) {
+    const questionRadioButtons =
+      questionContainer.querySelectorAll(".poll-answer-radio");
+    for (const radioButton of questionRadioButtons) {
+      radioButton.addEventListener("change", function () {
+        saveButton.disabled = !areAllQuestionsAnswered();
+      });
+    }
+  }
+});
+
+// Validate that all questions have been answered for the Open-ended template
+jQuery(document).ready(() => {
+  const saveButton = document.getElementById("open_ended_save_button");
+  const textareas = document.querySelectorAll(".poll-question-textarea");
+
+  // Function to check if all textareas have content
+  function areAllTextareasFilled() {
+    for (const textarea of textareas) {
+      if (textarea.value.trim() === "") {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Update "Save" button state when textareas change
+  for (const textarea of textareas) {
+    textarea.addEventListener("input", function () {
+      saveButton.disabled = !areAllTextareasFilled();
+    });
+  }
+});
+
+// Validate that all questions have been answered for the MCQ template
+jQuery(document).ready(() => {
+  const saveButton = document.getElementById("mcq_save_button");
+  const questionContainers = document.querySelectorAll(
+    ".poll-question-container"
+  );
+
+  // Function to check if all questions are answered
+  function areAllQuestionsAnswered() {
+    for (const questionContainer of questionContainers) {
+      const questionRadioButtons =
+        questionContainer.querySelectorAll(".poll-answer-radio");
+      let answered = false;
+      for (const radioButton of questionRadioButtons) {
+        if (radioButton.checked) {
+          answered = true;
+          break;
+        }
+      }
+      if (!answered) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Update "Save" button state when radio buttons change
+  for (const questionContainer of questionContainers) {
+    const questionRadioButtons =
+      questionContainer.querySelectorAll(".poll-answer-radio");
+    for (const radioButton of questionRadioButtons) {
+      radioButton.addEventListener("change", function () {
+        saveButton.disabled = !areAllQuestionsAnswered();
+      });
+    }
+  }
 });

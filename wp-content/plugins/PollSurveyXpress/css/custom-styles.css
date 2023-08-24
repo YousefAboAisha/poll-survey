@@ -1,7 +1,13 @@
 #wpfooter {
-    display: none !important;
+  display: none !important;
 }
 
 body {
-    background-color: #f8f9fa !important;
+  background-color: #f8f9fa !important;
+}
+
+button:disabled,
+input:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
 }
