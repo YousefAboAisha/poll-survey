@@ -675,7 +675,7 @@ class PollSurveyXpress
                 $template_type = sanitize_text_field($poll_data[0]['template']);
     
                 if ($template_type === 'Multiple Choice') {
-                    $output = '<form id="poll_form" method="post" action="your_action_url">';
+                    $output = '<form id="poll_form" method="post">';
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
                     // Start generating the poll structure
@@ -868,23 +868,33 @@ class PollSurveyXpress
     public function PSX_save_poll_response()
     {
         global $wpdb;
-    
+
         if (isset($_POST['poll_response'])) {
             $poll_response = json_decode(stripslashes($_POST['poll_response']), true);
-    
+
             // Extract data from the poll_response object
-            $poll_id = intval($poll_response['poll_id']);
+            $poll_id = $poll_response['poll_id'];
             $user_id = is_user_logged_in() ? get_current_user_id() : 0;
-            $session_id = isset($_SESSION['my_session_id']) ? sanitize_text_field($_SESSION['my_session_id']) : '';
-    
+            if (!isset($_SESSION['my_session_id'])) {
+                $_SESSION['my_session_id'] = uniqid(); // Generate a unique session ID
+            }
+            $session_id = isset($_SESSION['my_session_id']) ? $_SESSION['my_session_id'] : '';
+
             if (get_option('gdpr') === '0') {
-                $userIP = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']) : sanitize_text_field($_SERVER['REMOTE_ADDR']);
+                if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    // Check if multiple IP addresses are provided via proxies
+                    $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                    $userIP = $ipList[0];
+                } else {
+                    $userIP = $_SERVER['REMOTE_ADDR'];
+                }
             } else {
                 $userIP = '';
             }
-    
+
+
             $responses = $poll_response['responses'];
-    
+
             // Insert poll response data into the database
             $response_table = $wpdb->prefix . 'polls_psx_survey_responses';
             $wpdb->insert($response_table, array(
@@ -894,14 +904,14 @@ class PollSurveyXpress
                 'session_id' => $session_id,
             ));
             $response_id = $wpdb->insert_id;
-    
+
             $responses_data_table = $wpdb->prefix . 'polls_psx_survey_responses_data';
             foreach ($responses as $response) {
                 $wpdb->insert($responses_data_table, array(
                     'response_id' => $response_id,
-                    'question_id' => intval($response['question_id']),
-                    'answer_id' => intval($response['answer_id']),
-                    'open_text_response' => sanitize_text_field($response['answer_text']),
+                    'question_id' => $response['question_id'],
+                    'answer_id' => $response['answer_id'],
+                    'open_text_response' => $response['answer_text'],
                 ));
             }
 
