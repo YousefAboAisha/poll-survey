@@ -1,27 +1,4 @@
 <?php
-function get_checkbox_value($checkbox_id)
-{
-    return get_option($checkbox_id);
-}
-
-// Function to save the checkbox value to wp_options
-function update_checkbox_value($checkbox_id, $value)
-{
-    update_option($checkbox_id, $value);
-}
-
-// Process form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
-    $checkbox_ids = array('email', 'gdpr', 'clear_data');
-
-    foreach ($checkbox_ids as $checkbox_id) {
-        if (isset($_POST[$checkbox_id])) {
-            update_checkbox_value($checkbox_id, '1');
-        } else {
-            update_checkbox_value($checkbox_id, '0');
-        }
-    }
-}
 ?>
 
 
@@ -45,33 +22,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
             </div>
 
             <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
+            <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                 <div class="form-group d-flex flex-column">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_checkbox_value('email') === '1') echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_option('PSX_email') ) echo 'checked'; ?> />
                         <label class="form-check-label" for="email">
                             Email on survey deactivation
                         </label>
 
                     </div>
 
-                    <input readonly=<?php echo true ?> id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value="sadsad dsa dsa d">
+                    <input id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value= "<?php echo get_option('admin_email')?>">
 
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_checkbox_value('gdpr') === '1') echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_option('PSX_gdpr')) echo 'checked'; ?> />
                         <label class="form-check-label" for="gdpr">
                             General Data Protection Regulations(GDBR) integrity
                         </label>
                     </div>
 
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" <?php if (get_checkbox_value('clear_data') === '1') echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" <?php if (get_option('PSX_clear_data')) echo 'checked'; ?> />
                         <label class="form-check-label" for="clear_data">
                             Clear tables data when plugin uninstalled
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" name="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
+                <button type="button" name="save_changes" id = "save_changes"class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
                     Save changes
                 </button>
             </form>
@@ -81,14 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
 
 
     <script>
+
+        const nonce = document.getElementById("my-ajax-nonce").value;
         const emailRadioButton = document.getElementById("email");
         const isEmailChecked = document.getElementById("email").checked;
         const email_input = document.getElementById("email_input");
+        const save_changes = document.getElementById("save_changes");
 
+        // Define the function to handle the initial state
         // Define the function to handle the initial state
         function setInitialEmailState() {
             if (emailRadioButton.checked) {
                 email_input.style.display = "block";
+                email_input.disabled = false;
             } else {
                 email_input.style.display = "none";
             }
@@ -104,10 +87,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
         emailRadioButton.addEventListener("change", function() {
             if (emailRadioButton.checked) {
                 email_input.style.display = "block";
+                email_input.disabled = false;
             } else {
                 email_input.style.display = "none";
+                email_input.disabled = true;
             }
         });
+        finalObj = {
+            email: emailRadioButton.checked,
+            gdpr: document.getElementById("gdpr").checked,
+            clear_data: document.getElementById("clear_data").checked,
+            admin_email: email_input.value,
+        }
+        save_changes.addEventListener("click", function() {
+            finalObj = {
+            email: emailRadioButton.checked,
+            gdpr: document.getElementById("gdpr").checked,
+            clear_data: document.getElementById("clear_data").checked,
+            admin_email: email_input.value,
+        }
+        jQuery.ajax
+            ({
+                type: "POST",
+                url: my_ajax_object.ajaxurl,
+                data: {
+                    action: 'PSX_save_changes_settings',
+                    settings_data :JSON.stringify(finalObj),
+                    nonce : nonce,
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+        });       
+     });
+        
+
+
+
     </script>
 
 </body>

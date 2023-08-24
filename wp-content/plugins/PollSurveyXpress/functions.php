@@ -32,6 +32,8 @@ class PollSurveyXpress
         add_action("wp_ajax_nopriv_PSX_update_poll_settings", array($this, "PSX_update_poll_settings")); // For non-logged-in users
         add_action('wp_ajax_PSX_save_poll_response', array($this, 'PSX_save_poll_response'));
         add_action('wp_ajax_nopriv_PSX_save_poll_response', array($this, 'PSX_save_poll_response')); // For non-logged-in users
+        add_action('wp_ajax_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings'));
+        add_action('wp_ajax_nopriv_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings')); // For non-logged-in users
 
     }
 
@@ -330,7 +332,35 @@ class PollSurveyXpress
             include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template_view.php');
         }
     }
+    //Function to change settings values in database
 
+    public function PSX_save_changes_settings(){
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+            wp_send_json_error('Invalid nonce.');
+        }
+    
+        // Decode the JSON string into an associative array
+        $settings_data = json_decode(stripslashes($_POST['settings_data']), true);
+    
+        update_option('PSX_gdpr', $settings_data['gdpr']);
+        update_option('PSX_clear_data', $settings_data['clear_data']);
+        update_option('PSX_email', $settings_data['email']);
+
+        $admin_email = get_option('admin_email');
+        // Get the submitted admin email from the form
+        $submitted_admin_email = sanitize_email($settings_data['admin_email']);
+        
+        // Update the admin email option if it's different
+        if ($submitted_admin_email !== $admin_email) {
+            update_option('PSX_survey_email', $submitted_admin_email);
+            $admin_email = $submitted_admin_email; // Update the admin email variable
+        }
+    
+        // Send a success response
+        wp_send_json_success('Settings saved successfully.');
+    }
+    
+    
     //Method to save poll (Multiple Choice) data
     public function PSX_save_poll_Multiple_data()
     {
