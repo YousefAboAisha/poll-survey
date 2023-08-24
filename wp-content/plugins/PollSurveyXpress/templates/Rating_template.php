@@ -81,6 +81,8 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
+                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+
                     <div>
                         <label>Change plugin Theme</label>
 
@@ -325,12 +327,15 @@
                 settings: settingObj,
                 template: "Rating",
             };
+            var nonce = jQuery('#my-ajax-nonce').val();
+
             jQuery.ajax({
                 type: "POST",
                 url: my_ajax_object.ajaxurl,
                 data: {
                     action: "PSX_save_poll_rating_data",
                     poll_data: JSON.stringify(finalObj),
+                    nonce: nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");

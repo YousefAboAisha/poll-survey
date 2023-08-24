@@ -77,6 +77,7 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
+                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                     <div>
                         <label>Change plugin Theme</label>
 

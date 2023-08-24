@@ -289,6 +289,7 @@ jQuery(document).ready(function (jQuery) {
     };
 
     console.log(finalObj);
+    var nonce = jQuery('#my-ajax-nonce').val();
 
     if (pollsCardsArray.length > 0) {
       jQuery.ajax({
@@ -296,6 +297,7 @@ jQuery(document).ready(function (jQuery) {
         url: my_ajax_object.ajaxurl,
         data: {
           action: "PSX_save_poll_Multiple_data",
+          nonce: nonce, // Pass the nonce
           poll_data: JSON.stringify(finalObj),
         },
         success: function (shortcode) {
@@ -376,8 +378,12 @@ jQuery(document).ready(function (jQuery) {
 
   const save_button = document.getElementById("mcq_save_button");
 
+  const nonce = document.getElementById("my-ajax-nonce").value;
+
   save_button.addEventListener("click", function (event) {
+
     event.preventDefault();
+    console.log(nonce);
 
     // Disable the button and add spinner/loading text
     save_button.disabled = true;
@@ -404,7 +410,6 @@ jQuery(document).ready(function (jQuery) {
       poll_id: poll_id,
       responses: responses_arr,
     };
-
     const show_results_buttons = document.querySelectorAll(
       "#percentage_result_btn"
     );
@@ -416,6 +421,7 @@ jQuery(document).ready(function (jQuery) {
       data: {
         action: "PSX_save_poll_response",
         poll_response: JSON.stringify(finalObj),
+        nonce: nonce, // Pass the nonce
       },
       success: function (response) {
         const jsonData = JSON.parse(JSON.parse(response));
@@ -512,7 +518,7 @@ jQuery(document).ready(function (jQuery) {
     // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
-
+    var nonce = jQuery('#my-ajax-nonce').val();
     textareas.forEach(function (elem) {
       let response_obj = {};
       const question_id = elem.getAttribute("data-question-id");
@@ -539,6 +545,7 @@ jQuery(document).ready(function (jQuery) {
       data: {
         action: "PSX_save_poll_response",
         poll_response: JSON.stringify(finalObj),
+        nonce: nonce,
       },
       success: function (response) {
         save_button.textContent = "Save";
@@ -566,6 +573,7 @@ jQuery(document).ready(function (jQuery) {
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
+  var nonce = jQuery('#my-ajax-nonce').val();
 
   const save_button = document.getElementById("rating_save_button");
   // Disable the button and add spinner/loading text
@@ -611,6 +619,7 @@ jQuery(document).ready(function (jQuery) {
       data: {
         action: "PSX_save_poll_response",
         poll_response: JSON.stringify(finalObj),
+        nonce: nonce,
       },
       success: function (response) {
         save_button.textContent = "Save";

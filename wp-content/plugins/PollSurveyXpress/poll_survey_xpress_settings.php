@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
             </div>
 
             <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
+
                 <div class="form-group d-flex flex-column">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_checkbox_value('email') === '1') echo 'checked'; ?> />

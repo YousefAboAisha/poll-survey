@@ -335,6 +335,9 @@ class PollSurveyXpress
     public function PSX_save_poll_Multiple_data()
     {
         global $wpdb;
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+            wp_send_json_error('Invalid nonce.');
+        }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
         
@@ -414,6 +417,9 @@ class PollSurveyXpress
     public function PSX_save_poll_rating_data()
     {
         global $wpdb;
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+            wp_send_json_error('Invalid nonce.');
+        }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
 
@@ -494,6 +500,9 @@ class PollSurveyXpress
     public function PSX_save_poll_open_ended_data()
     {
         global $wpdb;
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+            wp_send_json_error('Invalid nonce.');
+        }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
 
@@ -676,8 +685,9 @@ class PollSurveyXpress
     
                 if ($template_type === 'Multiple Choice') {
                     $output = '<form id="poll_form" method="post">';
-
+                    
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
                     // Start generating the poll structure
                     // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -731,6 +741,7 @@ class PollSurveyXpress
                     $questions = $wpdb->get_results($query, ARRAY_A);
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
 
                     $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
 
@@ -755,9 +766,12 @@ class PollSurveyXpress
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                     $questions = $wpdb->get_results($query, ARRAY_A);
-
-                    // Start White background list
+                    
+                    $output = '<form id="poll_form" method="post">';
                     $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
+
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
+                
 
                     $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
@@ -828,7 +842,9 @@ class PollSurveyXpress
     public function PSX_update_poll_settings()
     {
         global $wpdb;
-        
+        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+            wp_send_json_error('Invalid nonce.');
+        }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
 
@@ -868,7 +884,9 @@ class PollSurveyXpress
     public function PSX_save_poll_response()
     {
         global $wpdb;
-
+        if ( !isset($_POST['nonce'])  || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce'))  {
+            wp_send_json_error('Invalid nonce.');
+        }
         if (isset($_POST['poll_response'])) {
             $poll_response = json_decode(stripslashes($_POST['poll_response']), true);
 
@@ -876,9 +894,9 @@ class PollSurveyXpress
             $poll_id = $poll_response['poll_id'];
             $user_id = is_user_logged_in() ? get_current_user_id() : 0;
             if (!isset($_SESSION['my_session_id'])) {
-                $_SESSION['my_session_id'] = uniqid(); // Generate a unique session ID
+                $_SESSION['my_session_id'] = uniqid(); 
             }
-            $session_id = isset($_SESSION['my_session_id']) ? $_SESSION['my_session_id'] : '';
+            $session_id = $_SESSION['my_session_id'];
 
             if (get_option('gdpr') === '0') {
                 if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {

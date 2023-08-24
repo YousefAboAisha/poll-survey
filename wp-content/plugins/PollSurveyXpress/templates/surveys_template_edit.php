@@ -36,6 +36,8 @@ $poll_data_json = json_encode($poll_data);
 
 
         <form id="update_form" data-form-id=<?php echo ($poll_id) ?> class="d-flex flex-column p-4 rounded-3 border w-100 bg-white">
+        <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+   
             <div>
                 <label>Change plugin Theme</label>
 
@@ -173,6 +175,7 @@ $poll_data_json = json_encode($poll_data);
                 };
 
                 console.log(settingObj);
+                var nonce = jQuery('#my-ajax-nonce').val();
 
                 if (settingObj != {} || !settingObj) {
                     jQuery.ajax({
@@ -181,6 +184,7 @@ $poll_data_json = json_encode($poll_data);
                         data: {
                             action: "PSX_update_poll_settings",
                             poll_data: JSON.stringify(settingObj),
+                            nonce: nonce,
                         },
                         success: function() {
                             console.log("Done");
