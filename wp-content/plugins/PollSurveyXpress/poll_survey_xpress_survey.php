@@ -94,8 +94,14 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                 <td colspan="7" class=" text-xss text-center p-4">No surveys found,<a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>">add new record</a></td>
                                             </tr>
                                         <?php } else { ?>
-                                            <?php foreach ($polls as $poll) { ?>
-                                                <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
+                                            <?php 
+                                             $index = 0; // Initialize index
+                                                $reversedPolls = array_reverse($polls);
+                                                foreach ($reversedPolls as $poll) { 
+
+                                                 ?>
+
+                                             <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id;?>>
                                                     <td>
                                                         <p class="text-xs mb-0 m-0 text-center align-middle ">
                                                             <?php echo $poll->poll_id; ?>
@@ -143,12 +149,23 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                                                     </td>
                                                 </tr>
+                                                <?php  $index++;?>
+                                                <tr data-count=<?php echo count($polls); ?> data-index="<?php echo $index; ?>" class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
+
                                             <?php } ?>
                                         <?php } ?>
+                                       
                                     </tbody>
+                                    
                                 </table>
+                                <div id="pagination">
+                                    <button id="prevPage">Previous</button>
+                                    <span id="currentPage">Page 1</span>
+                                    <button id="nextPage">Next</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            
                     </div>
                 </div>
             </div>
@@ -259,6 +276,44 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
         });
     </script>
 
+    <script>
+        jQuery(document).ready(function() {
+        const pollsPerPage = 20;
+        let currentPage = 1;
+        const rows = jQuery('.gray-row');
+        const totalRows = rows.length;
+
+        function displayRows() {
+            
+            rows.hide(); // Hide all rows
+            const startIndex = (currentPage - 1) * pollsPerPage;
+            const endIndex = startIndex + pollsPerPage;
+
+            for (let i = startIndex; i < endIndex && i < totalRows && i < startIndex + pollsPerPage; i++) {
+                rows.eq(i).show(); // Show the rows for the current page
+            }
+
+            jQuery('#currentPage').text(`Page ${currentPage}`);
+        }
+
+        displayRows();
+
+        jQuery('#prevPage').on('click', function() {
+            if (currentPage > 1) {
+            currentPage--;
+            displayRows();
+            }
+        });
+
+        jQuery('#nextPage').on('click', function() {
+            const totalPages = Math.ceil(totalRows / pollsPerPage);
+            if (currentPage < totalPages) {
+            currentPage++;
+            displayRows();
+            }
+        });
+        });
+    </script>
 
 
 </body>
