@@ -38,9 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
 
 
 <body>
-    <main class="main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg" >
-
-
+    <main class="main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <div class="container-fluid mx-auto ">
             <div class="w-100 pb-0 d-flex align-items-center">
                 <h4 class="fw-bolder m-0 p-0">General settings</h4>
@@ -53,7 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
                         <label class="form-check-label" for="email">
                             Email on survey deactivation
                         </label>
+
                     </div>
+
+                    <input readonly=<?php echo true ?> id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value="sadsad dsa dsa d">
 
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_checkbox_value('gdpr') === '1') echo 'checked'; ?> />
@@ -75,8 +76,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_changes'])) {
                 </button>
             </form>
         </div>
-
     </main>
+
+
+
+    <script>
+        const emailRadioButton = document.getElementById("email");
+        const isEmailChecked = document.getElementById("email").checked;
+        const email_input = document.getElementById("email_input");
+
+        // Define the function to handle the initial state
+        function setInitialEmailState() {
+            if (emailRadioButton.checked) {
+                email_input.style.display = "block";
+            } else {
+                email_input.style.display = "none";
+            }
+        }
+
+        // Call the function immediately
+        setInitialEmailState();
+
+        // Call the function within DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', setInitialEmailState);
+
+        // Event listener for change input state
+        emailRadioButton.addEventListener("change", function() {
+            if (emailRadioButton.checked) {
+                email_input.style.display = "block";
+            } else {
+                email_input.style.display = "none";
+            }
+        });
+    </script>
+
 </body>
+
 
 </html>
