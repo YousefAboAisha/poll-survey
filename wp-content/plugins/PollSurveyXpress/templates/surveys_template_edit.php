@@ -36,8 +36,6 @@ $poll_data_json = json_encode($poll_data);
 
 
         <form id="update_form" data-form-id=<?php echo ($poll_id) ?> class="d-flex flex-column p-4 rounded-3 border w-100 bg-white">
-        <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
-   
             <div>
                 <label>Change plugin Theme</label>
 
@@ -175,7 +173,6 @@ $poll_data_json = json_encode($poll_data);
                 };
 
                 console.log(settingObj);
-                var nonce = jQuery('#my-ajax-nonce').val();
 
                 if (settingObj != {} || !settingObj) {
                     jQuery.ajax({
@@ -184,7 +181,6 @@ $poll_data_json = json_encode($poll_data);
                         data: {
                             action: "PSX_update_poll_settings",
                             poll_data: JSON.stringify(settingObj),
-                            nonce: nonce,
                         },
                         success: function() {
                             console.log("Done");
@@ -194,7 +190,7 @@ $poll_data_json = json_encode($poll_data);
                             // Create a new toast element
                             var toast = document.createElement("div");
                             toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                            toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                            toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
                             toast.innerHTML = `
                             <p class="m-0 fw-bold text-xs text-white">
                             Updated survey settings successfully!
@@ -204,7 +200,11 @@ $poll_data_json = json_encode($poll_data);
                             document.body.appendChild(toast);
 
                             // Initialize the Bootstrap toast
-                            var bootstrapToast = new bootstrap.Toast(toast);
+                            // Initialize the Bootstrap toast with custom options
+                            var bootstrapToast = new bootstrap.Toast(toast, {
+                                autohide: true, // Set to true to enable automatic hiding
+                                delay: 2000,
+                            });
                             bootstrapToast.show();
                         },
                         error: function(error) {

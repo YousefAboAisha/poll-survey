@@ -50,8 +50,12 @@ $questions_with_answers_json = json_encode($questions_with_answers);
 
 <body>
     <main class="container-fluid main-content position-relative max-height-vh-100 h-100">
-        <h6 class="font-weight-bolder mb-0 p-0 mt-4">Multiple choice Template View</h6>
 
+        <div class="d-flex align-items-center gap-2 my-4">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">Multiple Choice Survey View</h6>
+        </div>
 
         <div class="bg-white mt-4 border rounded-3">
             <div class="row row-cols-1 row-cols-lg-2 g-4 ">

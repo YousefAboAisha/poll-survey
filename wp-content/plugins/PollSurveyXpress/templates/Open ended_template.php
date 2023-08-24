@@ -12,15 +12,13 @@
 
 <body>
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <!-- Navbar -->
-        <nav class="px-0 mb-4 shadow-none border-radius-xl" navbar-scroll="true">
-            <nav aria-label="breadcrumb">
-                <h6 class="font-weight-bolder mb-0">Open Ended Template</h6>
-            </nav>
-        </nav>
+        <div class="d-flex align-items-center gap-2 my-4">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey Add</h6>
+        </div>
 
         <!-- End Navbar -->
-
         <div class="d-flex flex-column justify-content-center align-items-center gap-3">
             <div class="d-flex w-100 flex-column gap-2 border rounded-3 bg-white">
                 <div class="p-4 pt-3">
@@ -68,8 +66,6 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
-                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
-
                     <div>
                         <label>Change plugin Theme</label>
 
@@ -141,9 +137,6 @@
     </div>
 
     <script>
-
-        var nonce = jQuery('#my-ajax-nonce').val();
-
         const save_button = document.getElementById("save_button");
         const pullTitle = document.getElementById("pullTitle");
         const addQuestionButton = document.getElementById("addQuestion");
@@ -291,7 +284,6 @@
                 data: {
                     action: "PSX_save_poll_open_ended_data",
                     poll_data: JSON.stringify(finalObj),
-                    nonce : nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");
@@ -302,7 +294,7 @@
                     // Create a new toast element
                     var toast = document.createElement("div");
                     toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                    toast.className = "position-fixed p-2 px-4 bg-primary border rounded-2";
+                    toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
                     toast.innerHTML = `
                     <p class="m-0 fw-bold text-xs text-white">
                     New survey has been added successfully!
@@ -312,7 +304,11 @@
                     document.body.appendChild(toast);
 
                     // Initialize the Bootstrap toast
-                    var bootstrapToast = new bootstrap.Toast(toast);
+                    // Initialize the Bootstrap toast with custom options
+                    var bootstrapToast = new bootstrap.Toast(toast, {
+                        autohide: true, // Set to true to enable automatic hiding
+                        delay: 2000,
+                    });
                     bootstrapToast.show();
 
                     window.location.reload();
