@@ -337,63 +337,77 @@ class PollSurveyXpress
         global $wpdb;
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-
+        
             // Extract necessary data from $poll_data_array
-            $surveyTitle = $poll_data_array['surveyTitle'];
+            $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $pollCards = $poll_data_array['pollCards'];
             $settings = $poll_data_array['settings'];
-            $template = $poll_data_array['template'];
-
+            $template = sanitize_text_field($poll_data_array['template']);
+        
+            // Sanitize and validate date inputs
+            $start_date = empty($settings['start_date']) ? current_time('mysql') : sanitize_text_field($settings['start_date']);
+            $end_date = empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : sanitize_text_field($settings['end_date']);
+        
+            // Sanitize other settings
+            $cta_Text = sanitize_text_field($settings['cta_Text']);
+            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $color = sanitize_hex_color($settings['color']);
+            $bgcolor = sanitize_hex_color($settings['bgcolor']);
+            $sharing = isset($settings['sharing']) ? 'true' : 'false';
+            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $min_votes = absint($settings['min_votes']);
+        
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
-                'cta_Text' => $settings['cta_Text'],
-                'start_date' => empty($settings['start_date']) ? current_time('mysql') : $settings['start_date'],
-                'end_date' => empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : $settings['end_date'],
-                'status' => $settings['status'] ? 'active' : 'inactive',
+                'cta_Text' => $cta_Text,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'status' => $status,
                 'template' => $template,
                 'Short_Code' => '',
-                'color' => $settings['color'],
-                'bgcolor' => $settings['bgcolor'],
-                'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
-                'min_votes' => $settings['min_votes']
+                'color' => $color,
+                'bgcolor' => $bgcolor,
+                'sharing' => $sharing,
+                'real_time_result_text' => $real_time_result_text,
+                'min_votes' => $min_votes
             );
-
+        
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
+            
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
-
+        
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
                 $wpdb->prefix . 'polls_psx_polls',
                 array('Short_Code' => $shortcode),
                 array('poll_id' => $poll_id)
             );
-
+        
             foreach ($pollCards as $pollCard) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => $pollCard['questionTitle'],
+                    'question_text' => sanitize_text_field($pollCard['questionTitle']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
-
+        
                 // Insert data into polls_psx_survey_answers table
                 foreach ($pollCard['options'] as $option) {
                     $answer_data = array(
                         'poll_id' => $poll_id,
                         'question_id' => $question_id,
-                        'answer_text' => $option,
+                        'answer_text' => sanitize_text_field($option),
                     );
                     $wpdb->insert($wpdb->prefix . 'polls_psx_survey_answers', $answer_data);
                 }
             }
         }
         wp_die();
-    }
+    }        
 
     //Method to save poll (Rating) data
 
@@ -404,32 +418,45 @@ class PollSurveyXpress
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
 
             // Extract necessary data from $poll_data_array
-            $surveyTitle = $poll_data_array['surveyTitle'];
+            $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $questions = $poll_data_array['questions'];
             $ratesArray = $poll_data_array['ratesArray'];
             $settings = $poll_data_array['settings'];
-            $template = $poll_data_array['template'];
+            $template = sanitize_text_field($poll_data_array['template']);
+
+            // Sanitize and validate date inputs
+            $start_date = empty($settings['start_date']) ? current_time('mysql') : sanitize_text_field($settings['start_date']);
+            $end_date = empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : sanitize_text_field($settings['end_date']);
+
+            // Sanitize other settings
+            $cta_Text = sanitize_text_field($settings['cta_Text']);
+            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $color = sanitize_hex_color($settings['color']);
+            $bgcolor = sanitize_hex_color($settings['bgcolor']);
+            $sharing = isset($settings['sharing']) ? 'true' : 'false';
+            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
-                'cta_Text' => $settings['cta_Text'],
-                'start_date' => empty($settings['start_date']) ? current_time('mysql') : $settings['start_date'],
-                'end_date' => empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : $settings['end_date'],
-                'status' =>  $settings['status'] ? 'active' : 'inactive',
+                'cta_Text' => $cta_Text,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'status' => $status,
                 'template' => $template,
                 'Short_Code' => '',
-                'color' => $settings['color'],
-                'bgcolor' => $settings['bgcolor'],
-                'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
-                'min_votes' => $settings['min_votes']
+                'color' => $color,
+                'bgcolor' => $bgcolor,
+                'sharing' => $sharing,
+                'real_time_result_text' => $real_time_result_text,
+                'min_votes' => $min_votes
             );
 
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-
+            
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
 
@@ -443,17 +470,17 @@ class PollSurveyXpress
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => $question['questionTitle'],
+                    'question_text' => sanitize_text_field($question['questionTitle']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
 
                 // Insert data into polls_psx_survey_answers table
-                foreach ($ratesArray as $otion) {
+                foreach ($ratesArray as $option) {
                     $answer_data = array(
                         'poll_id' => $poll_id,
                         'question_id' => $question_id,
-                        'answer_text' => $otion,
+                        'answer_text' => sanitize_text_field($option),
                     );
                     $wpdb->insert($wpdb->prefix . 'polls_psx_survey_answers', $answer_data);
                 }
@@ -461,6 +488,7 @@ class PollSurveyXpress
         }
         wp_die();
     }
+
 
     //Method to save poll (Open Ended) data
     public function PSX_save_poll_open_ended_data()
@@ -470,31 +498,44 @@ class PollSurveyXpress
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
 
             // Extract necessary data from $poll_data_array
-            $surveyTitle = $poll_data_array['surveyTitle'];
+            $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $questions = $poll_data_array['questions'];
             $settings = $poll_data_array['settings'];
-            $template = $poll_data_array['template'];
+            $template = sanitize_text_field($poll_data_array['template']);
+
+            // Sanitize and validate date inputs
+            $start_date = empty($settings['start_date']) ? current_time('mysql') : sanitize_text_field($settings['start_date']);
+            $end_date = empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : sanitize_text_field($settings['end_date']);
+
+            // Sanitize other settings
+            $cta_Text = sanitize_text_field($settings['cta_Text']);
+            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $color = sanitize_hex_color($settings['color']);
+            $bgcolor = sanitize_hex_color($settings['bgcolor']);
+            $sharing = isset($settings['sharing']) ? 'true' : 'false';
+            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
-                'cta_Text' => $settings['cta_Text'],
-                'start_date' => empty($settings['start_date']) ? current_time('mysql') : $settings['start_date'],
-                'end_date' => empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : $settings['end_date'],
-                'status' => $settings['status'] ? 'active' : 'inactive',
+                'cta_Text' => $cta_Text,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'status' => $status,
                 'template' => $template,
                 'Short_Code' => '',
-                'color' => $settings['color'],
-                'bgcolor' => $settings['bgcolor'],
-                'sharing' => $settings['sharing'] ? 'true' : 'false',
-                'real_time_result_text' => $settings['real_time_check'] ? '' : $settings['real_time_result_text'],
-                'min_votes' => $settings['min_votes']
+                'color' => $color,
+                'bgcolor' => $bgcolor,
+                'sharing' => $sharing,
+                'real_time_result_text' => $real_time_result_text,
+                'min_votes' => $min_votes
             );
 
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-
+            
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
 
@@ -508,10 +549,10 @@ class PollSurveyXpress
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => $question['questionTitle'],
+                    'question_text' => sanitize_text_field($question['questionTitle']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
-                //Add an answer for each question
+                // Add an answer for each question
 
                 $question_id = $wpdb->insert_id;
                 $answer_data = array(
@@ -525,29 +566,14 @@ class PollSurveyXpress
         wp_die();
     }
 
-    //Method to change poll status (active/inactive to archived)
-    public function PSX_archive_poll()
-    {
-        if (isset($_POST["poll_id"])) {
-            $poll_id = intval($_POST["poll_id"]);
-
-            // Update the poll status in the database
-            global $wpdb;
-            $table_name = $wpdb->prefix . "polls_psx_polls";
-            $wpdb->update(
-                $table_name,
-                array("status" => "archived"),
-                array("poll_id" => $poll_id)
-            );
-        }
-        wp_die();
-    }
-
     //Method to change poll status (archived to inactive)
     public function PSX_restore_poll()
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
+
+            // Sanitize the poll ID
+            $poll_id = absint($poll_id);
 
             // Update the poll status in the database
             global $wpdb;
@@ -561,11 +587,35 @@ class PollSurveyXpress
         wp_die();
     }
 
+    //Method to change poll status (active/inactive to archived)
+    public function PSX_archive_poll()
+    {
+        if (isset($_POST["poll_id"])) {
+            $poll_id = intval($_POST["poll_id"]);
+    
+            // Sanitize the poll ID
+            $poll_id = absint($poll_id);
+    
+            // Update the poll status in the database
+            global $wpdb;
+            $table_name = $wpdb->prefix . "polls_psx_polls";
+            $wpdb->update(
+                $table_name,
+                array("status" => "archived"),
+                array("poll_id" => $poll_id)
+            );
+        }
+        wp_die();
+    }
+    
     //Method to delete poll (delete from database)
     public function PSX_permenant_delete()
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
+
+            // Sanitize the poll ID
+            $poll_id = absint($poll_id);
 
             global $wpdb;
 
@@ -599,21 +649,32 @@ class PollSurveyXpress
     }
 
     // Add shortcode form to the frontend of the website
+    
     public function PSX_poll_shortcode_handler($atts)
     {
         global $wpdb;
+        
+        // Sanitize the shortcode attributes
+        $atts = array_map('sanitize_text_field', $atts);
+    
         // Extract the poll ID from the shortcode
         $components = explode("_", $atts[0]);
-        $poll_id = $components[2];
-
+        $poll_id = absint($components[2]);
+    
         // Query the database
         $table_name = $wpdb->prefix . 'polls_psx_polls';
         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
         $poll_data = $wpdb->get_results($query, ARRAY_A);
-
+    
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
-                if ($poll_data[0]['template'] === 'Multiple Choice') {
+                // Sanitize the poll title
+                $poll_title = sanitize_text_field($poll_data[0]['title']);
+    
+                // Sanitize the template type
+                $template_type = sanitize_text_field($poll_data[0]['template']);
+    
+                if ($template_type === 'Multiple Choice') {
                     $output = '<form id="poll_form" method="post" action="your_action_url">';
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
@@ -651,7 +712,7 @@ class PollSurveyXpress
 
                         $output .= '</div>'; // Close the poll structure div
                         $output .= '<div class="spinner-border text-primary d-none" role="status">
-                      </div>'; // Close the poll structure div
+                    </div>'; // Close the poll structure div
                     }
                     $output .= '</div>'; // Close the col div
 
@@ -662,7 +723,7 @@ class PollSurveyXpress
                     $output .= '</div>'; // Close the container-fluid div
                     $output .= '</form>';
 
-                    // Fetch questions from the database
+                // Fetch questions from the database
                 } else if ($poll_data[0]['template'] === 'Open ended') {
                     // Start generating the poll structure
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -760,27 +821,29 @@ class PollSurveyXpress
                 $output = '<p>Poll not found.</p>';
             }
             return $output;
-        }
+    }
     }
 
     // Function to update poll settings                                                                            
     public function PSX_update_poll_settings()
     {
-
         global $wpdb;
+        
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-            $poll_id = intval($poll_data_array["poll_id"]);
-            $start_date = $poll_data_array["start_date"];
-            $end_date = $poll_data_array["end_date"];
-            $status = $poll_data_array["status"];
-            $color = $poll_data_array["color"];
-            $bgcolor = $poll_data_array["bgcolor"];
-            $sharing = $poll_data_array["sharing"];
-            $real_time_result_text = $poll_data_array["real_time_result_text"];
-            $real_time_check = $poll_data_array["real_time_check"];
-            $min_votes = $poll_data_array["min_votes"];
-            $cta_text = $poll_data_array["cta_Text"];
+
+            // Sanitize inputs
+            $poll_id = absint($poll_data_array["poll_id"]);
+            $start_date = sanitize_text_field($poll_data_array["start_date"]);
+            $end_date = sanitize_text_field($poll_data_array["end_date"]);
+            $status = isset($poll_data_array["status"]) ? (bool) $poll_data_array["status"] : false;
+            $color = sanitize_text_field($poll_data_array["color"]);
+            $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
+            $sharing = isset($poll_data_array["sharing"]) ? sanitize_text_field($poll_data_array["sharing"]) : 'false';
+            $real_time_result_text = sanitize_text_field($poll_data_array["real_time_result_text"]);
+            $real_time_check = isset($poll_data_array["real_time_check"]) ? (bool) $poll_data_array["real_time_check"] : false;
+            $min_votes = absint($poll_data_array["min_votes"]);
+            $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
 
             $table_name = $wpdb->prefix . "polls_psx_polls";
             $wpdb->update(
@@ -805,33 +868,23 @@ class PollSurveyXpress
     public function PSX_save_poll_response()
     {
         global $wpdb;
-
+    
         if (isset($_POST['poll_response'])) {
             $poll_response = json_decode(stripslashes($_POST['poll_response']), true);
-
+    
             // Extract data from the poll_response object
-            $poll_id = $poll_response['poll_id'];
+            $poll_id = intval($poll_response['poll_id']);
             $user_id = is_user_logged_in() ? get_current_user_id() : 0;
-            if (!isset($_SESSION['my_session_id'])) {
-                $_SESSION['my_session_id'] = uniqid(); // Generate a unique session ID
-            }
-            $session_id = isset($_SESSION['my_session_id']) ? $_SESSION['my_session_id'] : '';
-
+            $session_id = isset($_SESSION['my_session_id']) ? sanitize_text_field($_SESSION['my_session_id']) : '';
+    
             if (get_option('gdpr') === '0') {
-                if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                    // Check if multiple IP addresses are provided via proxies
-                    $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                    $userIP = $ipList[0];
-                } else {
-                    $userIP = $_SERVER['REMOTE_ADDR'];
-                }
+                $userIP = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']) : sanitize_text_field($_SERVER['REMOTE_ADDR']);
             } else {
                 $userIP = '';
             }
-
-
+    
             $responses = $poll_response['responses'];
-
+    
             // Insert poll response data into the database
             $response_table = $wpdb->prefix . 'polls_psx_survey_responses';
             $wpdb->insert($response_table, array(
@@ -841,14 +894,14 @@ class PollSurveyXpress
                 'session_id' => $session_id,
             ));
             $response_id = $wpdb->insert_id;
-
+    
             $responses_data_table = $wpdb->prefix . 'polls_psx_survey_responses_data';
             foreach ($responses as $response) {
                 $wpdb->insert($responses_data_table, array(
                     'response_id' => $response_id,
-                    'question_id' => $response['question_id'],
-                    'answer_id' => $response['answer_id'],
-                    'open_text_response' => $response['answer_text'],
+                    'question_id' => intval($response['question_id']),
+                    'answer_id' => intval($response['answer_id']),
+                    'open_text_response' => sanitize_text_field($response['answer_text']),
                 ));
             }
 
