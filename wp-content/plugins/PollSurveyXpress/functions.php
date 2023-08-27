@@ -384,7 +384,7 @@ class PollSurveyXpress
 
             // Sanitize other settings
             $cta_Text = sanitize_text_field($settings['cta_Text']);
-            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $sharing = isset($settings['sharing']) ? 'true' : 'false';
@@ -467,7 +467,7 @@ class PollSurveyXpress
 
             // Sanitize other settings
             $cta_Text = sanitize_text_field($settings['cta_Text']);
-            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $sharing = isset($settings['sharing']) ? 'true' : 'false';
@@ -549,7 +549,7 @@ class PollSurveyXpress
 
             // Sanitize other settings
             $cta_Text = sanitize_text_field($settings['cta_Text']);
-            $status = isset($settings['status']) ? 'active' : 'inactive';
+            $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $sharing = isset($settings['sharing']) ? 'true' : 'false';

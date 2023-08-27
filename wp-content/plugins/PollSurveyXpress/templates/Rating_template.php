@@ -82,6 +82,8 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
+                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+
                     <div>
                         <label>Change plugin Theme</label>
 
@@ -188,6 +190,7 @@
         const show_results_input = document.getElementById("show_results_input");
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
+        var nonce = jQuery('#my-ajax-nonce').val();
 
         // Rates data
         const rateInputs = document.querySelectorAll("#rateInputs input");
@@ -332,6 +335,7 @@
                 data: {
                     action: "PSX_save_poll_rating_data",
                     poll_data: JSON.stringify(finalObj),
+                    nonce : nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");
