@@ -95,7 +95,7 @@ $poll_data_json = json_encode($poll_data);
 
                     <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                         <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
-                        <button id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                        <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                             <?php echo $poll_data->cta_Text; ?>
                         </button>
                     </div>

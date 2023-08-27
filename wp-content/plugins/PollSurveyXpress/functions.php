@@ -334,14 +334,15 @@ class PollSurveyXpress
     }
     //Function to change settings values in database
 
-    public function PSX_save_changes_settings(){
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+    public function PSX_save_changes_settings()
+    {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
-    
+
         // Decode the JSON string into an associative array
         $settings_data = json_decode(stripslashes($_POST['settings_data']), true);
-    
+
         update_option('PSX_gdpr', $settings_data['gdpr']);
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
@@ -349,38 +350,38 @@ class PollSurveyXpress
         $admin_email = get_option('admin_email');
         // Get the submitted admin email from the form
         $submitted_admin_email = sanitize_email($settings_data['admin_email']);
-        
+
         // Update the admin email option if it's different
         if ($submitted_admin_email !== $admin_email) {
             update_option('PSX_survey_email', $submitted_admin_email);
             $admin_email = $submitted_admin_email; // Update the admin email variable
         }
-    
+
         // Send a success response
         wp_send_json_success('Settings saved successfully.');
     }
-    
-    
+
+
     //Method to save poll (Multiple Choice) data
     public function PSX_save_poll_Multiple_data()
     {
         global $wpdb;
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
-        
+
             // Extract necessary data from $poll_data_array
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $pollCards = $poll_data_array['pollCards'];
             $settings = $poll_data_array['settings'];
             $template = sanitize_text_field($poll_data_array['template']);
-        
+
             // Sanitize and validate date inputs
             $start_date = empty($settings['start_date']) ? current_time('mysql') : sanitize_text_field($settings['start_date']);
             $end_date = empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : sanitize_text_field($settings['end_date']);
-        
+
             // Sanitize other settings
             $cta_Text = sanitize_text_field($settings['cta_Text']);
             $status = isset($settings['status']) ? 'active' : 'inactive';
@@ -389,7 +390,7 @@ class PollSurveyXpress
             $sharing = isset($settings['sharing']) ? 'true' : 'false';
             $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
-        
+
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
@@ -405,21 +406,21 @@ class PollSurveyXpress
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
-        
+
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-            
+
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
-        
+
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
                 $wpdb->prefix . 'polls_psx_polls',
                 array('Short_Code' => $shortcode),
                 array('poll_id' => $poll_id)
             );
-        
+
             foreach ($pollCards as $pollCard) {
                 $question_data = array(
                     'poll_id' => $poll_id,
@@ -427,7 +428,7 @@ class PollSurveyXpress
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
-        
+
                 // Insert data into polls_psx_survey_answers table
                 foreach ($pollCard['options'] as $option) {
                     $answer_data = array(
@@ -440,14 +441,14 @@ class PollSurveyXpress
             }
         }
         wp_die();
-    }        
+    }
 
     //Method to save poll (Rating) data
 
     public function PSX_save_poll_rating_data()
     {
         global $wpdb;
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
@@ -492,7 +493,7 @@ class PollSurveyXpress
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-            
+
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
 
@@ -530,7 +531,7 @@ class PollSurveyXpress
     public function PSX_save_poll_open_ended_data()
     {
         global $wpdb;
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
@@ -574,7 +575,7 @@ class PollSurveyXpress
             // Insert the poll data into the polls_psx_polls table
             $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
             $poll_id = $wpdb->insert_id;
-            
+
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
 
@@ -631,10 +632,10 @@ class PollSurveyXpress
     {
         if (isset($_POST["poll_id"])) {
             $poll_id = intval($_POST["poll_id"]);
-    
+
             // Sanitize the poll ID
             $poll_id = absint($poll_id);
-    
+
             // Update the poll status in the database
             global $wpdb;
             $table_name = $wpdb->prefix . "polls_psx_polls";
@@ -646,7 +647,7 @@ class PollSurveyXpress
         }
         wp_die();
     }
-    
+
     //Method to delete poll (delete from database)
     public function PSX_permenant_delete()
     {
@@ -688,36 +689,36 @@ class PollSurveyXpress
     }
 
     // Add shortcode form to the frontend of the website
-    
+
     public function PSX_poll_shortcode_handler($atts)
     {
         global $wpdb;
-        
+
         // Sanitize the shortcode attributes
         $atts = array_map('sanitize_text_field', $atts);
-    
+
         // Extract the poll ID from the shortcode
         $components = explode("_", $atts[0]);
         $poll_id = absint($components[2]);
-    
+
         // Query the database
         $table_name = $wpdb->prefix . 'polls_psx_polls';
         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
         $poll_data = $wpdb->get_results($query, ARRAY_A);
-    
+
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
                 // Sanitize the poll title
                 $poll_title = sanitize_text_field($poll_data[0]['title']);
-    
+
                 // Sanitize the template type
                 $template_type = sanitize_text_field($poll_data[0]['template']);
-    
+
                 if ($template_type === 'Multiple Choice') {
                     $output = '<form id="poll_form" method="post">';
-                    
+
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
                     // Start generating the poll structure
                     // Fetch questions from the database
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -763,7 +764,7 @@ class PollSurveyXpress
                     $output .= '</div>'; // Close the container-fluid div
                     $output .= '</form>';
 
-                // Fetch questions from the database
+                    // Fetch questions from the database
                 } else if ($poll_data[0]['template'] === 'Open ended') {
                     // Start generating the poll structure
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
@@ -771,7 +772,7 @@ class PollSurveyXpress
                     $questions = $wpdb->get_results($query, ARRAY_A);
 
                     $output = '<div class="mt-4 container-fluid bg-transparent">';
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
                     $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
 
@@ -796,12 +797,12 @@ class PollSurveyXpress
                     $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                     $questions = $wpdb->get_results($query, ARRAY_A);
-                    
+
                     $output = '<form id="poll_form" method="post">';
                     $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
 
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' .wp_create_nonce('my_ajax_nonce'). '"/>';
-                
+                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+
 
                     $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
@@ -865,14 +866,14 @@ class PollSurveyXpress
                 $output = '<p>Poll not found.</p>';
             }
             return $output;
-    }
+        }
     }
 
     // Function to update poll settings                                                                            
     public function PSX_update_poll_settings()
     {
         global $wpdb;
-        if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce') ) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
@@ -914,7 +915,7 @@ class PollSurveyXpress
     public function PSX_save_poll_response()
     {
         global $wpdb;
-        if ( !isset($_POST['nonce'])  || ! wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce'))  {
+        if (!isset($_POST['nonce'])  || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
             wp_send_json_error('Invalid nonce.');
         }
         if (isset($_POST['poll_response'])) {
@@ -924,7 +925,7 @@ class PollSurveyXpress
             $poll_id = $poll_response['poll_id'];
             $user_id = is_user_logged_in() ? get_current_user_id() : 0;
             if (!isset($_SESSION['my_session_id'])) {
-                $_SESSION['my_session_id'] = uniqid(); 
+                $_SESSION['my_session_id'] = uniqid();
             }
             $session_id = $_SESSION['my_session_id'];
 
@@ -1001,12 +1002,19 @@ class PollSurveyXpress
             // Step 2: Calculate total response count
             $totalResponses = count($responses_data);
 
-            // Step 3: Calculate percentages
+            // Calculate percentages including unanswered questions
             $percentages = array();
             foreach ($answerCounts as $questionId => $answerData) {
                 $percentages[$questionId] = array();
+
+                $totalAnswers = 0; // To calculate the total answers for each question
+
                 foreach ($answerData as $answerId => $count) {
-                    $percentage = ($count / $totalResponses) * 100;
+                    $totalAnswers += $count;
+                }
+
+                foreach ($answerData as $answerId => $count) {
+                    $percentage = ($totalAnswers > 0) ? (($count / $totalResponses) * 100) : 0; // Handle division by zero
                     $formattedPercentage = number_format($percentage, 2);
                     $percentages[$questionId][$answerId] = $formattedPercentage;
                 }

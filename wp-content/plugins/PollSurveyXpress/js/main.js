@@ -21,7 +21,7 @@ jQuery(document).ready(function (jQuery) {
     }
   });
 
-  // Add Pol cards variables
+  // Add Poll cards variables
   let addOptionButton = document.getElementById("addOption");
   let optionInput = document.getElementById("optionInput");
   let optionsGroup = document.getElementById("optionsGroup");
@@ -289,7 +289,7 @@ jQuery(document).ready(function (jQuery) {
     };
 
     console.log(finalObj);
-    var nonce = jQuery('#my-ajax-nonce').val();
+    var nonce = jQuery("#my-ajax-nonce").val();
 
     if (pollsCardsArray.length > 0) {
       jQuery.ajax({
@@ -381,7 +381,6 @@ jQuery(document).ready(function (jQuery) {
   const nonce = document.getElementById("my-ajax-nonce").value;
 
   save_button.addEventListener("click", function (event) {
-
     event.preventDefault();
     console.log(nonce);
 
@@ -465,10 +464,18 @@ jQuery(document).ready(function (jQuery) {
                   element.className =
                     "d-flex align-items-center justify-content-between gap-2 w-100";
                   element.style.cssText = "min-width:200px";
+
+                  // Check if the percentageValue is defined (not null or undefined)
+                  // If it's not defined, set it to 0
+                  percentageValue =
+                    percentageValue !== null && percentageValue !== undefined
+                      ? percentageValue
+                      : 0;
+
                   element.innerHTML = `
-                  <p style="width:${percentageValue}%; height:2px" class="m-0 bg-primary text-primary rounded-2"></p>
-                  <p style="font-size:10px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
-                `;
+                    <p style="width:${percentageValue}%; height:2px" class="m-0 bg-primary text-primary rounded-2"></p>
+                    <p style="font-size:10px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
+                    `;
                   popoverContent.appendChild(element);
                 }
               }
@@ -490,6 +497,10 @@ jQuery(document).ready(function (jQuery) {
       },
       error: function (error) {
         console.error("Error:", error);
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
+      complete: function () {
         save_button.textContent = "Save";
         save_button.disabled = false;
       },
@@ -518,7 +529,7 @@ jQuery(document).ready(function (jQuery) {
     // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
-    var nonce = jQuery('#my-ajax-nonce').val();
+    var nonce = jQuery("#my-ajax-nonce").val();
     textareas.forEach(function (elem) {
       let response_obj = {};
       const question_id = elem.getAttribute("data-question-id");
@@ -573,7 +584,7 @@ jQuery(document).ready(function (jQuery) {
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
-  var nonce = jQuery('#my-ajax-nonce').val();
+  var nonce = jQuery("#my-ajax-nonce").val();
 
   const save_button = document.getElementById("rating_save_button");
   // Disable the button and add spinner/loading text
