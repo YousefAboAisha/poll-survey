@@ -21,34 +21,33 @@
         </div>
 
 
-        <div class="d-flex flex-column justify-content-center align-items-center gap-3">
-            <div class="d-flex w-100 flex-column gap-2 border rounded-3 bg-white">
-                <div class="p-4 pt-3">
-                    <div class="mb-2">
-                        <label for="surveyTitle" class="form-label">Add new question</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
-                            <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
-                                <i class="fas fa-plus text-sm p-0" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Final output Survey -->
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
 
-            <div class="d-flex justify-content-between align-items-center w-100 mb-3">
-                <input type="text" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
+
+            <div class="d-flex justify-content-between align-items-center w-100 mb-4">
+                <input type="text" class="w-100 text-lg p-2 px-0 bg-white border-0 rounded-1 m-0 p-0" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
 
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
-                    <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Rate #1" value="Rate #1" />
-                    <input type="text" id="rateInput2" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Rate #2" value="Rate #2" />
-                    <input type="text" id="rateInput3" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Rate #3" value="Rate #3" />
-                    <input type="text" id="rateInput4" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Rate #4" value="Rate #4" />
-                    <input type="text" id="rateInput5" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1 mb-4" placeholder="Rate #5" value="Rate #5" />
+                    <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #1" value="Rate #1" />
+                    <input type="text" id="rateInput2" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #2" value="Rate #2" />
+                    <input type="text" id="rateInput3" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #3" value="Rate #3" />
+                    <input type="text" id="rateInput4" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #4" value="Rate #4" />
+                    <input type="text" id="rateInput5" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #5" value="Rate #5" />
+                </div>
+            </div>
+
+            <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mb-4">
+                <div class="mb-2">
+                    <label for="surveyTitle" class="form-label">Add new question</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
+                        <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
+                            <i class="fas fa-plus text-sm p-0" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
