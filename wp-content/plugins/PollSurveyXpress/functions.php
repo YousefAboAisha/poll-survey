@@ -42,7 +42,7 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.0', true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.1', true);
         wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);

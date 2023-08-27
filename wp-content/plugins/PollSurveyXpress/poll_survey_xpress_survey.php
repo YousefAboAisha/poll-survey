@@ -49,7 +49,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0">New Survey
                                     <i style="cursor: pointer" class="fas fa-add text-white ms-2 text-lg"></i>
                                 </a>
-                                <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0">Recycle Bin <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
+                                <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0">Recycle Bin <i style="cursor: pointer" class="fas fa-trash text-white"></i></a>
                             </div>
                         </div>
 

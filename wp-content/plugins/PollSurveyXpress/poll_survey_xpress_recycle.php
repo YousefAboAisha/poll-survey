@@ -89,8 +89,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                 <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
                                                     <td class="align-middle text-center"><?php echo $poll->poll_id; ?></td>
 
-                                                    <td>
-                                                        <p class="text-xs font-weight-bold mb-0 m-0">
+                                                    <td class="align-middle ">
+                                                        <p title=<?php echo $poll->title; ?> style="width: 120px;" class="text-xs mb-0 text-truncate">
                                                             <?php echo $poll->title; ?>
                                                         </p>
                                                     </td>

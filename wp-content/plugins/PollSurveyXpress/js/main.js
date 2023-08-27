@@ -422,18 +422,14 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce, // Pass the nonce
       },
       success: function (response) {
-        const jsonData = JSON.parse(JSON.parse(response));
-        // Access the 'percentages' and 'isSessionSaved' properties
-        const percentages = jsonData.percentages;
-        const isSessionSaved = jsonData.isSessionSaved;
+        save_button.textContent = "DONE!";
 
-        save_button.textContent = "Done!";
-        save_button.disabled = jsonData.isSessionSaved;
+        const jsonData = JSON.parse(JSON.parse(response));
+        const percentages = jsonData.percentages;
 
         // Now you can work with the decoded data
         console.log("JSON data:", jsonData);
         console.log("Percentages:", percentages);
-        console.log("Is Session Saved:", isSessionSaved);
 
         show_results_buttons.forEach((button) => {
           button.disabled = false;
@@ -502,10 +498,6 @@ jQuery(document).ready(function (jQuery) {
         save_button.textContent = "Save";
         save_button.disabled = false;
       },
-      complete: function () {
-        save_button.textContent = "Save";
-        save_button.disabled = false;
-      },
     });
   });
 });
@@ -564,8 +556,8 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce,
       },
       success: function (response) {
-        save_button.textContent = "Save";
-        save_button.disabled = false;
+        save_button.textContent = "DONE!";
+        save_button.disabled = true;
 
         open_ended_container.innerHTML = `
           <div class="d-flex flex-column justify-content-center align-items-center gap-3 bg-white rounded-3 border p-5 col-11 mx-auto">
@@ -581,11 +573,6 @@ jQuery(document).ready(function (jQuery) {
       error: function (error) {
         console.error("Error:", error);
         save_button.textContent = "Save";
-        save_button.disabled = false;
-      },
-      complete: function () {
-        // Reset button state whether the request succeeded or failed
-        save_button.innerHTML = "Save";
         save_button.disabled = false;
       },
     });
@@ -646,17 +633,12 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce,
       },
       success: function (response) {
-        save_button.textContent = "Save";
-        save_button.disabled = false;
+        save_button.textContent = "DONE!";
+        save_button.disabled = true;
       },
       error: function (error) {
         console.error("Error:", error);
         save_button.textContent = "Save";
-        save_button.disabled = false;
-      },
-      complete: function () {
-        // Reset button state whether the request succeeded or failed
-        save_button.innerHTML = "Save";
         save_button.disabled = false;
       },
     });

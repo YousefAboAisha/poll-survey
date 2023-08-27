@@ -51,13 +51,6 @@
             </form>
 
 
-            <div class="container d-flex flex-column justify-content-center align-items-center gap-3 mt-5 bg-white rounded-3 border p-4 col-lg-5 col-md-8 col-10">
-                <i style="font-size: 80px;" class="fas fa-circle-check text-success"></i>
-                <h4 class="m-0 text-dark">Thank you for voting!</h4>
-                <span>Your vote has been successfully submitted.</span>
-                <span class="m-0 text-sxx">Go back to<a class="text-primary ms-1 fw-bold" href="admin.php?page=poll-survey-xpress-surveys">Home page</a> </span>
-            </div>
-
         </div>
     </main>
 
