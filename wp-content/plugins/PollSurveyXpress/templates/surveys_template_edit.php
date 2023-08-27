@@ -183,7 +183,7 @@ $poll_data_json = json_encode($poll_data);
                         data: {
                             action: "PSX_update_poll_settings",
                             poll_data: JSON.stringify(settingObj),
-                            nonce : nonce ,
+                            nonce: nonce,
                         },
                         success: function() {
                             console.log("Done");

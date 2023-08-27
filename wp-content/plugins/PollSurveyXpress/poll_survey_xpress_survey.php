@@ -156,14 +156,14 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     </tbody>
 
                                 </table>
-                                <div id="pagination">
-                                    <button id="prevPage">Previous</button>
-                                    <span id="currentPage">Page 1</span>
-                                    <button id="nextPage">Next</button>
-                                </div>
                             </div>
                         </div>
 
+                        <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
+                            <span class="m-0 p-0" id="currentPage">Page 1</span>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -263,10 +263,10 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         toast.style = "z-index:1000; right: 10px; bottom: 10px";
                         toast.className = "position-fixed p-2 px-4 bg-danger border rounded-2";
                         toast.innerHTML = `
-                    <p class="m-0 fw-bold text-xs text-white">
-                       Shortcode copied successfully!
-                    </p>
-                `;
+                            <p class="m-0 fw-bold text-xs text-white">
+                            Survey moved to trash successfully!
+                            </p>
+                        `;
                         // Append the toast to the document
                         document.body.appendChild(toast);
 
@@ -304,7 +304,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
             const totalRows = rows.length;
 
             function displayRows() {
-
                 rows.hide(); // Hide all rows
                 const startIndex = (currentPage - 1) * pollsPerPage;
                 const endIndex = startIndex + pollsPerPage;
@@ -314,6 +313,13 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 }
 
                 jQuery('#currentPage').text(`Page ${currentPage}`);
+
+                // Disable "Previous" button if on the first page
+                jQuery('#prevPage').prop('disabled', currentPage === 1);
+
+                // Disable "Next" button if on the last page
+                const totalPages = Math.ceil(totalRows / pollsPerPage);
+                jQuery('#nextPage').prop('disabled', currentPage === totalPages || totalRows === 0);
             }
 
             displayRows();

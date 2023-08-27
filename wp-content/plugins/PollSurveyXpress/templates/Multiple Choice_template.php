@@ -136,7 +136,7 @@
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control" placeholder="Add CTA button title" id="cta_input" value="CTA title" />
-                                <button id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                                <button onclick="(e)=>e.preventDefault()" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     CTA Title
                                 </button>
                             </div>
@@ -147,4 +147,4 @@
         </div>
     </div>
 
-</body> 
+</body>
