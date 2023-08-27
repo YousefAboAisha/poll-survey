@@ -82,7 +82,7 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
-                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+                    <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
                     <div>
                         <label>Change plugin Theme</label>
@@ -143,7 +143,7 @@
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control" placeholder="Add CTA button title" id="cta_input" value="CTA title" />
-                                <button id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                                <button onclick="(e)=>e.preventDefault()" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     CTA Title
                                 </button>
                             </div>
@@ -335,7 +335,7 @@
                 data: {
                     action: "PSX_save_poll_rating_data",
                     poll_data: JSON.stringify(finalObj),
-                    nonce : nonce,
+                    nonce: nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");

@@ -1,7 +1,3 @@
-<?php
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,17 +18,17 @@
             </div>
 
             <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
-            <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+                <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                 <div class="form-group d-flex flex-column">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_option('PSX_email') ) echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_option('PSX_email')) echo 'checked'; ?> />
                         <label class="form-check-label" for="email">
                             Email on survey deactivation
                         </label>
 
                     </div>
 
-                    <input id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value= "<?php echo get_option('admin_email')?>">
+                    <input id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value="<?php echo get_option('admin_email') ?>">
 
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_option('PSX_gdpr')) echo 'checked'; ?> />
@@ -49,17 +45,25 @@
                     </div>
                 </div>
 
-                <button type="button" name="save_changes" id = "save_changes"class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
+                <button type="button" name="save_changes" id="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
                     Save changes
                 </button>
             </form>
+
+
+            <div class="container d-flex flex-column justify-content-center align-items-center gap-3 mt-5 bg-white rounded-3 border p-4 col-lg-5 col-md-8 col-10">
+                <i style="font-size: 80px;" class="fas fa-circle-check text-success"></i>
+                <h4 class="m-0 text-dark">Thank you for voting!</h4>
+                <span>Your vote has been successfully submitted.</span>
+                <span class="m-0 text-sxx">Go back to<a class="text-primary ms-1 fw-bold" href="admin.php?page=poll-survey-xpress-surveys">Home page</a> </span>
+            </div>
+
         </div>
     </main>
 
 
 
     <script>
-
         const nonce = document.getElementById("my-ajax-nonce").value;
         const emailRadioButton = document.getElementById("email");
         const isEmailChecked = document.getElementById("email").checked;
@@ -100,30 +104,56 @@
             admin_email: email_input.value,
         }
         save_changes.addEventListener("click", function() {
+            save_changes.disabled = true;
+            save_changes.innerHTML =
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
             finalObj = {
-            email: emailRadioButton.checked,
-            gdpr: document.getElementById("gdpr").checked,
-            clear_data: document.getElementById("clear_data").checked,
-            admin_email: email_input.value,
-        }
-        jQuery.ajax
-            ({
+                email: emailRadioButton.checked,
+                gdpr: document.getElementById("gdpr").checked,
+                clear_data: document.getElementById("clear_data").checked,
+                admin_email: email_input.value,
+            }
+            console.log(finalObj);
+            jQuery.ajax({
                 type: "POST",
                 url: my_ajax_object.ajaxurl,
                 data: {
                     action: 'PSX_save_changes_settings',
-                    settings_data :JSON.stringify(finalObj),
-                    nonce : nonce,
+                    settings_data: JSON.stringify(finalObj),
+                    nonce: nonce,
                 },
-                success: function (data) {
+                success: function(data) {
                     console.log(data);
-                }
-        });       
-     });
-        
+                    save_changes.textContent = "Save changes";
+                    save_changes.disabled = false;
 
+                    // Create a new toast element
+                    var toast = document.createElement("div");
+                    toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                    toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+                    toast.innerHTML = `
+                            <p class="m-0 fw-bold text-xs text-white">
+                                Plugin settings updated successfully!
+                            </p>
+                        `;
+                    // Append the toast to the document
+                    document.body.appendChild(toast);
 
-
+                    // Initialize the Bootstrap toast with custom options
+                    var bootstrapToast = new bootstrap.Toast(toast, {
+                        autohide: true, // Set to true to enable automatic hiding
+                        delay: 2000,
+                    });
+                    bootstrapToast.show();
+                },
+                error: function(error) {
+                    console.error("Error:", error);
+                    save_changes.textContent = "Save changes";
+                    save_changes.disabled = false;
+                },
+            });
+        });
     </script>
 
 </body>

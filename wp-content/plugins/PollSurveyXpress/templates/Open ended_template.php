@@ -12,7 +12,7 @@
 
 <body>
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-    <div class="d-flex align-items-center gap-2 my-4">
+        <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
             <i class="fas fa-angle-right"></i>
             <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey Add</h6>
@@ -127,7 +127,7 @@
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control" placeholder="Add CTA button title" id="cta_input" value="CTA title" />
-                                <button id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                                <button onclick="(e)=>e.preventDefault()" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     CTA Title
                                 </button>
                             </div>
@@ -287,7 +287,7 @@
                 data: {
                     action: "PSX_save_poll_open_ended_data",
                     poll_data: JSON.stringify(finalObj),
-                    nonce : nonce,
+                    nonce: nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");

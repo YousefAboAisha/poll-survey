@@ -21,7 +21,7 @@ jQuery(document).ready(function (jQuery) {
     }
   });
 
-  // Add Pol cards variables
+  // Add Poll cards variables
   let addOptionButton = document.getElementById("addOption");
   let optionInput = document.getElementById("optionInput");
   let optionsGroup = document.getElementById("optionsGroup");
@@ -50,6 +50,7 @@ jQuery(document).ready(function (jQuery) {
   const min_votes_input = document.getElementById("min_votes_input");
   const cta_input = document.getElementById("cta_input");
   const save_button = document.getElementById("save_button");
+  const nonce = jQuery("#my-ajax-nonce").val();
 
   function createOption(optionTitle) {
     const newOption = document.createElement("div");
@@ -289,7 +290,6 @@ jQuery(document).ready(function (jQuery) {
     };
 
     console.log(finalObj);
-    var nonce = jQuery('#my-ajax-nonce').val();
 
     if (pollsCardsArray.length > 0) {
       jQuery.ajax({
@@ -377,18 +377,16 @@ jQuery(document).ready(function (jQuery) {
     .getAttribute("data-card-id");
 
   const save_button = document.getElementById("mcq_save_button");
-
-  const nonce = document.getElementById("my-ajax-nonce").value;
+  var nonce = jQuery("#my-ajax-nonce").val();
 
   save_button.addEventListener("click", function (event) {
-
     event.preventDefault();
     console.log(nonce);
 
     // Disable the button and add spinner/loading text
     save_button.disabled = true;
     save_button.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
     const responses_arr = [];
     const questions = document.querySelectorAll(".poll-answer-radio");
@@ -465,10 +463,21 @@ jQuery(document).ready(function (jQuery) {
                   element.className =
                     "d-flex align-items-center justify-content-between gap-2 w-100";
                   element.style.cssText = "min-width:200px";
+
+                  // Check if the percentageValue is defined (not null or undefined)
+                  // If it's not defined, set it to 0
+                  percentageValue =
+                    percentageValue !== null && percentageValue !== undefined
+                      ? percentageValue
+                      : 0;
+
                   element.innerHTML = `
-                  <p style="width:${percentageValue}%; height:2px" class="m-0 bg-primary text-primary rounded-2"></p>
-                  <p style="font-size:10px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
-                `;
+                    <div class="progress-bar bg-transparent">
+                        <p style="width:${percentageValue}%; z-index:5" class="m-0 bg-primary rounded-2"></p>
+                        <p style="width:100%; background-color:#DDD;" class="m-0 rounded-2"></p>
+                    </div>                    
+                        <p style="font-size:12px" class="text-primary m-0 fw-bolder">${percentageValue}%</p>
+                    `;
                   popoverContent.appendChild(element);
                 }
               }
@@ -493,6 +502,10 @@ jQuery(document).ready(function (jQuery) {
         save_button.textContent = "Save";
         save_button.disabled = false;
       },
+      complete: function () {
+        save_button.textContent = "Save";
+        save_button.disabled = false;
+      },
     });
   });
 });
@@ -505,20 +518,23 @@ jQuery(document).ready(function (jQuery) {
   // Assume you have a button with ID "get_values_button" to trigger the action
 
   const save_button = document.getElementById("open_ended_save_button");
+  const open_ended_container = document.getElementById("open_ended_container");
 
   save_button.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
 
+    console.log(open_ended_container);
+
     // Disable the button and add spinner/loading text
     save_button.disabled = true;
     save_button.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
     const textareas = document.querySelectorAll("textarea[data-question-id]"); // Select textareas with the data-question-id attribute
     // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
-    var nonce = jQuery('#my-ajax-nonce').val();
+    var nonce = jQuery("#my-ajax-nonce").val();
     textareas.forEach(function (elem) {
       let response_obj = {};
       const question_id = elem.getAttribute("data-question-id");
@@ -551,6 +567,20 @@ jQuery(document).ready(function (jQuery) {
         save_button.textContent = "Save";
         save_button.disabled = false;
 
+        open_ended_container.innerHTML = `
+          <div class="d-flex flex-column justify-content-center align-items-center gap-3 bg-white rounded-3 border p-5 col-11 mx-auto">
+              <i style="font-size: 80px;" class="fas fa-circle-check text-success"></i>
+              <h3 class="m-0 text-dark">Thank you for voting!</h3>
+              <span class="text-sxx">Your vote has been successfully submitted.</span>
+              <span class="m-0 text-sxx">
+                  Go back to
+                  <a class="text-primary ms-1 fw-bold" href="admin.php?page=poll-survey-xpress-surveys">
+                      Home page
+                  </a>
+              </span>
+          </div>
+      `;
+
         console.log("Done");
         // window.location.reload();
       },
@@ -573,7 +603,7 @@ jQuery(document).ready(function (jQuery) {
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
-  var nonce = jQuery('#my-ajax-nonce').val();
+  var nonce = jQuery("#my-ajax-nonce").val();
 
   const save_button = document.getElementById("rating_save_button");
   // Disable the button and add spinner/loading text
