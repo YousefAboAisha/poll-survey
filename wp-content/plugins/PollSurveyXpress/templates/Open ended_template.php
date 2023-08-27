@@ -12,7 +12,7 @@
 
 <body>
     <main class="col-lg-6 col-md-8 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <div class="d-flex align-items-center gap-2 my-4">
+    <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
             <i class="fas fa-angle-right"></i>
             <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey Add</h6>
@@ -66,6 +66,8 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
+                    <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+
                     <div>
                         <label>Change plugin Theme</label>
 
@@ -157,6 +159,7 @@
         const show_results_input = document.getElementById("show_results_input");
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
+        var nonce = jQuery('#my-ajax-nonce').val();
 
         function addQuestion() {
             const questionTitle = questionInput.value.trim();
@@ -284,6 +287,7 @@
                 data: {
                     action: "PSX_save_poll_open_ended_data",
                     poll_data: JSON.stringify(finalObj),
+                    nonce : nonce,
                 },
                 success: function(shortcode) {
                     console.log("Done");
