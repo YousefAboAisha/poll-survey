@@ -372,6 +372,9 @@ jQuery(document).ready(function (jQuery) {
 
 // Multiple Choice Question collect handle
 jQuery(document).ready(function (jQuery) {
+  const poll_count = document
+    .getElementById("Title")
+    .getAttribute("data-vote-count");
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
@@ -380,6 +383,8 @@ jQuery(document).ready(function (jQuery) {
   var nonce = jQuery("#my-ajax-nonce").val();
 
   save_button.addEventListener("click", function (event) {
+    console.log(poll_count);
+
     event.preventDefault();
     console.log(nonce);
 
@@ -512,6 +517,7 @@ jQuery(document).ready(function (jQuery) {
 
 // Open Ended collect data
 jQuery(document).ready(function (jQuery) {
+
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
@@ -564,9 +570,9 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce,
       },
       success: function (response) {
+
         save_button.textContent = "Save";
         save_button.disabled = false;
-
         open_ended_container.innerHTML = `
           <div class="d-flex flex-column justify-content-center align-items-center gap-3 bg-white rounded-3 border p-5 col-11 mx-auto">
               <p style="font-size: 80px; height:fit-content">✅</p>

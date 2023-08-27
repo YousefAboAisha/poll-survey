@@ -386,8 +386,8 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = isset($settings['sharing']) ? 'true' : 'false';
-            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $sharing = $settings['sharing'] ? 'true' : 'false';
+            $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
@@ -468,8 +468,8 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = isset($settings['sharing']) ? 'true' : 'false';
-            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $sharing = $settings['sharing'] ? 'true' : 'false';
+            $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
@@ -550,7 +550,7 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = isset($settings['sharing']) ? 'true' : 'false';
+            $sharing = $settings['sharing'] ? 'true' : 'false';
             $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
@@ -707,9 +707,10 @@ class PollSurveyXpress
 
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
-                // Sanitize the poll title
-                $poll_title = sanitize_text_field($poll_data[0]['title']);
-
+                if ($poll_data[0]['start_date'] > date("Y-m-d") || $poll_data[0]['end_date'] < date("Y-m-d")) {
+                    return '<p class="text-center">This poll is ended</p>';
+                }else{
+                
                 // Sanitize the template type
                 $template_type = sanitize_text_field($poll_data[0]['template']);
                 if ($length > 1) {
@@ -732,7 +733,7 @@ class PollSurveyXpress
                         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                         $questions = $wpdb->get_results($query, ARRAY_A);
 
-                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $output .= '<div class="col">';
                         foreach ($questions as $index => $question) {
@@ -792,7 +793,7 @@ class PollSurveyXpress
                         $output .= '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
                         $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $output .= '<div class="col">';
                         foreach ($questions as $index => $question) {
@@ -838,7 +839,7 @@ class PollSurveyXpress
 
                         $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                        $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -911,7 +912,7 @@ class PollSurveyXpress
                         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                         $questions = $wpdb->get_results($query, ARRAY_A);
 
-                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $output .= '<div class="col">';
                         foreach ($questions as $index => $question) {
@@ -959,7 +960,7 @@ class PollSurveyXpress
                         $output = '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
                         $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $output .= '<div class="col">';
                         foreach ($questions as $index => $question) {
@@ -991,7 +992,7 @@ class PollSurveyXpress
 
                         $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                        $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
 
                         $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                         $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -1052,6 +1053,7 @@ class PollSurveyXpress
         } else {
             $output = '<p>Poll not found.</p>';
         }
+    }
         return $output;
     }
     // Function to update poll settings                                                                            
