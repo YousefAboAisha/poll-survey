@@ -569,15 +569,9 @@ jQuery(document).ready(function (jQuery) {
 
         open_ended_container.innerHTML = `
           <div class="d-flex flex-column justify-content-center align-items-center gap-3 bg-white rounded-3 border p-5 col-11 mx-auto">
-              <i style="font-size: 80px;" class="fas fa-circle-check text-success"></i>
-              <h3 class="m-0 text-dark">Thank you for voting!</h3>
-              <span class="text-sxx">Your vote has been successfully submitted.</span>
-              <span class="m-0 text-sxx">
-                  Go back to
-                  <a class="text-primary ms-1 fw-bold" href="admin.php?page=poll-survey-xpress-surveys">
-                      Home page
-                  </a>
-              </span>
+              <p style="font-size: 80px; height:fit-content">✅</p>
+              <h3 class="m-0 text-dark fw-bloder ">Thank you for voting!</h3>
+              <span style="font-size:15px" >Your vote has been successfully submitted.</span>
           </div>
       `;
 
@@ -613,7 +607,7 @@ jQuery(document).ready(function (jQuery) {
     // Get the user ID if logged in
     save_button.disabled = true;
     save_button.innerHTML =
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
     // Get the session ID from the browser
     const session_id = sessionStorage.getItem("my_session_id");

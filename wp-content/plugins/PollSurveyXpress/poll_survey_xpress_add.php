@@ -91,7 +91,7 @@ $templateCount = count($previewFiles);
                                         <?php echo ($details); ?>
                                     </p>
 
-                                    <a class="text-white btn bg-primary text-sm font-weight-bold mb-0 icon-move-right" href="<?php echo admin_url('admin.php?page=view_template_page&template=' . $fileName); ?>">
+                                    <a class="text-white bg-primary text-sm font-weight-bold mb-0 icon-move-right p-2 py-3 rounded-2 text-center fw-bolder" href="<?php echo admin_url('admin.php?page=view_template_page&template=' . $fileName); ?>">
                                         View Template
                                         <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                                     </a>

@@ -41,19 +41,19 @@ class PollSurveyXpress
     public function PSX_enqueue_frontend_scripts()
     {
 
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.0', true);
+        wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
 
-        //enqueue Style files
-
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.5', true);
+        wp_enqueue_script('smooth-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/smooth-scrollbar.min.js');
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my_ajax_nonce'),
         ));
+
 
         //enqueue Style files
         wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
@@ -63,7 +63,6 @@ class PollSurveyXpress
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
     }
-
     // Enqueue scripts and styles for the admin area
     public function PSX_enqueue_admin_scripts()
     {
@@ -81,7 +80,6 @@ class PollSurveyXpress
             wp_enqueue_script('perfect-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/perfect-scrollbar.min.js');
             wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
             wp_enqueue_script('chartjs-extension-script', plugin_dir_url(__FILE__) . 'js/chartjs.min.js');
-
 
             wp_enqueue_script('smooth-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/smooth-scrollbar.min.js');
             wp_localize_script('plugin-custom', 'my_ajax_object', array(
@@ -694,6 +692,7 @@ class PollSurveyXpress
     {
         global $wpdb;
 
+        $length = count($atts);
         // Sanitize the shortcode attributes
         $atts = array_map('sanitize_text_field', $atts);
 
@@ -713,162 +712,348 @@ class PollSurveyXpress
 
                 // Sanitize the template type
                 $template_type = sanitize_text_field($poll_data[0]['template']);
+                if ($length > 1) {
 
-                if ($template_type === 'Multiple Choice') {
-                    $output = '<form id="poll_form" method="post">';
+                    $output = '<div>';
+                    if ($template_type === 'Multiple Choice') {
 
-                    $output = '<div class="mt-4 container-fluid bg-transparent">';
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
-                    // Start generating the poll structure
-                    // Fetch questions from the database
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
-                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
-                    $questions = $wpdb->get_results($query, ARRAY_A);
+                        $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#mcq_data">' . $poll_data[0]['cta_Text'] . '</button>';
 
-                    $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<div class="modal fade" id="mcq_data" tabindex="-1" role="dialog" aria-hidden="true">
+                        ';
+                        $output .= '<div class="modal-dialog modal-dialog-centered">';
+                        $output .= '<div class="modal-content">';
+                        $output .= '<div class="modal-body">';
 
-                    $output .= '<div class="col">';
-                    foreach ($questions as $index => $question) {
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+                        // Start generating the poll structure
+                        // Fetch questions from the database
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
 
-                        // Show results button
-                        $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
+                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
 
-                        // Poll title     
-                        $output .= '<h6 class="mb-4">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                        $output .= '<div class="col">';
+                        foreach ($questions as $index => $question) {
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
 
-                        // Fetch answers for each question
-                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
-                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
-                        $answers = $wpdb->get_results($query, ARRAY_A);
+                            // Show results button
+                            $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
 
-                        foreach ($answers as $answer) {
-                            $output .= '<div class="poll-answer position-relative w-full d-flex align-items-center justify-content-between mb-2 p-2">';
-                            $output .= '<div id="disable_text_questions" class="d-flex align-items-center">';
-                            $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
-                            $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] . '</label>';
-                            $output .= '</div>';
-                            $output .= '</div>';
+                            // Poll title     
+                            $output .= '<h6 class="mb-4">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+
+                            // Fetch answers for each question
+                            $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                            $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
+                            $answers = $wpdb->get_results($query, ARRAY_A);
+
+                            foreach ($answers as $answer) {
+                                $output .= '<div class="poll-answer position-relative w-full d-flex align-items-center justify-content-between mb-2 p-2">';
+                                $output .= '<div id="disable_text_questions" class="d-flex align-items-center">';
+                                $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                                $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] . '</label>';
+                                $output .= '</div>';
+                                $output .= '</div>';
+                            }
+
+                            $output .= '</div>'; // Close the poll structure div
+                            $output .= '<div class="spinner-border text-primary d-none" role="status">
+                        </div>'; // Close the poll structure div
+                        }
+                        $output .= '</div>'; // Close the col div
+
+                        $output .= '<button id="mcq_save_button" disabled
+                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                            Save
+                        </button>';
+                        $output .= '</div>'; // Close the Modal body
+                        $output .= '</div>'; // Close the Modal content
+                        $output .= '</div>'; // Close the container div
+                        $output .= '</div>'; // Close the modal div
+
+
+                        // Fetch questions from the database
+                    } else if ($poll_data[0]['template'] === 'Open ended') {
+
+                        $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#open_ended_data">' . $poll_data[0]['cta_Text'] . '</button>';
+
+                        $output .= '<div class="modal fade" id="open_ended_data" tabindex="-1" role="dialog" aria-hidden="true">';
+                        $output .= '<div class="modal-dialog modal-dialog-centered">';
+                        $output .= '<div class="modal-content">';
+                        $output .= '<div class="modal-body">';
+
+                        // Start generating the poll structure
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
+
+                        $output .= '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+
+                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+
+                        $output .= '<div class="col">';
+                        foreach ($questions as $index => $question) {
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                            $output .= '<h6 class="mb-3">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                            $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Edit the poll question title"></textarea>';
+                            $output .= '</div>'; // Close the poll structure div
                         }
 
-                        $output .= '</div>'; // Close the poll structure div
-                        $output .= '<div class="spinner-border text-primary d-none" role="status">
-                    </div>'; // Close the poll structure div
-                    }
-                    $output .= '</div>'; // Close the col div
+                        $output .= '</div>'; // Close the col div
 
-                    $output .= '<button id="mcq_save_button" disabled
-                        class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        $output .= '<button disabled id="open_ended_save_button"
+                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
                         Save
                     </button>';
-                    $output .= '</div>'; // Close the container-fluid div
-                    $output .= '</form>';
 
-                    // Fetch questions from the database
-                } else if ($poll_data[0]['template'] === 'Open ended') {
-                    // Start generating the poll structure
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
-                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
-                    $questions = $wpdb->get_results($query, ARRAY_A);
-
-                    $output = '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
-
-                    $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
-
-                    $output .= '<div class="col">';
-                    foreach ($questions as $index => $question) {
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
-                        $output .= '<h6 class="mb-3">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
-                        $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Edit the poll question title"></textarea>';
-                        $output .= '</div>'; // Close the poll structure div
-                    }
-
-                    $output .= '</div>'; // Close the col div
-
-                    $output .= '<button disabled id="open_ended_save_button"
-                    class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
-                    Save
-                </button>';
-                    $output .= '</div>'; // Close the container-fluid div
-
-                } else if ($poll_data[0]['template'] === 'Rating') {
-                    // Code for the 'Rating' template
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
-                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
-                    $questions = $wpdb->get_results($query, ARRAY_A);
-
-                    $output = '<form id="poll_form" method="post">';
-                    $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
-
-                    $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+                        $output .= '</div>'; // Close the Modal body
+                        $output .= '</div>'; // Close the Modal content
+                        $output .= '</div>'; // Close the container div
+                        $output .= '</div>'; // Close the modal div
 
 
-                    $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
+                    } else if ($poll_data[0]['template'] === 'Rating') {
+                        $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#rating_data">' . $poll_data[0]['cta_Text'] . '</button>';
 
-                    $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+                        $output .= '<div class="modal fade" id="rating_data" tabindex="-1" role="dialog" aria-hidden="true">
+                        ';
+                        $output .= '<div class="modal-dialog modal-dialog-centered">';
+                        $output .= '<div class="modal-content">';
+                        $output .= '<div class="modal-body">';
 
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
-                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
-                    $ratings = $wpdb->get_results($query, ARRAY_A);
 
-                    // Start of rating buttons div
-                    $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
-                    $flag = false;
-                    $flag_text = $ratings[0]["answer_text"];
+                        // Code for the 'Rating' template
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
 
-                    foreach ($ratings as $rating) {
-                        if ($flag_text === $rating["answer_text"] && $flag) {
-                            break;
-                        }
-                        $output .= '<p class="m-0 text-sm ">' . $rating["answer_text"] . '</p>';
-                        $flag = true;
-                    }
+                        $output .= '<form id="poll_form" method="post">';
+                        $output .= '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
 
-                    $output .= '</div>';
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                    $output .= '</div>'; // Close the Rating space-between div
 
-                    $output .= '<div class="p-4">';
-                    foreach ($questions as $index => $question) {
-                        // Start of the rating card
-                        $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
-                        $output .= '<h6 class="m-0 text-break" data-question-id="' . ($index + 1) . ") " . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
+                        $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                        // Fetch answers for each question
+                        $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+
                         $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
-                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
-                        $answers = $wpdb->get_results($query, ARRAY_A);
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $ratings = $wpdb->get_results($query, ARRAY_A);
 
-                        $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+                        // Start of rating buttons div
+                        $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
+                        $flag = false;
+                        $flag_text = $ratings[0]["answer_text"];
 
-                        foreach ($answers as $answer) {
-                            $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                        foreach ($ratings as $rating) {
+                            if ($flag_text === $rating["answer_text"] && $flag) {
+                                break;
+                            }
+                            $output .= '<p class="m-0 text-sm ">' . $rating["answer_text"] . '</p>';
+                            $flag = true;
                         }
 
-                        $output .= '</div>'; // End the answers container
+                        $output .= '</div>';
 
-                        // End of the rating card
-                        $output .= "</div>";
+                        $output .= '</div>'; // Close the Rating space-between div
+
+                        $output .= '<div class="p-4">';
+                        foreach ($questions as $index => $question) {
+                            // Start of the rating card
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
+                            $output .= '<h6 class="m-0 text-break" data-question-id="' . ($index + 1) . ") " . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
+
+                            // Fetch answers for each question
+                            $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                            $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
+                            $answers = $wpdb->get_results($query, ARRAY_A);
+
+                            $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+
+                            foreach ($answers as $answer) {
+                                $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                            }
+
+                            $output .= '</div>'; // End the answers container
+
+                            // End of the rating card
+                            $output .= "</div>";
+                        }
+                        $output .= '</div>';
+
+                        $output .= '</div>';
+
+                        $output .= '<div>';
+                        $output .= '<button disabled type="submit" id="rating_save_button"
+                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0 mt-4">
+                        Save
+                        </button>';
+
+                        $output .= '</div>'; // Close the Modal body
+                        $output .= '</div>'; // Close the Modal content
+                        $output .= '</div>'; // Close the container div
+                        $output .= '</div>'; // Close the modal div
                     }
-                    $output .= '</div>';
+                    $output .= '</div>';  // Close the body tag
 
-                    $output .= '</div>';
+                } else {
+                    if ($template_type === 'Multiple Choice') {
 
-                    $output .= '<div>';
-                    $output .= '<button disabled type="submit" id="rating_save_button"
-                    class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
-                    Save
+                        $output = '<div class="mt-4 container-fluid bg-transparent">';
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+                        // Start generating the poll structure
+                        // Fetch questions from the database
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
+
+                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+
+                        $output .= '<div class="col">';
+                        foreach ($questions as $index => $question) {
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+
+                            // Show results button
+                            $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
+
+                            // Poll title     
+                            $output .= '<h6 class="mb-4">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+
+                            // Fetch answers for each question
+                            $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                            $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
+                            $answers = $wpdb->get_results($query, ARRAY_A);
+
+                            foreach ($answers as $answer) {
+                                $output .= '<div class="poll-answer position-relative w-full d-flex align-items-center justify-content-between mb-2 p-2">';
+                                $output .= '<div id="disable_text_questions" class="d-flex align-items-center">';
+                                $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                                $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] . '</label>';
+                                $output .= '</div>';
+                                $output .= '</div>';
+                            }
+
+                            $output .= '</div>'; // Close the poll structure div
+                            $output .= '<div class="spinner-border text-primary d-none" role="status">
+                        </div>'; // Close the poll structure div
+                        }
+                        $output .= '</div>'; // Close the col div
+
+                        $output .= '<button id="mcq_save_button" disabled
+                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                            Save
+                        </button>';
+                        $output .= '</div>'; // Close the container-fluid div
+
+                        // Fetch questions from the database
+                    } else if ($poll_data[0]['template'] === 'Open ended') {
+                        // Start generating the poll structure
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
+
+                        $output = '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+
+                        $output .= '<h4 class="mb-3">' . $poll_data[0]['title'] . '</h4>';
+
+                        $output .= '<div class="col">';
+                        foreach ($questions as $index => $question) {
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                            $output .= '<h6 class="mb-3">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                            $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Edit the poll question title"></textarea>';
+                            $output .= '</div>'; // Close the poll structure div
+                        }
+
+                        $output .= '</div>'; // Close the col div
+
+                        $output .= '<button disabled id="open_ended_save_button"
+                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        Save
                     </button>';
-                    $output .= '</div>';
-                }
-            } else {
-                $output = '<p>Poll not found.</p>';
-            }
-            return $output;
-        }
-    }
+                        $output .= '</div>'; // Close the container-fluid div
 
+                    } else if ($poll_data[0]['template'] === 'Rating') {
+                        // Code for the 'Rating' template
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $questions = $wpdb->get_results($query, ARRAY_A);
+
+                        $output = '<form id="poll_form" method="post">';
+                        $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
+
+                        $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
+
+
+                        $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
+
+                        $output .= '<h4 class="m-0">' . $poll_data[0]['title'] . '</h4>';
+
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $ratings = $wpdb->get_results($query, ARRAY_A);
+
+                        // Start of rating buttons div
+                        $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
+                        $flag = false;
+                        $flag_text = $ratings[0]["answer_text"];
+
+                        foreach ($ratings as $rating) {
+                            if ($flag_text === $rating["answer_text"] && $flag) {
+                                break;
+                            }
+                            $output .= '<p class="m-0 text-sm ">' . $rating["answer_text"] . '</p>';
+                            $flag = true;
+                        }
+
+                        $output .= '</div>';
+
+                        $output .= '</div>'; // Close the Rating space-between div
+
+                        $output .= '<div class="p-4">';
+                        foreach ($questions as $index => $question) {
+                            // Start of the rating card
+                            $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
+                            $output .= '<h6 class="m-0 text-break" data-question-id="' . ($index + 1) . ") " . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
+
+                            // Fetch answers for each question
+                            $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                            $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
+                            $answers = $wpdb->get_results($query, ARRAY_A);
+
+                            $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+
+                            foreach ($answers as $answer) {
+                                $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                            }
+
+                            $output .= '</div>'; // End the answers container
+
+                            // End of the rating card
+                            $output .= "</div>";
+                        }
+                        $output .= '</div>';
+
+                        $output .= '</div>';
+
+                        $output .= '<div>';
+                        $output .= '<button disabled type="submit" id="rating_save_button"
+                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
+                        Save
+                        </button>';
+                        $output .= '</div>';
+                    }
+                }
+            }
+        } else {
+            $output = '<p>Poll not found.</p>';
+        }
+        return $output;
+    }
     // Function to update poll settings                                                                            
     public function PSX_update_poll_settings()
     {
