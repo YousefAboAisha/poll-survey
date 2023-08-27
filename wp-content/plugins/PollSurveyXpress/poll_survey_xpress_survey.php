@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 global $wpdb;
 $table_name = $wpdb->prefix . 'polls_psx_polls';
@@ -123,6 +122,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                                                     <td class="align-middle">
                                                         <input style="width: 150px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
+                                                        <input style="width: 150px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?> button]'>
+
                                                     </td>
 
                                                     <td class="align-middle">
