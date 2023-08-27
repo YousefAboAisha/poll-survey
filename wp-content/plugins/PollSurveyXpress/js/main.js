@@ -372,6 +372,9 @@ jQuery(document).ready(function (jQuery) {
 
 // Multiple Choice Question collect handle
 jQuery(document).ready(function (jQuery) {
+  const poll_count = document
+    .getElementById("Title")
+    .getAttribute("data-vote-count");
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
@@ -380,6 +383,8 @@ jQuery(document).ready(function (jQuery) {
   var nonce = jQuery("#my-ajax-nonce").val();
 
   save_button.addEventListener("click", function (event) {
+    console.log(poll_count);
+
     event.preventDefault();
     console.log(nonce);
 
