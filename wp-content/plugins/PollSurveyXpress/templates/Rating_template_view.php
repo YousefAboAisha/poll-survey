@@ -213,11 +213,11 @@ $questions_with_answers_json = json_encode($questions_with_answers);
 
         <div class="mt-6 p-0 pb-4">
             <h4 class="mb-4 align-self-start p-0 w-75">
-                <?php echo ((json_decode(stripslashes($poll_data_json), true)['title'])); ?></h4>
+                <?php echo ((json_decode(($poll_data_json), true)['title'])); ?></h4>
             <div class="d-flex flex-column align-items-start mb-4 gap-3">
                 <?php
                 // Decode the JSON back to a PHP array
-                $questions_decoded = json_decode(stripslashes($questions_json), true);
+                $questions_decoded = json_decode(($questions_json), true);
 
                 // Check if decoding was successful
                 if ($questions_decoded !== null) {
@@ -233,11 +233,11 @@ $questions_with_answers_json = json_encode($questions_with_answers);
                                 $answers_query = $wpdb->prepare("
                                 SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
                                 WHERE question_id = %d and poll_id = %d
-                                ", $question['question_id'], (json_decode(stripslashes($poll_data_json), true)['poll_id']));
+                                ", $question['question_id'], (json_decode(($poll_data_json), true)['poll_id']));
 
                                 $answers = $wpdb->get_results($answers_query);
                                 $questions_with_answers_json = json_encode($answers);
-                                $answers = json_decode(stripslashes($questions_with_answers_json), true); ?>
+                                $answers = json_decode(($questions_with_answers_json), true); ?>
                                 <?php foreach ($answers as $answer) { ?>
                                     <p class="m-0 text-sm ">
                                         <?php echo $answer['answer_text']; ?>

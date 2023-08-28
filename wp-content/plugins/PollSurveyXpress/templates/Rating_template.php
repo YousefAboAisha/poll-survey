@@ -17,6 +17,8 @@
         <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
             <i class="fas fa-angle-right"></i>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark">Templates</a>
+            <i class="fas fa-angle-right"></i>
             <h6 class="font-weight-bolder mb-0 p-0 ">Rating Survey Add</h6>
         </div>
 
@@ -354,7 +356,6 @@
                     // Append the toast to the document
                     document.body.appendChild(toast);
 
-                    // Initialize the Bootstrap toast
                     // Initialize the Bootstrap toast with custom options
                     var bootstrapToast = new bootstrap.Toast(toast, {
                         autohide: true, // Set to true to enable automatic hiding
@@ -362,8 +363,9 @@
                     });
                     bootstrapToast.show();
 
-                    window.location.reload();
-
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500)
                 },
                 error: function(error) {
                     console.error("Error:", error);

@@ -33,37 +33,35 @@ $templateCount = count($previewFiles);
     }
 </style>
 
+<?php $cardData = [
+    [
+        'details' => 'Qspondents are presented with a set of questions and a predefined list of answer choices for each question. Respondents select one or more answers from the provided options.',
+        'icon' => 'fas fa-hashtag fa-lg',
+    ],
+    [
+        'details' => 'Questions prompting respondents to provide free-form, open-ended responses. Participants have the freedom to express their thoughts',
+        'icon' => 'fas fa-paragraph fa-lg',
+    ],
+    [
+        'details' => 'Participants are asked to assign ratings or scores to specific items or statements based on their preferences, opinions, or experiences.',
+        'icon' => 'fas fa-circle-dot fa-lg',
+    ],
+]; ?>
+
 <body class="bg-gray-100">
 
 
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
         <!-- Navbar -->
-        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl">
-            <div class="container-fluid py-1 px-3">
-                <nav aria-label="breadcrumb">
-                    <h6 class="font-weight-bolder mb-0">All Templates</h6>
-                </nav>
-            </div>
-        </nav>
+        <div class="d-flex align-items-center gap-2 my-4 mb-5">
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <i class="fas fa-angle-right"></i>
+            <h6 class="font-weight-bolder mb-0 p-0 ">All Templates</h6>
+        </div>
+
         <!-- End Navbar -->
-        <div class="container-fluid py-4">
+        <div class="container-fluid p-0">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mx-auto">
-
-                <?php $cardData = [
-                    [
-                        'details' => 'Qspondents are presented with a set of questions and a predefined list of answer choices for each question. Respondents select one or more answers from the provided options.',
-                        'icon' => 'fas fa-hashtag fa-lg',
-                    ],
-                    [
-                        'details' => 'Questions prompting respondents to provide free-form, open-ended responses. Participants have the freedom to express their thoughts',
-                        'icon' => 'fas fa-paragraph fa-lg',
-                    ],
-                    [
-                        'details' => 'Participants are asked to assign ratings or scores to specific items or statements based on their preferences, opinions, or experiences.',
-                        'icon' => 'fas fa-circle-dot fa-lg',
-                    ],
-                ]; ?>
-
                 <?php foreach ($previewFiles as $index => $previewFile) : ?>
                     <?php
                     // Extract the template name from the filename

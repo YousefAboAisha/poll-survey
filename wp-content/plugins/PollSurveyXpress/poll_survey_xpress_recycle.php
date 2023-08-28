@@ -206,7 +206,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                             if (rowToRemove) {
                                 rowsCount--;
                                 if (rowsCount <= 0) {
-                                    window.location.reload()
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 500)
                                 }
                                 rowToRemove.remove(); // Remove the row from the table
 
@@ -269,7 +271,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         if (rowToRemove) {
                             rowsCount--;
                             if (rowsCount <= 0) {
-                                window.location.reload()
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 500)
                             }
                             rowToRemove.remove(); // Remove element
                         } else {

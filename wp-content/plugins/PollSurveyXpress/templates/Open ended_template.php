@@ -15,28 +15,28 @@
         <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
             <i class="fas fa-angle-right"></i>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark">Templates</a>
+            <i class="fas fa-angle-right"></i>
             <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey Add</h6>
         </div>
 
-        <!-- End Navbar -->
-        <div class="d-flex flex-column justify-content-center align-items-center gap-3">
-            <div class="d-flex w-100 flex-column gap-2 border rounded-3 bg-white">
-                <div class="p-4 pt-3">
-                    <div class="mb-2">
-                        <label for="surveyTitle" class="form-label">Add new question</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
-                            <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
-                                <i class="fas fa-plus text-sm p-0" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
             <input type="text" class="form-control p-2 border rounded-1" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
+            <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
+
+            <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mt-4 mb-2">
+                <div class="mb-2">
+                    <label for="surveyTitle" class="form-label">Add new question</label>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
+                        <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
+                            <i class="fas fa-plus text-sm p-0" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <div id="questionsGroup" class="flex flex-column gap-2 w-100">
                 <div class="d-flex justify-content-between align-items-center w-100 mb-3"></div>
@@ -66,7 +66,6 @@
 
                 <!-- Modal body -->
                 <form class="modal-body card">
-                    <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
                     <div>
                         <label>Change plugin Theme</label>
@@ -253,11 +252,9 @@
                 if (questionsArray.length <= 0) {
                     save_button.disabled = true
                 }
-
-
             }
-
         }
+
         save_button.addEventListener("click", () => {
             save_button.disabled = true;
             save_button.innerHTML =
@@ -289,11 +286,10 @@
                     poll_data: JSON.stringify(finalObj),
                     nonce: nonce,
                 },
-                success: function(shortcode) {
+                success: function() {
                     console.log("Done");
                     save_button.textContent = "Save";
                     save_button.disabled = false;
-
 
                     // Create a new toast element
                     var toast = document.createElement("div");
@@ -307,7 +303,6 @@
                     // Append the toast to the document
                     document.body.appendChild(toast);
 
-                    // Initialize the Bootstrap toast
                     // Initialize the Bootstrap toast with custom options
                     var bootstrapToast = new bootstrap.Toast(toast, {
                         autohide: true, // Set to true to enable automatic hiding
@@ -315,7 +310,9 @@
                     });
                     bootstrapToast.show();
 
-                    window.location.reload();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500)
 
                 },
                 error: function(error) {
@@ -340,9 +337,6 @@
             }
         });
     </script>
-
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>

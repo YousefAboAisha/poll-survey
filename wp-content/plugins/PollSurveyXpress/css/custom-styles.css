@@ -25,3 +25,10 @@ input:disabled {
   left: 0 !important;
   height: 4px !important;
 }
+
+input[type="radio"] {
+  width: 25px !important;
+  min-width: 25px !important;
+  height: 25px !important;
+  min-height: 25px !important;
+}

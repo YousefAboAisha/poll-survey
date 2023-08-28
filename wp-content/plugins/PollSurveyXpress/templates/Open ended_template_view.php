@@ -195,13 +195,13 @@ $questions_json = json_encode($questions);
 
         <div class="mt-6 p-0 pb-4">
             <h4 class="mb-4 m-0 align-self-start p-0">
-                <?php echo ((json_decode(stripslashes($poll_data_json), true)['title'])); ?></h4>
+                <?php echo ((json_decode(($poll_data_json), true)['title'])); ?></h4>
 
             <div class="row row-cols-1 row-cols-lg-2 g-2">
 
                 <?php
                 // Decode the JSON back to a PHP array
-                $questions_decoded = json_decode(stripslashes($questions_json), true);
+                $questions_decoded = json_decode(($questions_json), true);
 
                 // Check if decoding was successful
                 if ($questions_decoded !== null) {

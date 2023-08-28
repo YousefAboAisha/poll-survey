@@ -71,7 +71,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                             </th>
 
                                             <th class=" text-uppercase text-xxs p-4">
-                                                Shortcode
+                                                Shortcodes
                                             </th>
 
                                             <th class=" text-uppercase text-xxs p-4">
@@ -107,7 +107,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p title=<?php echo $poll->title; ?> style="width: 120px;" class="text-xs mb-0 text-truncate">
+                                                        <p title="<?php echo $poll->title; ?>" style="width: 120px;" class="text-xs mb-0 text-truncate">
                                                             <?php echo $poll->title; ?>
                                                         </p>
                                                     </td>
@@ -119,8 +119,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <input style="width: 150px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
-                                                        <input style="width: 150px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?> button]'>
+                                                        <input title="Normal Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
+                                                        <input title="Button Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?> button]'>
                                                     </td>
 
                                                     <td class="align-middle">
@@ -281,7 +281,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         if (rowToRemove) {
                             rowsCount--;
                             if (rowsCount <= 0) {
-                                window.location.reload()
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 500)
                             }
                             rowToRemove.remove(); // Remove the row from the table
                             console.log("Minus count", rowsCount);
