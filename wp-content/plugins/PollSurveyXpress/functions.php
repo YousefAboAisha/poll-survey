@@ -716,8 +716,7 @@ class PollSurveyXpress
 
                             $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#mcq_data">' . $poll_data[0]['cta_Text'] . '</button>';
 
-                            $output .= '<div class="modal fade" id="mcq_data" tabindex="-1" role="dialog" aria-hidden="true">
-                        ';
+                            $output .= '<div class="modal fade" id="mcq_data" tabindex="-1" role="dialog" aria-hidden="true">';
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
                             $output .= '<div class="modal-body">';
@@ -779,14 +778,14 @@ class PollSurveyXpress
                             $output .= '<div class="modal fade" id="open_ended_data" tabindex="-1" role="dialog" aria-hidden="true">';
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
-                            $output .= '<div class="modal-body">';
+                            $output .= '<div id="open_ended_container"  class="modal-body">';
 
                             // Start generating the poll structure
                             $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
+                            $output .= '<div class="mt-4 container-fluid bg-transparent">';
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
                             $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
@@ -819,7 +818,7 @@ class PollSurveyXpress
                         ';
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa;">';
-                            $output .= '<div class="modal-body">';
+                            $output .= '<div id="rating_container" class="modal-body">';
 
 
                             // Code for the 'Rating' template
@@ -827,7 +826,6 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<form id="poll_form" method="post">';
                             $output .= '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
 
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
@@ -979,8 +977,7 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output = '<form id="poll_form" method="post">';
-                            $output = '<div class="position-relative w-100 col-12 mt-4 bg-white border">';
+                            $output = '<div id="rating_container" class="position-relative w-100 col-12 mt-4 bg-white border">';
 
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 

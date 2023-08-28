@@ -92,6 +92,7 @@ jQuery(document).ready(function (jQuery) {
       },
       success: function (response) {
         save_button.textContent = "DONE!";
+        save_button.style.display = "none";
 
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
@@ -99,6 +100,25 @@ jQuery(document).ready(function (jQuery) {
         // Now you can work with the decoded data
         console.log("JSON data:", jsonData);
         console.log("Percentages:", percentages);
+
+        // Create a new toast element
+        var toast = document.createElement("div");
+        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+        toast.innerHTML = `
+        <p class="m-0 fw-bold text-xs text-white">
+          You have successfully submitted your votes!
+        </p>
+         `;
+        // Append the toast to the document
+        document.body.appendChild(toast);
+
+        // Initialize the Bootstrap toast with custom options
+        var bootstrapToast = new bootstrap.Toast(toast, {
+          autohide: true, // Set to true to enable automatic hiding
+          delay: 2000,
+        });
+        bootstrapToast.show();
 
         show_results_buttons.forEach((button) => {
           button.disabled = false;
@@ -231,15 +251,33 @@ jQuery(document).ready(function (jQuery) {
         save_button.disabled = true;
 
         open_ended_container.innerHTML = `
-          <div class="d-flex flex-column justify-content-center align-items-center gap-3 bg-white rounded-3 border p-5 col-11 mx-auto">
-              <p style="font-size: 80px; height:fit-content">✅</p>
-              <h3 class="m-0 text-dark fw-bloder ">Thank you for voting!</h3>
-              <span style="font-size:15px" >Your vote has been successfully submitted.</span>
+          <div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto">
+              <p style="font-size: 60px; height:fit-content">✅</p>
+              <h3 class="m-0 text-dark fw-bolder p-0 text-center">You have successfully submitted your votes!</h3>
+              <span class="m-0 p-0" style="font-size:15px" >Your vote has been successfully submitted.</span>
           </div>
-      `;
-
+          `;
         console.log("Done");
-        // window.location.reload();
+        save_button.style.display = "none";
+
+        // Create a new toast element
+        var toast = document.createElement("div");
+        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+        toast.innerHTML = `
+        <p class="m-0 fw-bold text-xs text-white">
+          You have successfully submitted your votes!
+        </p>
+    `;
+        // Append the toast to the document
+        document.body.appendChild(toast);
+
+        // Initialize the Bootstrap toast with custom options
+        var bootstrapToast = new bootstrap.Toast(toast, {
+          autohide: true, // Set to true to enable automatic hiding
+          delay: 2000,
+        });
+        bootstrapToast.show();
       },
       error: function (error) {
         console.error("Error:", error);
@@ -258,6 +296,7 @@ jQuery(document).ready(function (jQuery) {
   var nonce = jQuery("#my-ajax-nonce").val();
 
   const save_button = document.getElementById("rating_save_button");
+  const rating_container = document.getElementById("rating_container");
   // Disable the button and add spinner/loading text
 
   save_button.addEventListener("click", function (event) {
@@ -306,6 +345,34 @@ jQuery(document).ready(function (jQuery) {
       success: function (response) {
         save_button.textContent = "DONE!";
         save_button.disabled = true;
+
+        rating_container.innerHTML = `
+          <div class="d-flex flex-column justify-content-center align-items-center gap-3 p-5 col-11 mx-auto">
+              <p class="m-0 p-0" style="font-size: 60px; height:fit-content">✅</p>
+              <h3 class="m-0 text-dark fw-bolder p-0">You have successfully submitted your votes!</h3>
+              <span style="font-size:15px" >Your vote has been successfully submitted.</span>
+          </div>
+      `;
+        save_button.style.display = "none";
+
+        // Create a new toast element
+        var toast = document.createElement("div");
+        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+        toast.innerHTML = `
+        <p class="m-0 fw-bold text-xs text-white">
+          You have successfully submitted your votes!
+        </p>
+    `;
+        // Append the toast to the document
+        document.body.appendChild(toast);
+
+        // Initialize the Bootstrap toast with custom options
+        var bootstrapToast = new bootstrap.Toast(toast, {
+          autohide: true, // Set to true to enable automatic hiding
+          delay: 2000,
+        });
+        bootstrapToast.show();
       },
       error: function (error) {
         console.error("Error:", error);

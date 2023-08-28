@@ -126,6 +126,13 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                 </table>
                             </div>
                         </div>
+
+                        <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
+                            <span class="m-0 p-0" id="currentPage">Page 1</span>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -289,10 +296,51 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
         });
     </script>
 
+    <script>
+        jQuery(document).ready(function() {
+            const pollsPerPage = 10;
+            let currentPage = 1;
+            const rows = jQuery('.gray-row');
+            const totalRows = rows.length;
 
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+            function displayRows() {
+                rows.hide(); // Hide all rows
+                const startIndex = (currentPage - 1) * pollsPerPage;
+                const endIndex = startIndex + pollsPerPage;
+
+                for (let i = startIndex; i < endIndex && i < totalRows && i < startIndex + pollsPerPage; i++) {
+                    rows.eq(i).show(); // Show the rows for the current page
+                }
+
+                jQuery('#currentPage').text(`Page ${currentPage}`);
+
+                // Disable "Previous" button if on the first page
+                jQuery('#prevPage').prop('disabled', currentPage === 1);
+
+                // Disable "Next" button if on the last page
+                const totalPages = Math.ceil(totalRows / pollsPerPage);
+                jQuery('#nextPage').prop('disabled', currentPage === totalPages || totalRows === 0);
+            }
+
+            displayRows();
+
+            jQuery('#prevPage').on('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayRows();
+                }
+            });
+
+            jQuery('#nextPage').on('click', function() {
+                const totalPages = Math.ceil(totalRows / pollsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayRows();
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

@@ -52,14 +52,14 @@ $templateCount = count($previewFiles);
 
 
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
-        <!-- Navbar -->
+
         <div class="d-flex align-items-center gap-2 my-4 mb-5">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
             <i class="fas fa-angle-right"></i>
             <h6 class="font-weight-bolder mb-0 p-0 ">All Templates</h6>
         </div>
 
-        <!-- End Navbar -->
+
         <div class="container-fluid p-0">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 mx-auto">
                 <?php foreach ($previewFiles as $index => $previewFile) : ?>

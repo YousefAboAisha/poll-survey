@@ -33,10 +33,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
 <body>
 
-    <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
-        <!-- Navbar -->
+    <main class="main-content position-relative max-height-vh-100 h-100 mt-1">
 
-        <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="py-4">
                 <div class="row">
@@ -98,7 +96,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                             $reversedPolls = array_reverse($polls);
                                             foreach ($reversedPolls as $poll) {
                                             ?>
-
                                                 <tr data-count=<?php echo count($polls); ?> class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
                                                     <td>
                                                         <p class="text-xs mb-0 m-0 text-center align-middle ">
@@ -136,35 +133,30 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
                                                     <!-- Other dynamic data columns here -->
 
-                                                    <td class="d-flex align-items-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
+                                                    <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1" style="height: 77px;">
                                                         <a href="<?php echo admin_url('admin.php?page=show_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                            <i class="fas fa-eye text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
+                                                            <i class="fas fa-eye text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=edit_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                            <i class="fas fa-pen text-sm text-dark" aria-hidden="true" style="cursor: pointer"></i>
+                                                            <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
-                                                        <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
+                                                        <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
 
                                                     </td>
                                                 </tr>
-                                                <?php $index++; ?>
-                                                <tr data-count=<?php echo count($polls); ?> data-index="<?php echo $index; ?>" class="gray-row" id="survey_data" data-card-id=<?php echo $poll->poll_id; ?>>
-
-                                                <?php } ?>
                                             <?php } ?>
-
+                                        <?php } ?>
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
-                            <span class="m-0 p-0" id="currentPage">Page 1</span>
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
-                        </div>
+                    <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
+                        <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
+                        <span class="m-0 p-0" id="currentPage">Page 1</span>
+                        <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
                     </div>
                 </div>
             </div>
@@ -301,7 +293,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
     <script>
         jQuery(document).ready(function() {
-            const pollsPerPage = 20;
+            const pollsPerPage = 10;
             let currentPage = 1;
             const rows = jQuery('.gray-row');
             const totalRows = rows.length;
@@ -343,6 +335,5 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
             });
         });
     </script>
-
 
 </body>
