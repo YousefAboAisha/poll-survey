@@ -19,16 +19,18 @@
 
             <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
                 <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
-                <div class="form-group d-flex flex-column">
+                <div class="form-group">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_option('PSX_email')) echo 'checked'; ?> />
                         <label class="form-check-label" for="email">
                             Email on survey deactivation
                         </label>
-
                     </div>
 
-                    <input id="email_input" type="text" class="form-control border rounded-1 w-25 text-dark" value="<?php echo get_option('admin_email') ?>">
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
+                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4" value="<?php echo get_option('admin_email') ?>" placeholder="Enter your email">
+                    </div>
+
 
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_option('PSX_gdpr')) echo 'checked'; ?> />
@@ -45,7 +47,22 @@
                     </div>
                 </div>
 
-                <button type="button" name="save_changes" id="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-2">
+                <div class="d-flex flex-column gap-2 mt-2">
+                    <h4>Front-end messages</h4>
+
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
+                        <label class="form-check-label">When poll status is (inactive)</label>
+                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter inactive message..." />
+                    </div>
+
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
+                        <label class="form-check-label">When poll is (expired)</label>
+                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter expire message..." />
+                    </div>
+
+                </div>
+
+                <button type="button" name="save_changes" id="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-4">
                     Save changes
                 </button>
             </form>
