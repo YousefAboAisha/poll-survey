@@ -116,8 +116,8 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <input title="Normal Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?>]'>
-                                                        <input title="Button Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[poll <?php echo $poll->Short_Code; ?> button]'>
+                                                        <input title="Normal Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[<?php echo $poll->Short_Code; ?>]'>
+                                                        <input title="Button Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[<?php echo $poll->Short_Code; ?> btn]'>
                                                     </td>
 
                                                     <td class="align-middle">
@@ -134,10 +134,10 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     <!-- Other dynamic data columns here -->
 
                                                     <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1" style="height: 77px;">
-                                                        <a href="<?php echo admin_url('admin.php?page=show_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
                                                             <i class="fas fa-eye text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
-                                                        <a href="<?php echo admin_url('admin.php?page=edit_template_page&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id.'&action=edit'); ?>">
                                                             <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 

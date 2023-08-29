@@ -39,9 +39,14 @@ jQuery(document).ready(function (jQuery) {
   const poll_count = document
     .getElementById("Title")
     .getAttribute("data-vote-count");
+  const poll_results = document
+    .getElementById("Title")
+    .getAttribute("data-show-results");
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
+  const message = document.getElementById("message");
+  const mcq_container = document.getElementById("mcq_container");
 
   const save_button = document.getElementById("mcq_save_button");
   var nonce = jQuery("#my-ajax-nonce").val();
@@ -96,6 +101,13 @@ jQuery(document).ready(function (jQuery) {
 
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
+
+        if (poll_results != null) {
+          mcq_container.innerHTML = ``;
+          mcq_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+
+        }
 
         // Now you can work with the decoded data
         console.log("JSON data:", jsonData);
@@ -199,7 +211,7 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("poll_card")
     .getAttribute("data-card-id");
   // Assume you have a button with ID "get_values_button" to trigger the action
-
+  const message = document.getElementById("message");
   const save_button = document.getElementById("open_ended_save_button");
   const open_ended_container = document.getElementById("open_ended_container");
 
@@ -249,15 +261,9 @@ jQuery(document).ready(function (jQuery) {
       success: function (response) {
         save_button.textContent = "DONE!";
         save_button.disabled = true;
-
-        open_ended_container.innerHTML = `
-          <div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto">
-              <p style="font-size: 60px; height:fit-content">✅</p>
-              <h3 class="m-0 text-dark fw-bolder p-0 text-center">You have successfully submitted your votes!</h3>
-              <span class="m-0 p-0" style="font-size:15px" >Your vote has been successfully submitted.</span>
-          </div>
-          `;
-        console.log("Done");
+        open_ended_container.innerHTML = ``;
+        open_ended_container.style.cssText = "display:none !important";
+        message.style.cssText = "display:flex !important";
         save_button.style.display = "none";
 
         // Create a new toast element
@@ -290,6 +296,11 @@ jQuery(document).ready(function (jQuery) {
 
 // Rating collect data
 jQuery(document).ready(function (jQuery) {
+  const poll_results = document
+    .getElementById("Title")
+    .getAttribute("data-show-results");
+  const message = document.getElementById("message");
+
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
@@ -345,14 +356,12 @@ jQuery(document).ready(function (jQuery) {
       success: function (response) {
         save_button.textContent = "DONE!";
         save_button.disabled = true;
+        if (poll_results != null) {
+          rating_container.innerHTML = ``;
+          rating_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+        }
 
-        rating_container.innerHTML = `
-          <div class="d-flex flex-column justify-content-center align-items-center gap-3 p-5 col-11 mx-auto">
-              <p class="m-0 p-0" style="font-size: 60px; height:fit-content">✅</p>
-              <h3 class="m-0 text-dark fw-bolder p-0">You have successfully submitted your votes!</h3>
-              <span style="font-size:15px" >Your vote has been successfully submitted.</span>
-          </div>
-      `;
         save_button.style.display = "none";
 
         // Create a new toast element

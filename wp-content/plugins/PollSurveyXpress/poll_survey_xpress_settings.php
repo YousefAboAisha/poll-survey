@@ -52,12 +52,12 @@
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
                         <label class="form-check-label">When poll status is (inactive)</label>
-                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter inactive message..." />
+                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter inactive message..." value ="<?php echo get_option('PSX_status_message')?>"/>
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
                         <label class="form-check-label">When poll is (expired)</label>
-                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter expire message..." />
+                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2" value ="<?php echo get_option('PSX_expire_message')?>" placeholder="Enter expire message..." />
                     </div>
 
                 </div>
@@ -79,8 +79,9 @@
         const isEmailChecked = document.getElementById("email").checked;
         const email_input = document.getElementById("email_input");
         const save_changes = document.getElementById("save_changes");
-
-        // Define the function to handle the initial state
+        const status_message = document.getElementById("status_message");
+        const expire_message = document.getElementById("expire_message");
+        
         // Define the function to handle the initial state
         function setInitialEmailState() {
             if (emailRadioButton.checked) {
@@ -112,6 +113,8 @@
             gdpr: document.getElementById("gdpr").checked,
             clear_data: document.getElementById("clear_data").checked,
             admin_email: email_input.value,
+            expire_message: expire_message.value,
+            status_message: status_message.value,
         }
         save_changes.addEventListener("click", function() {
             save_changes.disabled = true;
@@ -123,6 +126,8 @@
                 gdpr: document.getElementById("gdpr").checked,
                 clear_data: document.getElementById("clear_data").checked,
                 admin_email: email_input.value,
+                expire_message: expire_message.value,
+                status_message: status_message.value,
             }
             console.log(finalObj);
             jQuery.ajax({

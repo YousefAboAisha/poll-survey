@@ -9,9 +9,6 @@ class PollSurveyXpress
         add_action('admin_enqueue_scripts', array($this, 'PSX_enqueue_admin_scripts'));
         add_action('admin_menu', array($this, 'PSX_add_admin_menu_link'));
         add_action('admin_bar_menu', array($this, 'PSX_toolbar_link'), 99);
-        add_action('admin_menu', array($this, 'PSX_view_template_action'));
-        add_action('admin_menu', array($this, 'PSX_edit_templates_action'));
-        add_action('admin_menu', array($this, 'PSX_show_templates_action'));
         add_action('wp_enqueue_scripts', array($this, 'PSX_enqueue_frontend_scripts'));
 
 
@@ -27,7 +24,7 @@ class PollSurveyXpress
         add_action("wp_ajax_nopriv_PSX_restore_poll", array($this, "PSX_restore_poll")); // For non-logged-in users
         add_action("wp_ajax_PSX_permenant_delete", array($this, "PSX_permenant_delete"));
         add_action("wp_ajax_nopriv_PSX_permenant_delete", array($this, "PSX_permenant_delete")); // For non-logged-in users
-        add_shortcode('poll', array($this, 'PSX_poll_shortcode_handler'));
+        add_shortcode('poll_psx', array($this, 'PSX_poll_shortcode_handler'));
         add_action("wp_ajax_PSX_update_poll_settings", array($this, "PSX_update_poll_settings"));
         add_action("wp_ajax_nopriv_PSX_update_poll_settings", array($this, "PSX_update_poll_settings")); // For non-logged-in users
         add_action('wp_ajax_PSX_save_poll_response', array($this, 'PSX_save_poll_response'));
@@ -227,22 +224,41 @@ class PollSurveyXpress
     // Callback method for the Surveys page
     public function PSX_poll_survey_xpress_surveys_callback()
     {
-        include 'poll_survey_xpress_survey.php';
+        if (!isset($_GET['poll_id'])) {
+            include 'poll_survey_xpress_survey.php';
+        } elseif (isset($_GET['poll_id']) && !isset($_GET['action'])) {
+            $template = $_GET['template'];
+            $templatePath = dirname(__FILE__) . '/templates/' . $template . '_template_view.php';
+            include($templatePath);
+        }else{
+            $templatePath = dirname(__FILE__) . '/templates/' .'surveys_template_edit.php';
+            include($templatePath);        }
     }
 
-    // Callback method for the Add page
+    // Callback method for the Add page and templates (Add New)
     public function PSX_poll_survey_xpress_add_callback()
-    {
-        if (!isset($_GET['view_template'])) {
+    {    
+        if (!isset($_GET['template'])) {
             include 'poll_survey_xpress_add.php';
+        } else {
+            $template = $_GET['template'];
+            $templatePath = dirname(__FILE__) . '/templates/' . $template . '_template.php';
+            
+            if (file_exists($templatePath)) {
+                include $templatePath;
+            } else {
+                echo "Template not found.";
+            }
+        
         }
     }
-
+    
     // Callback method for the Settings page
     public function PSX_poll_survey_xpress_settings_callback()
     {
         include 'poll_survey_xpress_settings.php';
     }
+    
     // Add menu link in top bar (PollSurveyXpress)
     public function PSX_toolbar_link($wp_admin_bar)
     {
@@ -258,79 +274,7 @@ class PollSurveyXpress
             $wp_admin_bar->add_node($link_data);
         }
     }
-    //hidden menu to add pages of templates
-    public function PSX_view_template_action()
-    {
-        add_submenu_page(
-            null, // Parent slug (null creates a hidden menu page)
-            'Template', // Page title
-            'View Template', // Menu title
-            'manage_options', // Capability
-            'view_template_page', // Menu slug
-            array($this, 'PSX_view_template_page_callback') // Callback function
-        );
-    }
-    //render pages of templates
-    public function PSX_view_template_page_callback()
-    {
-        if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'view_template_page') {
-            // Get the template slug from the query parameter
-            $templateSlug = sanitize_text_field($_GET['template']);
 
-            // Include the template file
-            include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template.php');
-        }
-    }
-
-    //hidden menu to edit pages of templates
-    public function PSX_edit_templates_action()
-    {
-        add_submenu_page(
-            null,
-            'Edit Template', // Page title
-            'Edit Template', // Menu title
-            'manage_options', // Capability
-            'edit_template_page', // Menu slug
-            array($this, 'PSX_view_edit_template_page_callback') // Callback function
-        );
-    }
-
-    //render pages of templates
-    public function PSX_view_edit_template_page_callback()
-    {
-        if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'edit_template_page') {
-
-            // Include the edit template file
-            include(plugin_dir_path(__FILE__) . 'templates/surveys_template_edit.php');
-        }
-    }
-
-    //hidden menu to show pages of templates
-    public function PSX_show_templates_action()
-    {
-        add_submenu_page(
-            null,
-            'Show Template', // Page title
-            'Edit Template', // Menu title
-            'manage_options', // Capability
-            'show_template_page', // Menu slug
-            array($this, 'PSX_show_templates_action_callback') // Callback function
-        );
-    }
-
-    //render pages of templates
-    public function PSX_show_templates_action_callback()
-    {
-        if (isset($_GET['template']) && isset($_GET['page']) && $_GET['page'] === 'show_template_page') {
-            // Get the template slug from the query parameter
-            $templateSlug = sanitize_text_field($_GET['template']);
-            // Get the poll ID from the query parameter
-            $pollId = isset($_GET['poll_id']) ? intval($_GET['poll_id']) : 0;
-
-            // Include the edit template file
-            include(plugin_dir_path(__FILE__) . 'templates/' . $templateSlug . '_template_view.php');
-        }
-    }
     //Function to change settings values in database
 
     public function PSX_save_changes_settings()
@@ -344,6 +288,8 @@ class PollSurveyXpress
         update_option('PSX_gdpr', $settings_data['gdpr']);
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
+        update_option('PSX_expire_message', $settings_data['expire_message']);
+        update_option('PSX_status_message', $settings_data['status_message']);
 
         $admin_email = get_option('admin_email');
         // Get the submitted admin email from the form
@@ -409,7 +355,7 @@ class PollSurveyXpress
             $poll_id = $wpdb->insert_id;
 
             // Generate the shortcode based on title and ID
-            $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
+            $shortcode = 'poll_psx '. $poll_id;
 
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
@@ -490,7 +436,7 @@ class PollSurveyXpress
             $poll_id = $wpdb->insert_id;
 
             // Generate the shortcode based on title and ID
-            $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
+            $shortcode = 'poll_psx '. $poll_id;
 
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
@@ -547,7 +493,7 @@ class PollSurveyXpress
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $sharing = $settings['sharing'] ? 'true' : 'false';
-            $real_time_result_text = isset($settings['real_time_check']) ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
@@ -571,7 +517,7 @@ class PollSurveyXpress
             $poll_id = $wpdb->insert_id;
 
             // Generate the shortcode based on title and ID
-            $shortcode = 'poll_' . sanitize_title_with_dashes($surveyTitle) . '_' . $poll_id;
+            $shortcode = 'poll_psx '. $poll_id;
 
             // Update the Short_Code field in polls_psx_polls table
             $wpdb->update(
@@ -694,7 +640,7 @@ class PollSurveyXpress
 
         // Extract the poll ID from the shortcode
         $components = explode("_", $atts[0]);
-        $poll_id = absint($components[2]);
+        $poll_id = absint($components[0]);
 
         // Query the database
         $table_name = $wpdb->prefix . 'polls_psx_polls';
@@ -704,7 +650,7 @@ class PollSurveyXpress
         if ($poll_data) {
             if ($poll_data[0]['status'] === 'active') {
                 if ($poll_data[0]['end_date'] < date("Y-m-d", strtotime("+1 day"))) {
-                    return '<p class="text-center">This poll is ended</p>';
+                    $output = '<p>'.get_option('PSX_expire_message').'</p>';
                 } else {
 
                     // Sanitize the template type
@@ -713,13 +659,24 @@ class PollSurveyXpress
 
                         $output = '<div>';
                         if ($template_type === 'Multiple Choice') {
-
+                            
                             $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#mcq_data">' . $poll_data[0]['cta_Text'] . '</button>';
 
                             $output .= '<div class="modal fade" id="mcq_data" tabindex="-1" role="dialog" aria-hidden="true">';
+                            
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
+                            
+                            if (!empty($poll_data[0]['real_time_result_text'])){
+                              
+                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto modal-content" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                            }
+                            
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
-                            $output .= '<div class="modal-body">';
+                            $output .= '<div id="mcq_container"  class="modal-body">';
 
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
                             // Start generating the poll structure
@@ -728,8 +685,9 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
+                            $output .= '<h2>' .$poll_data[0]['real_time_result_text']. '<h2>';
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
                                 $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
@@ -772,14 +730,24 @@ class PollSurveyXpress
 
                             // Fetch questions from the database
                         } else if ($poll_data[0]['template'] === 'Open ended') {
-
+                            
                             $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#open_ended_data">' . $poll_data[0]['cta_Text'] . '</button>';
 
                             $output .= '<div class="modal fade" id="open_ended_data" tabindex="-1" role="dialog" aria-hidden="true">';
+                            
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
+                            $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto modal-content" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                        
+                            
+                            
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
+                           
                             $output .= '<div id="open_ended_container"  class="modal-body">';
-
+                            
                             // Start generating the poll structure
                             $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -788,7 +756,7 @@ class PollSurveyXpress
                             $output .= '<div class="mt-4 container-fluid bg-transparent">';
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                            $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
@@ -817,6 +785,13 @@ class PollSurveyXpress
                             $output .= '<div class="modal fade" id="rating_data" tabindex="-1" role="dialog" aria-hidden="true">
                         ';
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
+                            if (!empty($poll_data[0]['real_time_result_text'])){
+                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto modal-content" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                            }
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa;">';
                             $output .= '<div id="rating_container" class="modal-body">';
 
@@ -832,7 +807,7 @@ class PollSurveyXpress
 
                             $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center p-3 ">';
 
-                            $output .= '<h5 class="" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h5>';
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -898,6 +873,13 @@ class PollSurveyXpress
                         if ($template_type === 'Multiple Choice') {
 
                             $output = '<div class="mt-4 container-fluid bg-transparent">';
+                            if (!empty($poll_data[0]['real_time_result_text'])){
+                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                            }
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
                             // Start generating the poll structure
                             // Fetch questions from the database
@@ -905,12 +887,12 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
                                 $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
-
+                                
                                 // Show results button
                                 $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
 
@@ -950,10 +932,16 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output = '<div id="open_ended_container" class="mt-4 container-fluid bg-transparent">';
+                            if (!empty($poll_data[0]['real_time_result_text'])){
+                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                            }
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                            $output .= '<h4 class="mb-3" id ="Title" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
@@ -976,16 +964,21 @@ class PollSurveyXpress
                             $table_name = $wpdb->prefix . 'polls_psx_survey_questions';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
-
+                            if (!empty($poll_data[0]['real_time_result_text'])){
+                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-4 col-11 mx-auto" id="message">
+                                <p style="font-size: 60px; height:fit-content">✅</p>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' .$poll_data[0]['real_time_result_text'].  '</h3>
+                                </div>
+                                ';
+                            }
                             $output = '<div id="rating_container" class="position-relative w-100 col-12 mt-4 bg-white border">';
-
+                           
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
 
                             $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                            $output .= '<h4 class="mb-3" data-vote-count ="' . $poll_data[0]['min_votes']  . '">' .  $poll_data[0]['title'] . '</h4>';
-
+                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
                             $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $ratings = $wpdb->get_results($query, ARRAY_A);
@@ -1043,7 +1036,7 @@ class PollSurveyXpress
                     }
                 }
             } else {
-                $output = '<p>Poll not found.</p>';
+                $output = '<p>'.get_option('PSX_status_message').'</p>';
             }
         }
         return $output;
@@ -1061,15 +1054,14 @@ class PollSurveyXpress
             $poll_id = absint($poll_data_array["poll_id"]);
             $start_date = sanitize_text_field($poll_data_array["start_date"]);
             $end_date = sanitize_text_field($poll_data_array["end_date"]);
-            $status = isset($poll_data_array["status"]) ? (bool) $poll_data_array["status"] : false;
+            $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
-            $sharing = isset($poll_data_array["sharing"]) ? sanitize_text_field($poll_data_array["sharing"]) : 'false';
+            $sharing = $poll_data_array["sharing"] ? true : false;
             $real_time_result_text = sanitize_text_field($poll_data_array["real_time_result_text"]);
-            $real_time_check = isset($poll_data_array["real_time_check"]) ? (bool) $poll_data_array["real_time_check"] : false;
+            $real_time_check = $poll_data_array["real_time_check"] ? true : false;
             $min_votes = absint($poll_data_array["min_votes"]);
             $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
-
             $table_name = $wpdb->prefix . "polls_psx_polls";
             $wpdb->update(
                 $table_name,
