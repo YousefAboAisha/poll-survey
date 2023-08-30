@@ -15,11 +15,11 @@
     <main class="col-lg-8 col-md-9 col-10 mx-auto main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
 
         <div class="d-flex align-items-center gap-2 my-4">
-            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Home', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark">Templates</a>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark"><?php _e('Templates', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <h6 class="font-weight-bolder mb-0 p-0 ">Rating Survey Add</h6>
+            <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Rating Survey Add', 'psx-poll-survey-plugin'); ?></h6>
         </div>
 
 
@@ -43,7 +43,7 @@
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mb-4">
                 <div class="mb-2">
-                    <label for="surveyTitle" class="form-label">Add new question</label>
+                    <label for="surveyTitle" class="form-label"><?php _e('Add new question', 'psx-poll-survey-plugin'); ?></label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="text" class="form-control p-2 border rounded-1" id="questionInput" placeholder="Question title" />
                         <button id="addQuestion" class="text-primary p-0 border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
@@ -62,7 +62,7 @@
         </div>
 
         <button disabled id="save_button" type="button" class="align-self-start text-white btn bg-primary col-lg-3 col-md-4 col-4 text-sm font-weight-bold mb-0 mb-5 mt-2">
-            Save
+        <?php _e('Save', 'psx-poll-survey-plugin'); ?> 
         </button>
 
     </main>
@@ -77,33 +77,32 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title">Survey Settings</h5>
+                    <h5 class="modal-title"> <?php _e('Survey Settings', 'psx-poll-survey-plugin'); ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- Modal body -->
                 <form class="modal-body card">
                     <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
-
                     <div>
-                        <label>Change plugin Theme</label>
+                        <label><?php _e('Change plugin Theme', 'psx-poll-survey-plugin'); ?></label>
 
                         <div class="d-flex align-items-center px-2 gap-2">
-                            <span class="text-sm fw-bold"> Bg color</span>
+                            <span class="text-sm fw-bold"><?php _e('Bg color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#F00" />
-                            <span class="text-sm fw-bold"> Text color </span>
+                            <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="#006600" />
                         </div>
                     </div>
 
                     <div class="d-flex flex-column gap-2 mt-2 mb-2 px-2">
                         <div>
-                            <label class="m-0">Starts</label>
+                            <label class="m-0"><?php _e('Starts', 'psx-poll-survey-plugin'); ?></label>
                             <input type="datetime-local" class="form-control" id="start_date" placeholder="Select a date" />
                         </div>
 
                         <div>
-                            <label class="m-0">Ends</label>
+                            <label class="m-0"<?php _e('Ends', 'psx-poll-survey-plugin'); ?>></label>
 
                             <input type="datetime-local" class="form-control" id="end_date" placeholder="Select a date" />
                         </div>
@@ -112,40 +111,44 @@
                     <div class="card-body pt-sm-3 p-0">
                         <div class="form-group d-flex flex-column">
                             <div class="form-check">
-                                <input class="form-check-input border" type="checkbox" id="active_plugin" />
+                                <input class="form-check-input" type="checkbox" id="active_plugin" />
                                 <label class="form-check-label" for="active_plugin">
-                                    Activate the survey
+                                    <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?>
                                 </label>
                             </div>
 
                             <div class="form-check">
-                                <input class="form-check-input border" type="checkbox" id="share_plugin" />
+                                <input class="form-check-input" type="checkbox" id="share_plugin" />
                                 <label class="form-check-label" for="share_plugin">
-                                    Share with my friends
+                                    <?php _e('Share with my friends', 'psx-poll-survey-plugin'); ?>
                                 </label>
                             </div>
 
                             <div>
                                 <div class="form-check">
-                                    <input class="form-check-input border" type="checkbox" id="show_results" />
+                                    <input class="form-check-input" type="checkbox" id="show_results" />
                                     <label class="form-check-label" for="show_results">
-                                        Show real-time results
+                                    <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
+
                                     </label>
                                 </div>
 
-                                <input type="text" class="form-control mt-2" placeholder="Add your results title" id="show_results_input" />
+                                <input type="text" class="form-control mt-2" placeholder="Add Thank Meesage" value="Thank You!" id="show_results_input" />
                             </div>
 
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
-                                    Show results after</label>
+                                <?php _e('Show results after', 'psx-poll-survey-plugin'); ?>
+
+                                </label>
                                 <input type="number" class="form-control w-55" placeholder="Number of votes" id="min_votes_input" value="10" />
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control" placeholder="Add CTA button title" id="cta_input" value="CTA title" />
                                 <button onclick="(e)=>e.preventDefault()" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                    CTA Title
+                                <?php _e('CTA Title', 'psx-poll-survey-plugin'); ?>
+
                                 </button>
                             </div>
                         </div>

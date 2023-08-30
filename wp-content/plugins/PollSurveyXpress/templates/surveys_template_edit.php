@@ -39,24 +39,25 @@ $poll_data_json = json_encode($poll_data);
             <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
             <div>
-                <label>Change plugin Theme</label>
+                <label><?php _e('Change plugin Theme', 'psx-poll-survey-plugin'); ?></label>
 
                 <div class="d-flex align-items-center px-2 gap-2">
-                    <span class="text-sm fw-bold"> Bg color</span>
+                    <span class="text-sm fw-bold"><?php _e('Bg color', 'psx-poll-survey-plugin'); ?> </span>
                     <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $poll_data->bgcolor; ?>" />
-                    <span class="text-sm fw-bold"> Text color </span>
+                    <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?>   </span>
                     <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="<?php echo $poll_data->color; ?>" />
                 </div>
             </div>
 
             <div class="d-flex flex-column gap-2 mt-2 mb-2 px-2">
                 <div>
-                    <label class="m-0">Starts</label>
+                    <label class="m-0"><?php _e('Starts', 'psx-poll-survey-plugin'); ?> </label>
                     <input type="datetime-local" class="form-control border rounded-1 p-1" id="start_date" placeholder="Select a date" value="<?php echo $poll_data->start_date; ?>" />
                 </div>
 
                 <div>
-                    <label class="m-0">Ends</label>
+                    <label class="m-0"> <?php _e('Ends', 'psx-poll-survey-plugin'); ?> 
+                </label>
 
                     <input type="datetime-local" class="form-control border rounded-1 p-1" id="end_date" placeholder="Select a date" value="<?php echo $poll_data->end_date; ?>" />
                 </div>
@@ -67,14 +68,15 @@ $poll_data_json = json_encode($poll_data);
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data->status === 'active' ? 'checked' : ''; ?> />
                         <label class="form-check-label" for="active_plugin">
-                            Activate the survey
+                        <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?> 
+
                         </label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="share_plugin" <?php echo $poll_data->sharing ? 'checked' : ''; ?> />
                         <label class="form-check-label" for="share_plugin">
-                            Share with my friends
+                        <?php _e('Share with my friends', 'psx-poll-survey-plugin'); ?> 
                         </label>
                     </div>
 
@@ -82,7 +84,8 @@ $poll_data_json = json_encode($poll_data);
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> onchange="toggleInputState()" />
                             <label class="form-check-label" for="show_results">
-                                Show real-time results
+                            <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?> 
+
                             </label>
                         </div>
 
@@ -105,7 +108,7 @@ $poll_data_json = json_encode($poll_data);
             </div>
 
             <button id="save_button" class="text-white btn bg-primary col-12 mx-auto text-sm font-weight-bold m-0 mt-3">
-                Save
+            <?php _e('Save', 'psx-poll-survey-plugin'); ?> 
             </button>
         </form>
     </main>

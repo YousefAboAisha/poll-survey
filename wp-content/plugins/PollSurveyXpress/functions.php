@@ -10,7 +10,9 @@ class PollSurveyXpress
         add_action('admin_menu', array($this, 'PSX_add_admin_menu_link'));
         add_action('admin_bar_menu', array($this, 'PSX_toolbar_link'), 99);
         add_action('wp_enqueue_scripts', array($this, 'PSX_enqueue_frontend_scripts'));
+        add_action('plugins_loaded',  array($this,'PSX_poll_survey_plugin_text_loaded'));
 
+    
 
         add_action('wp_ajax_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_data'));
         add_action('wp_ajax_nopriv_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_dataa'));
@@ -33,7 +35,11 @@ class PollSurveyXpress
         add_action('wp_ajax_nopriv_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings')); // For non-logged-in users
 
     }
-
+    //Add Translation
+    function PSX_poll_survey_plugin_text_loaded()
+        {
+            load_plugin_textdomain('psx-poll-survey-plugin', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        }
     // Enqueue scripts and styles for the frontend
     public function PSX_enqueue_frontend_scripts()
     {
@@ -101,15 +107,7 @@ class PollSurveyXpress
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        
-        if ($wpdb->is_mysql && $wpdb->is_read_only()) {
-            // Display an error message and return
-            add_action('admin_notices', function () {
-                echo '<div class="error"><p>Your database is in read-only mode. Plugin can`t create Tables needed to work ,  contact your administrator to resolve this issue before activating the plugin.</p></div>';
-            });
-            return;
-        }
-
+   
         $option_name = 'installation_time_of_PollSurveyXpress';
 
         // Check if the option already exists
@@ -202,7 +200,7 @@ class PollSurveyXpress
 
         if (!$wpdb->last_error === '') {
             add_action('admin_notices', function () use ($wpdb) {
-                echo '<div class="error"><p>Error creating database tables: ' . esc_html($wpdb->last_error) . '</p></div>';
+                echo '<div class="error"><p>Plugin can`t create Tables needed to work ,  contact your administrator to resolve this issue before activating the plugin. </p></div>';
             });
             return;
         } 

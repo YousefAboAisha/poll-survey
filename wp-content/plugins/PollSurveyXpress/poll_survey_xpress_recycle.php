@@ -9,7 +9,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 <html lang="en">
 
 <head>
-    <title>Recycle pin</title>
+    <title><?php _e('Recycle Bin', 'psx-poll-survey-plugin'); ?></title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -39,10 +39,11 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                     <div class="col-lg-12 col-xxl-10">
 
                         <div class="w-100 pb-0 d-flex align-items-center justify-content-between mb-6">
-                            <h4 class="fw-bolder m-0 p-0">Archived Surveys</h4>
+                            <h4 class="fw-bolder m-0 p-0"><?php _e('Archived Surveys', 'psx-poll-survey-plugin'); ?></h4>
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
-                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="btn btn-dark m-0">All surveys
+                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="btn btn-dark m-0">                                               <?php _e('All surveys', 'psx-poll-survey-plugin'); ?>
+
                                     <i style="cursor: pointer" class="fas fa-square-poll-vertical text-white ms-2 text-lg"></i>
 
                                 </a>
@@ -55,26 +56,31 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <thead class="p-4 ">
                                         <tr>
                                             <th class="text-uppercase text-center text-xxs font-weight-bolder opacity-7 p-4 w-fit">
-                                                ID
+                                            <?php _e('ID', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class=" text-uppercase text-xxs font-weight-bolder opacity-7 p-4 ps-2">
-                                                Title
+                                            <?php _e('Title', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class="text-uppercase text-xxs text-center font-weight-bolder opacity-7 p-4">
-                                                Status
+                                            <?php _e('Status', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class=" text-uppercase text-xxs text-center font-weight-bolder opacity-7 p-4">
-                                                End Date
+                                            <?php _e('End Date', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class=" text-uppercase text-xxs text-center font-weight-bolder opacity-7 p-4">
-                                                Template
+                                            <?php _e('Template', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
                                             <th class=" text-uppercase text-xxs text-center font-weight-bolder opacity-7 p-4 p-0">
-                                                Actions
+                                            <?php _e('Actions', 'psx-poll-survey-plugin'); ?>
                                             </th>
                                         </tr>
                                     </thead>
@@ -128,9 +134,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         </div>
 
                         <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
-                            <span class="m-0 p-0" id="currentPage">Page 1</span>
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"<?php _e('Previous', 'psx-poll-survey-plugin'); ?>></button>
+                            <span class="m-0 p-0" id="currentPage"><?php _e('Page 1', 'psx-poll-survey-plugin'); ?></span>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                         </div>
 
                     </div>

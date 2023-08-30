@@ -72,9 +72,9 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
     <main class="container-fluid main-content position-relative max-height-vh-100 h-100">
 
         <div class="d-flex align-items-center gap-2 mt-4">
-            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Home', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <h6 class="font-weight-bolder mb-0 p-0 ">Open-ended Survey View</h6>
+            <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Open-ended Survey View', 'psx-poll-survey-plugin'); ?></h6>
         </div>
 
 
@@ -87,27 +87,27 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                                 <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
                             </div>
                         </div>
-                        <h6 class="ms-2 mt-4 mb-0">Poll/survey Analysis</h6>
+                        <h6 class="ms-2 mt-4 mb-0"><?php _e('Poll/survey Analysis', 'psx-poll-survey-plugin'); ?></h6>
 
 
                         <div class="d-flex align-items-center justify-content-between flex-wrap mt-4">
                             <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                <p class="text-xs mt-1 mb-0 font-weight-bold">Questions</p>
+                                <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Questions', 'psx-poll-survey-plugin'); ?></p>
                                 <h2 class="font-weight-bolder"> <?php echo ($poll_num_of_questions) ?></h2>
                             </div>
 
                             <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                <p class="text-xs mt-1 mb-0 font-weight-bold">Votes</p>
+                                <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Votes', 'psx-poll-survey-plugin'); ?></p>
                                 <h2 class="font-weight-bolder"> +<?php echo ($poll_num_of_votes) ?></h2>
                             </div>
 
                             <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                <p class="text-xs mt-1 mb-0 font-weight-bold">Signed votes</p>
+                                <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Signed votes', 'psx-poll-survey-plugin'); ?></p>
                                 <h2 class="font-weight-bolder"> +<?php echo ($poll_num_of_signed_votes) ?> </h2>
                             </div>
 
                             <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
-                                <p class="text-xs mt-1 mb-0 font-weight-bold">Unsigned votes</p>
+                                <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Unsigned votes', 'psx-poll-survey-plugin'); ?></p>
                                 <h2 class="font-weight-bolder"> <?php echo ($poll_num_of_unsigned_votes) ?></h2>
                             </div>
                         </div>
@@ -117,7 +117,7 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                 <div class="col">
                     <div class="z-index-2">
                         <div class="card-header pb-0">
-                            <h6>Poll/survey overview</h6>
+                            <h6><?php _e('Poll/survey overview', 'psx-poll-survey-plugin'); ?></h6>
                             <p class="text-sm">
                                 <i class="fa fa-arrow-up text-success"></i>
                                 <span class="font-weight-bold">4% more</span> in 2021

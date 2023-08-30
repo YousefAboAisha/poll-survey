@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Settings</title>
+    <title><?php _e('Settings', 'psx-poll-survey-plugin'); ?></title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -14,7 +14,7 @@
     <main class="main-content position-relative max-height-vh-100 h-100 mt-4 border-radius-lg">
         <div class="container-fluid mx-auto ">
             <div class="w-100 pb-0 d-flex align-items-center">
-                <h4 class="fw-bolder m-0 p-0">General settings</h4>
+                <h4 class="fw-bolder m-0 p-0"><?php _e('General settings', 'psx-poll-survey-plugin'); ?></h4>
             </div>
 
             <form class="p-4 d-flex flex-column bg-white mt-4 rounded-3 border" method="post">
@@ -23,7 +23,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="email" name="email">
                         <label class="form-check-label" for="email">
-                            Email on survey deactivation
+                        <?php _e('Email on survey deactivation', 'psx-poll-survey-plugin'); ?>
                         </label>
                     </div>
 
@@ -35,37 +35,38 @@
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" checked="">
                         <label class="form-check-label" for="gdpr">
-                            General Data Protection Regulations(GDBR) integrity
+                        <?php _e('General Data Protection Regulations(GDBR) integrity', 'psx-poll-survey-plugin'); ?>
                         </label>
                     </div>
 
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" checked="">
                         <label class="form-check-label" for="clear_data">
-                            Clear tables data when plugin uninstalled
+                        <?php _e('Clear tables data when plugin uninstalled', 'psx-poll-survey-plugin'); ?>
                         </label>
                     </div>
                 </div>
 
                 <div class="d-flex flex-column gap-2 mt-2">
-                    <h4>Front-end messages</h4>
+                    <h4><?php _e('Front-end messages', 'psx-poll-survey-plugin'); ?></h4>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
-                        <p class="m-0">When poll status is (inactive)</p>
-                        <p class="m-0 mb-2" style="font-size:10px">(This message will be shown to the user, when the poll is inactive) </p>
+                        <p class="m-0"><?php _e('When poll status is (inactive)', 'psx-poll-survey-plugin'); ?></p>
+                        <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is inactive) ', 'psx-poll-survey-plugin'); ?></p>
                         <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="">
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
-                        <p class="m-0">When poll is (expired)</p>
-                        <p class="m-0 mb-2" style="font-size:10px">(This message will be shown to the user, when the poll is date expired) </p>
+                        <p class="m-0"><?php _e('When poll is (expired)<', 'psx-poll-survey-plugin'); ?></p>
+                        <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is date expired)', 'psx-poll-survey-plugin'); ?> </p>
                         <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="" placeholder="Enter expire message...">
                     </div>
 
                 </div>
 
                 <button type="button" name="save_changes" id="save_changes" class="align-self-start m-0 text-white btn bg-primary col-lg-2 col-md-4 col-5 text-sm font-weight-bold mt-4">
-                    Save changes
+                <?php _e('Save changes', 'psx-poll-survey-plugin'); ?>
+
                 </button>
             </form>
 

@@ -57,30 +57,32 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <thead class="p-4 ">
                                         <tr>
                                             <th class="text-uppercase text-center text-xxs p-4">
-                                                ID
+                                            <?php _e('ID', 'psx-poll-survey-plugin'); ?>
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">
-                                                Title
+                                            <?php _e('Title', 'psx-poll-survey-plugin'); ?>                                            <?php _e('ID', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">
-                                                Status
+                                           <?php _e('Status', 'psx-poll-survey-plugin'); ?>
                                             </th>
 
                                             <th class=" text-uppercase text-xxs p-4">
-                                                Shortcodes
+                                            <?php _e('Shortcodes', 'psx-poll-survey-plugin'); ?>
                                             </th>
 
                                             <th class=" text-uppercase text-xxs p-4">
-                                                End Date
+                                            <?php _e('End Date', 'psx-poll-survey-plugin'); ?>
+
                                             </th>
 
                                             <th class=" text-uppercase text-xxs p-4">
-                                                Template
+                                            <?php _e('Template', 'psx-poll-survey-plugin'); ?>
                                             </th>
                                             <th class=" text-uppercase text-xxs p-4">
-                                                Actions
+                                            <?php _e('Actions', 'psx-poll-survey-plugin'); ?>
                                             </th>
                                         </tr>
                                     </thead>

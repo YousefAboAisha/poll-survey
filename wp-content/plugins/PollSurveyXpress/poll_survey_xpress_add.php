@@ -35,7 +35,7 @@ $templateCount = count($previewFiles);
 
 <?php $cardData = [
     [
-        'details' => 'Qspondents are presented with a set of questions and a predefined list of answer choices for each question. Respondents select one or more answers from the provided options.',
+        'details' => 'Questions are presented with a set of questions and a predefined list of answer choices for each question. Respondents select one or more answers from the provided options.',
         'icon' => 'fas fa-hashtag fa-lg',
     ],
     [
@@ -54,9 +54,9 @@ $templateCount = count($previewFiles);
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
 
         <div class="d-flex align-items-center gap-2 my-4 mb-5">
-            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark">Home</a>
+            <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Home', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <h6 class="font-weight-bolder mb-0 p-0 ">All Templates</h6>
+            <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('All Templates', 'psx-poll-survey-plugin'); ?></h6>
         </div>
 
 
@@ -82,7 +82,7 @@ $templateCount = count($previewFiles);
                             <div class="overflow-hidden position-relative h-100">
                                 <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-0">
                                     <h5 class="text-dark font-weight-bolder m-0 mt-2">
-                                        <?php echo ucwords($templateName); ?>
+                                        <?php _e(ucwords($templateName), 'psx-poll-survey-plugin'); ?>
                                     </h5>
 
                                     <p class="mt-3" style="height: 150px;">
@@ -90,7 +90,7 @@ $templateCount = count($previewFiles);
                                     </p>
 
                                     <a class="text-white bg-primary text-sm font-weight-bold mb-0 icon-move-right p-2 py-3 rounded-2 text-center fw-bolder" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $fileName); ?>">
-                                        View Template
+                                    <?php _e('View Template', 'psx-poll-survey-plugin'); ?>
                                         <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                                     </a>
                                 </div>

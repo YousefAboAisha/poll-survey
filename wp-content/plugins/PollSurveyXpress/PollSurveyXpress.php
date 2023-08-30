@@ -7,6 +7,7 @@ Text Domain:
 Version:      1.0
 Author:       Ibrahim 
 Author URI:   http://localhost/wordpress/   
+Text Domain: psx-poll-survey-plugin
 */
 
 require_once(plugin_dir_path(__FILE__) . 'functions.php');
