@@ -21,26 +21,26 @@
                 <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                 <div class="form-group">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php if (get_option('PSX_email')) echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="email" name="email">
                         <label class="form-check-label" for="email">
                             Email on survey deactivation
                         </label>
                     </div>
 
-                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
-                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4" value="<?php echo get_option('admin_email') ?>" placeholder="Enter your email">
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
+                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="ashrafweb@gmail.com" placeholder="Enter your email" disabled="" style="display: none;">
                     </div>
 
 
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php if (get_option('PSX_gdpr')) echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" checked="">
                         <label class="form-check-label" for="gdpr">
                             General Data Protection Regulations(GDBR) integrity
                         </label>
                     </div>
 
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" <?php if (get_option('PSX_clear_data')) echo 'checked'; ?> />
+                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" checked="">
                         <label class="form-check-label" for="clear_data">
                             Clear tables data when plugin uninstalled
                         </label>
@@ -50,14 +50,16 @@
                 <div class="d-flex flex-column gap-2 mt-2">
                     <h4>Front-end messages</h4>
 
-                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
-                        <label class="form-check-label">When poll status is (inactive)</label>
-                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2" placeholder="Enter inactive message..." value ="<?php echo get_option('PSX_status_message')?>"/>
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
+                        <p class="m-0">When poll status is (inactive)</p>
+                        <p class="m-0 mb-2" style="font-size:10px">(This message will be shown to the user, when the poll is inactive) </p>
+                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="">
                     </div>
 
-                    <div class="col-12 col-sm-8 col-md-6 col-lg-4 ">
-                        <label class="form-check-label">When poll is (expired)</label>
-                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2" value ="<?php echo get_option('PSX_expire_message')?>" placeholder="Enter expire message..." />
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
+                        <p class="m-0">When poll is (expired)</p>
+                        <p class="m-0 mb-2" style="font-size:10px">(This message will be shown to the user, when the poll is date expired) </p>
+                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="" placeholder="Enter expire message...">
                     </div>
 
                 </div>
@@ -81,7 +83,7 @@
         const save_changes = document.getElementById("save_changes");
         const status_message = document.getElementById("status_message");
         const expire_message = document.getElementById("expire_message");
-        
+
         // Define the function to handle the initial state
         function setInitialEmailState() {
             if (emailRadioButton.checked) {
