@@ -25,6 +25,40 @@ $questions = $wpdb->get_results($questions_query);
 
 $poll_data_json = json_encode($poll_data);
 $questions_json = json_encode($questions);
+
+// Query to fetch poll responses data to analyze
+$poll_num_of_questions = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT count(question_id) FROM {$wpdb->prefix}polls_psx_survey_questions WHERE poll_id = %d",
+        $poll_id
+    )
+);
+
+$poll_num_of_votes = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT count(response_id) FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d",
+        $poll_id
+    )
+);
+
+$poll_num_of_signed_votes = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT count(response_id) FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d AND user_id != 0",
+        $poll_id
+    )
+);
+
+$poll_num_of_unsigned_votes = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT count(response_id) FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d AND user_id = 0",
+        $poll_id
+    )
+);
+// Output the results
+echo "Number of questions: " . $poll_num_of_questions . "<br>";
+echo "Total number of votes: " . $poll_num_of_votes . "<br>";
+echo "Number of signed votes: " . $poll_num_of_signed_votes . "<br>";
+echo "Number of unsigned votes: " . $poll_num_of_unsigned_votes . "<br>";
 ?>
 
 <!DOCTYPE html>
