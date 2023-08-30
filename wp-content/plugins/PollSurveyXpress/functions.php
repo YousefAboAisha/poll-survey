@@ -101,6 +101,14 @@ class PollSurveyXpress
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
+        
+        if ($wpdb->is_mysql && $wpdb->is_read_only()) {
+            // Display an error message and return
+            add_action('admin_notices', function () {
+                echo '<div class="error"><p>Your database is in read-only mode. Plugin can`t create Tables needed to work ,  contact your administrator to resolve this issue before activating the plugin.</p></div>';
+            });
+            return;
+        }
 
         $option_name = 'installation_time_of_PollSurveyXpress';
 
@@ -191,6 +199,13 @@ class PollSurveyXpress
         dbDelta($table_survey_answers);
         dbDelta($table_survey_responses);
         dbDelta($table_survey_responses_data);
+
+        if (!$wpdb->last_error === '') {
+            add_action('admin_notices', function () use ($wpdb) {
+                echo '<div class="error"><p>Error creating database tables: ' . esc_html($wpdb->last_error) . '</p></div>';
+            });
+            return;
+        } 
     }
 
     // Add main menu page (PollSurveyXpress)

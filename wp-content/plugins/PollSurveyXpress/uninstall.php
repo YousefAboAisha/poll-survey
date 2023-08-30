@@ -11,7 +11,7 @@ require_once(ABSPATH . 'wp-config.php');
 // Drop the plugin's tables if clear_data option is not zero
 global $wpdb;
 
-$clearDataOptionValue = get_option('clear_data');
+$clearDataOptionValue = get_option('PSX_clear_data');
 
 if ($clearDataOptionValue !== '0') {
     $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}polls_psx_survey_responses_data");
