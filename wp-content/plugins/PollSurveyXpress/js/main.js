@@ -190,6 +190,7 @@ jQuery(document).ready(function (jQuery) {
   const poll_id = document
     .getElementById("poll_card")
     .getAttribute("data-card-id");
+
   // Assume you have a button with ID "get_values_button" to trigger the action
   const message = document.getElementById("message");
   const save_button = document.getElementById("open_ended_save_button");
@@ -199,6 +200,7 @@ jQuery(document).ready(function (jQuery) {
     event.preventDefault(); // Prevent the default form submission behavior
 
     console.log(open_ended_container);
+    console.log("MESSAGE", message);
 
     // Disable the button and add spinner/loading text
     save_button.disabled = true;
@@ -269,7 +271,7 @@ jQuery(document).ready(function (jQuery) {
 
   const save_button = document.getElementById("rating_save_button");
   const rating_container = document.getElementById("rating_container");
-  // Disable the button and add spinner/loading text
+  const radio_buttons = document.querySelectorAll(".poll-answer-radio");
 
   save_button.addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -317,6 +319,10 @@ jQuery(document).ready(function (jQuery) {
       success: function (response) {
         save_button.textContent = "DONE!";
         save_button.style.display = "none";
+
+        radio_buttons.forEach((radio) => {
+          radio.disabled = true;
+        });
 
         if (poll_results != null && poll_results != "") {
           rating_container.innerHTML = "";

@@ -221,4 +221,17 @@ $poll_data_json = json_encode($poll_data);
         });
     </script>
 
+    <!-- Disable vote Input -->
+    <script>
+        const voteCheckbox = document.getElementById("show_results");
+        const limitsInput = document.getElementById("show_results_input");
+        voteCheckbox.addEventListener("change", function() {
+            if (!voteCheckbox.checked) {
+                limitsInput.disabled = false;
+            } else {
+                limitsInput.disabled = true;
+            }
+        });
+    </script>
+
 </body>

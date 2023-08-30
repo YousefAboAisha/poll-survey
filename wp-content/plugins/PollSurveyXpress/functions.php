@@ -39,7 +39,7 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.1', true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.2', true);
         wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
@@ -736,17 +736,17 @@ class PollSurveyXpress
 
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
 
-                            if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
+                            // if (!empty($poll_data[0]['real_time_result_text'])) {
+                            $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
-                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . ($poll_data[0]['real_time_result_text'] ? $poll_data[0]['real_time_result_text'] : "Thx for submitting!")
+                                .  '</h3>
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                                 </div>
                                 ';
-                            }
+                            // }
 
                             $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
-
                             $output .= '<div id="open_ended_container"  class="modal-body">';
 
                             // Start generating the poll structure
@@ -787,7 +787,7 @@ class PollSurveyXpress
                         ';
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
                             if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
+                                $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                                 <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
@@ -874,15 +874,16 @@ class PollSurveyXpress
                     } else {
                         $output = '<div>';
 
-                        if (!empty($poll_data[0]['real_time_result_text'])) {
-                            $output = '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
-                            <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
-                            <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
-                            <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
-                            </div>
-                            ';
-                        }
                         if ($template_type === 'Multiple Choice') {
+                            if (!empty($poll_data[0]['real_time_result_text'])) {
+                                $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                                </div>
+                                ';
+                            }
+
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="mcq_container">';
 
 
@@ -933,6 +934,14 @@ class PollSurveyXpress
 
                             // Fetch questions from the database
                         } else if ($poll_data[0]['template'] === 'Open ended') {
+                            $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . ($poll_data[0]['real_time_result_text'] ? $poll_data[0]['real_time_result_text'] : "Thx for submitting!")
+                                .  '</h3>
+                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                                </div>
+                                ';
+
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="open_ended_container">';
 
                             // Start generating the poll structure
@@ -961,6 +970,15 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the container-fluid div
 
                         } else if ($poll_data[0]['template'] === 'Rating') {
+                            if (!empty($poll_data[0]['real_time_result_text'])) {
+                                $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                                </div>
+                                ';
+                            }
+
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="rating_container">';
 
                             // Code for the 'Rating' template
