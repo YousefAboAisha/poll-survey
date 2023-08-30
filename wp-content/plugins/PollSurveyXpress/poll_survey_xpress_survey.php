@@ -135,10 +135,10 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                                                     <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1" style="height: 77px;">
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                            <i class="fas fa-eye text-sm text-dark" style="cursor: pointer"></i>
+                                                            <i class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
-                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id.'&action=edit'); ?>">
-                                                            <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
+                                                            <i class="fas fa-gear text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
                                                         <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
