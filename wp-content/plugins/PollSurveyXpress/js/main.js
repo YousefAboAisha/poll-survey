@@ -102,7 +102,7 @@ jQuery(document).ready(function (jQuery) {
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
 
-        if (poll_results != null) {
+        if (poll_results != null && poll_results != "") {
           mcq_container.innerHTML = ``;
           mcq_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
@@ -356,7 +356,7 @@ jQuery(document).ready(function (jQuery) {
       success: function (response) {
         save_button.textContent = "DONE!";
         save_button.disabled = true;
-        if (poll_results != null) {
+        if (poll_results != null && poll_results != "") {
           rating_container.innerHTML = ``;
           rating_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
