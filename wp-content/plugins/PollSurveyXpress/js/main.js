@@ -103,34 +103,14 @@ jQuery(document).ready(function (jQuery) {
         const percentages = jsonData.percentages;
 
         if (poll_results != null && poll_results != "") {
-          mcq_container.innerHTML = ``;
+          mcq_container.innerHTML = "";
           mcq_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
-
         }
 
         // Now you can work with the decoded data
         console.log("JSON data:", jsonData);
         console.log("Percentages:", percentages);
-
-        // Create a new toast element
-        var toast = document.createElement("div");
-        toast.style = "z-index:1000; right: 10px; bottom: 10px";
-        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-        toast.innerHTML = `
-        <p class="m-0 fw-bold text-xs text-white">
-          You have successfully submitted your votes!
-        </p>
-         `;
-        // Append the toast to the document
-        document.body.appendChild(toast);
-
-        // Initialize the Bootstrap toast with custom options
-        var bootstrapToast = new bootstrap.Toast(toast, {
-          autohide: true, // Set to true to enable automatic hiding
-          delay: 2000,
-        });
-        bootstrapToast.show();
 
         show_results_buttons.forEach((button) => {
           button.disabled = false;
@@ -260,30 +240,11 @@ jQuery(document).ready(function (jQuery) {
       },
       success: function (response) {
         save_button.textContent = "DONE!";
-        save_button.disabled = true;
-        open_ended_container.innerHTML = ``;
-        open_ended_container.style.cssText = "display:none !important";
-        message.style.cssText = "display:flex !important";
         save_button.style.display = "none";
 
-        // Create a new toast element
-        var toast = document.createElement("div");
-        toast.style = "z-index:1000; right: 10px; bottom: 10px";
-        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-        toast.innerHTML = `
-        <p class="m-0 fw-bold text-xs text-white">
-          You have successfully submitted your votes!
-        </p>
-    `;
-        // Append the toast to the document
-        document.body.appendChild(toast);
-
-        // Initialize the Bootstrap toast with custom options
-        var bootstrapToast = new bootstrap.Toast(toast, {
-          autohide: true, // Set to true to enable automatic hiding
-          delay: 2000,
-        });
-        bootstrapToast.show();
+        open_ended_container.innerHTML = "";
+        open_ended_container.style.cssText = "display:none !important";
+        message.style.cssText = "display:flex !important";
       },
       error: function (error) {
         console.error("Error:", error);
@@ -355,33 +316,13 @@ jQuery(document).ready(function (jQuery) {
       },
       success: function (response) {
         save_button.textContent = "DONE!";
-        save_button.disabled = true;
+        save_button.style.display = "none";
+
         if (poll_results != null && poll_results != "") {
-          rating_container.innerHTML = ``;
+          rating_container.innerHTML = "";
           rating_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
         }
-
-        save_button.style.display = "none";
-
-        // Create a new toast element
-        var toast = document.createElement("div");
-        toast.style = "z-index:1000; right: 10px; bottom: 10px";
-        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-        toast.innerHTML = `
-        <p class="m-0 fw-bold text-xs text-white">
-          You have successfully submitted your votes!
-        </p>
-    `;
-        // Append the toast to the document
-        document.body.appendChild(toast);
-
-        // Initialize the Bootstrap toast with custom options
-        var bootstrapToast = new bootstrap.Toast(toast, {
-          autohide: true, // Set to true to enable automatic hiding
-          delay: 2000,
-        });
-        bootstrapToast.show();
       },
       error: function (error) {
         console.error("Error:", error);
