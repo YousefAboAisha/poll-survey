@@ -87,13 +87,14 @@ $poll_data_json = json_encode($poll_data);
                                 <?php _e('Thanking Message', 'psx-poll-survey-plugin'); ?>
                             </label>
                         </div>
+
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> <?php echo $poll_data->template == 'Open ended' ? "hidden" : ''; ?> onchange="toggleInputState()" />
                             <label class="form-check-label" for="show_results">
                                 <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
-
                             </label>
                         </div>
+
                         <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                     </div>
 

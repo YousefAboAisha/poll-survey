@@ -124,7 +124,6 @@
                                     <input class="form-check-input" type="checkbox" id="show_results" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
-
                                     </label>
                                 </div>
 
@@ -184,7 +183,7 @@
             let createPollButton = document.getElementById("createPoll");
             let questionTitle = document.getElementById("questionTitle");
             let cardsContainer = document.getElementById("cardsContainer");
-            let surveyTitleValue = document.getElementById("surveyTitleValue");
+            let surveyTitleValue = document.getElementById("surveyTitleValue").value;
             let optionsHTMLArray = [];
             // Data will be sent
             let optionsArray = [];
@@ -291,7 +290,7 @@
 
                     newQuestionDiv.innerHTML = `
                         <div class="d-flex align-items-center w-100 gap-3">
-                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-trash text-danger"></i>
+                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-circle-xmark text-danger"></i>
 
                         <input 
                             type="text" 
@@ -479,11 +478,10 @@
                 }
             }
 
-
             save_button.addEventListener("click", () => {
-                // save_button.disabled = true;
-                // save_button.innerHTML =
-                //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                save_button.disabled = true;
+                save_button.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
                 settingObj = {
                     cta_Text: cta_input.value,
                     start_date: start_date.value || new Date().toISOString(),
@@ -506,7 +504,7 @@
                 };
 
                 finalObj = {
-                    surveyTitle: surveyTitleValue.value,
+                    surveyTitle: surveyTitleValue,
                     pollCards: pollsCardsArray,
                     settings: settingObj,
                     template: "Multiple Choice",

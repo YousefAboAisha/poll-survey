@@ -50,8 +50,6 @@ class PollSurveyXpress
         wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
-
-        wp_enqueue_script('smooth-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/smooth-scrollbar.min.js');
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my_ajax_nonce'),
@@ -59,7 +57,6 @@ class PollSurveyXpress
 
 
         //enqueue Style files
-        wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
         wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
         wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
@@ -75,25 +72,17 @@ class PollSurveyXpress
             wp_enqueue_script('jquery');
             wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.2', true);
             wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
-            wp_enqueue_script('bootstrap-notify-script', plugin_dir_url(__FILE__) . 'js/bootstrap-notify.js', array('jquery'), false, true);
             wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
             wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
-            wp_enqueue_script('choices-extension-script', plugin_dir_url(__FILE__) . 'js/choices.min.js');
-            wp_enqueue_script('fullcalendar-extension-script', plugin_dir_url(__FILE__) . 'js/fullcalendar.min.js');
-            wp_enqueue_script('perfect-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/perfect-scrollbar.min.js');
             wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
             wp_enqueue_script('chartjs-extension-script', plugin_dir_url(__FILE__) . 'js/chartjs.min.js');
 
-            wp_enqueue_script('smooth-scrollbar-extension-script', plugin_dir_url(__FILE__) . 'js/smooth-scrollbar.min.js');
             wp_localize_script('plugin-custom', 'my_ajax_object', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('my_ajax_nonce'),
             ));
 
             //enqueue Style files
-            wp_enqueue_style('fontawesome-style', plugin_dir_url(__FILE__) . 'css/all.min.css');
-            wp_enqueue_style('nucleo-icons', plugin_dir_url(__FILE__) . 'css/nucleo-icons.css');
-            wp_enqueue_style('nucleo-style', plugin_dir_url(__FILE__) . 'css/nucleo-svg.css');
             wp_enqueue_style('soft-style-map', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css.map');
             wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
             wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
@@ -1086,6 +1075,7 @@ class PollSurveyXpress
             $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
+            $real_time_check = $poll_data_array["real_time_check"] ? true : false;
             $sharing = $poll_data_array["sharing"] ? true : false;
             $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
 

@@ -90,9 +90,10 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
         <div class="bg-white mt-4 border rounded-3">
             <div class="row row-cols-1 row-cols-lg-2 g-4 ">
                 <div class="col mb-4">
+                    <div class="card-header pb-0">
+                        <h6 class="mb-2 mb-0 "><?php _e('Poll/survey Analysis', 'psx-poll-survey-plugin'); ?></h6>
+                    </div>
                     <div class="card-body p-3">
-                        <h6 class="ms-2 mt-4 mb-0"><?php _e('Poll/survey Analysis', 'psx-poll-survey-plugin'); ?></h6>
-
                         <div class="bg-gradient-dark border-radius-lg py-3 mb-3">
                             <div class="chart">
                                 <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
