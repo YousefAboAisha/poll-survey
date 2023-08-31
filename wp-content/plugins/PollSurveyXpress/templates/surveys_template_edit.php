@@ -74,21 +74,26 @@ $poll_data_json = json_encode($poll_data);
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="share_plugin" <?php echo $poll_data->sharing ? 'checked' : ''; ?> />
+                        <input class="form-check-input" type="checkbox" id="share_plugin" <?php echo $poll_data->sharing == 'true' ? 'checked' : ''; ?> />
                         <label class="form-check-label" for="share_plugin">
                             <?php _e('Share with my friends', 'psx-poll-survey-plugin'); ?>
                         </label>
                     </div>
 
                     <div>
+
+                        <div>
+                            <label for="show_results">
+                                <?php _e('Thanking Message', 'psx-poll-survey-plugin'); ?>
+                            </label>
+                        </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> onchange="toggleInputState()" />
+                            <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> <?php echo $poll_data->template == 'Open ended' ? "hidden" : ''; ?> onchange="toggleInputState()" />
                             <label class="form-check-label" for="show_results">
                                 <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
 
                             </label>
                         </div>
-
                         <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                     </div>
 
@@ -175,6 +180,7 @@ $poll_data_json = json_encode($poll_data);
                     real_time_result_text: show_results_input.value,
                     real_time_check: show_results.checked,
                     min_votes: min_votes_input.value,
+
                 };
 
                 console.log(settingObj);
@@ -238,3 +244,5 @@ $poll_data_json = json_encode($poll_data);
     </script>
 
 </body>
+
+</html>

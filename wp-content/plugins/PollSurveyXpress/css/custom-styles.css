@@ -32,7 +32,3 @@ input[type="radio"] {
   height: 25px !important;
   min-height: 25px !important;
 }
-
-.modal {
-  z-index: 9999999999999999 !important;
-}

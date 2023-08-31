@@ -89,9 +89,9 @@
 
                         <div class="d-flex align-items-center px-2 gap-2">
                             <span class="text-sm fw-bold"><?php _e('Bg color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#F00" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#f8f9fa" />
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="#006600" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="##344767" />
                         </div>
                     </div>
 

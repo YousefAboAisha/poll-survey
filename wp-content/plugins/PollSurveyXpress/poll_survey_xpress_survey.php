@@ -343,3 +343,5 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
     </script>
 
 </body>
+
+</html>

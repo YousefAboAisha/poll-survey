@@ -382,9 +382,6 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
             },
         });
     </script>
-
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 </body>
 
 </html>

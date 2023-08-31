@@ -71,9 +71,9 @@
 
                         <div class="d-flex align-items-center px-2 gap-2">
                             <span class="text-sm fw-bold"><?php _e('Bg color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#F00" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="#f8f9fa" />
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="#006600" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="##344767" />
                         </div>
                     </div>
 
@@ -106,16 +106,12 @@
                                 </label>
                             </div>
 
-                            <div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" />
-                                    <label class="form-check-label" for="show_results">
-                                        <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
+                            <div class="mt-2">
+                                <label for="show_results">
+                                    <?php _e('Thanking message', 'psx-poll-survey-plugin'); ?>
+                                </label>
 
-                                    </label>
-                                </div>
-
-                                <input type="text" class="form-control mt-2" placeholder="Add Thank Meesage" value="Thank You!" id="show_results_input" />
+                                <input type="text" class="form-control" placeholder="Add Thank Meesage" value="Thank You!" id="show_results_input" />
                             </div>
 
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
@@ -271,7 +267,6 @@
                 bgcolor: bg_color.value,
                 sharing: share_plugin.checked,
                 real_time_result_text: show_results_input.value,
-                real_time_check: show_results.checked,
                 min_votes: min_votes_input.value,
             };
 
@@ -330,13 +325,14 @@
 
     <!-- Disable vote Input -->
     <script>
-        const voteCheckbox = document.getElementById("show_results");
-        const limitsInput = document.getElementById("show_results_input");
-        voteCheckbox.addEventListener("change", function() {
-            if (!voteCheckbox.checked) {
-                limitsInput.disabled = false;
+        const ctaInput = document.getElementById("cta_input");
+        const ctaButton = document.getElementById("cta_button");
+
+        ctaInput.addEventListener("keyup", () => {
+            if (ctaInput.value == "") {
+                ctaButton.innerText = "CTA Title";
             } else {
-                limitsInput.disabled = true;
+                ctaButton.innerText = ctaInput.value;
             }
         });
     </script>

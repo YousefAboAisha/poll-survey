@@ -129,8 +129,8 @@ jQuery(document).ready(function (jQuery) {
 
               var popoverContent = document.createElement("div");
               popoverContent.className =
-                "position-relative d-flex flex-column gap-2 "; // Customize the class
-
+                "position-relative d-flex flex-column gap-2"; // Customize the class
+              console.log("question_data", question_data);
               // Iterate over the questionData object and create HTML elements
               for (var key in question_data) {
                 if (question_data.hasOwnProperty(key)) {
@@ -164,7 +164,8 @@ jQuery(document).ready(function (jQuery) {
               popoverInstance = new bootstrap.Popover(this, {
                 content: popoverContent,
                 trigger: "focus",
-                html: true, // Enable HTML content in the popover
+                html: true,
+                container: "body", // Append popover to the body element
               });
 
               popoverInstance.show(); // Show the popover

@@ -45,7 +45,7 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.2', true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.3', true);
         wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
@@ -64,7 +64,7 @@ class PollSurveyXpress
         wp_enqueue_style('soft-style-min', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.min.css');
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
-        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.6");
+        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.7");
     }
     // Enqueue scripts and styles for the admin area
     public function PSX_enqueue_admin_scripts()
@@ -73,7 +73,7 @@ class PollSurveyXpress
         if (isset($_GET['page']) && (($_GET['page'] === 'poll-survey-xpress-surveys' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page'] === 'poll-survey-xpress-add' || $_GET['page'] === 'poll-survey-xpress-settings' || $_GET['page'] === 'view_template_page' || $_GET['page'] === 'edit_template_page' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page']
             === 'show_template_page'))) {
             wp_enqueue_script('jquery');
-            wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.0', true);
+            wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.2', true);
             wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
             wp_enqueue_script('bootstrap-notify-script', plugin_dir_url(__FILE__) . 'js/bootstrap-notify.js', array('jquery'), false, true);
             wp_enqueue_script('bootstrap-bundle-script', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.js', array('jquery'), false, true);
@@ -237,9 +237,7 @@ class PollSurveyXpress
     // Callback method for the Surveys page
     public function PSX_poll_survey_xpress_surveys_callback()
     {
-        if (isset($_GET['page_id'])) {
-            include 'test.php';
-        } elseif (!isset($_GET['poll_id'])) {
+        if (!isset($_GET['poll_id'])) {
             include 'poll_survey_xpress_survey.php';
         } elseif (isset($_GET['poll_id']) && !isset($_GET['action'])) {
             $template = $_GET['template'];
@@ -508,7 +506,7 @@ class PollSurveyXpress
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $sharing = $settings['sharing'] ? 'true' : 'false';
-            $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
+            $real_time_result_text = sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
@@ -689,7 +687,7 @@ class PollSurveyXpress
                                 ';
                             }
 
-                            $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
+                            $output .= '<div class="modal-content" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;" >';
                             $output .= '<div id="mcq_container"  class="modal-body">';
 
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
@@ -699,18 +697,16 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
-
-                            $output .= '<h2>' . $poll_data[0]['real_time_result_text'] . '<h2>';
+                            $output .= '<h4 class="mb-3" id="Title" style="color:' . $poll_data[0]['color'] . ' !important;" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
-                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border border-dark rounded-3 p-4 m-0 mt-3">';
 
                                 // Show results button
-                                $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
+                                $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Poll Results" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
 
                                 // Poll title     
-                                $output .= '<h6 class="mb-4">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                                $output .= '<h6 class="mb-4" style="color:' . $poll_data[0]['color'] . ' !important;">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
 
                                 // Fetch answers for each question
                                 $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -722,7 +718,7 @@ class PollSurveyXpress
                                     $output .= '<div class="d-flex align-items-center">';
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
                                     $output .= '</div>';
-                                    $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] .  '</label>';
+                                    $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
                                     $output .= '</div>';
                                 }
 
@@ -761,7 +757,7 @@ class PollSurveyXpress
                                 ';
                             // }
 
-                            $output .= '<div class="modal-content" style="background-color:#f8f9fa">';
+                            $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
                             $output .= '<div id="open_ended_container"  class="modal-body">';
 
                             // Start generating the poll structure
@@ -772,12 +768,12 @@ class PollSurveyXpress
                             $output .= '<div class="mt-4 container-fluid bg-transparent">';
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $output .= '<div class="col">';
                             foreach ($questions as $index => $question) {
-                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
-                                $output .= '<h6 class="mb-3">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border border-dark rounded-3 p-4 m-0 mt-3">';
+                                $output .= '<h6 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
                                 $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Add your answer"></textarea>';
                                 $output .= '</div>'; // Close the poll structure div
                             }
@@ -810,7 +806,7 @@ class PollSurveyXpress
                                 ';
                             }
 
-                            $output .= '<div class="modal-content" style="background-color:#f8f9fa;">';
+                            $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
                             $output .= '<div id="rating_container" class="modal-body">';
 
                             // Code for the 'Rating' template
@@ -824,7 +820,7 @@ class PollSurveyXpress
 
                             $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center p-3 ">';
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
                             $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
@@ -839,7 +835,7 @@ class PollSurveyXpress
                                 if ($flag_text === $rating["answer_text"] && $flag) {
                                     break;
                                 }
-                                $output .= '<p class="m-0 text-sm ">' . $rating["answer_text"] . '</p>';
+                                $output .= '<p class="m-0 text-sm" style="color:' . $poll_data[0]['color'] . ' !important;">' . $rating["answer_text"] . '</p>';
                                 $flag = true;
                             }
 
@@ -847,11 +843,11 @@ class PollSurveyXpress
 
                             $output .= '</div>'; // Close the Rating space-between div
 
-                            $output .= '<div class="p-4">';
+                            $output .= '<div class="p-4" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;">';
                             foreach ($questions as $index => $question) {
                                 // Start of the rating card
                                 $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
-                                $output .= '<h6 class="m-0 text-break" data-question-id="' . $question['question_id'] . '">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                                $output .= '<h6 class="m-0 text-break" style="color:' . $poll_data[0]['color'] . ' !important;" data-question-id="' . $question['question_id'] . '">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
 
                                 // Fetch answers for each question
                                 $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -909,17 +905,17 @@ class PollSurveyXpress
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $questions = $wpdb->get_results($query, ARRAY_A);
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
-                            $output .= '<div class="col">';
+                            $output .= '<div class="col" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;">';
                             foreach ($questions as $index => $question) {
-                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
+                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border border-dark rounded-3 p-4 m-0 mt-3">';
 
                                 // Show results button
-                                $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Dismissible popover" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
+                                $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Poll Results" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
 
                                 // Poll title     
-                                $output .= '<h6 class="mb-4">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                                $output .= '<h6 class="mb-4" style="color:' . $poll_data[0]['color'] . ' !important;">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
 
                                 // Fetch answers for each question
                                 $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -931,7 +927,7 @@ class PollSurveyXpress
                                     $output .= '<div class="d-flex align-items-center">';
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
                                     $output .= '</div>';
-                                    $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0">' . $answer['answer_text'] .  '</label>';
+                                    $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
                                     $output .= '</div>';
                                 }
 
@@ -966,12 +962,12 @@ class PollSurveyXpress
 
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
 
-                            $output .= '<div class="col">';
+                            $output .= '<div class="col" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;">';
                             foreach ($questions as $index => $question) {
-                                $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border rounded-3 bg-white p-4 m-0 mt-3">';
-                                $output .= '<h6 class="mb-3">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
+                                $output .= '<div id="poll_card"  data-card-id="' . $poll_id . '" class="position-relative flex-column gap-2 border border-dark rounded-3 p-4 m-0 mt-3">';
+                                $output .= '<h6 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
                                 $output .= '<textarea data-question-id="' . $question['question_id'] . '" class="poll-question-textarea form-control mb-2 w-100 border rounded-1" placeholder="Add your answer"></textarea>';
                                 $output .= '</div>'; // Close the poll structure div
                             }
@@ -1008,7 +1004,7 @@ class PollSurveyXpress
 
                             $output .= '<div style="background-color: #EEE;" class="d-flex justify-content-between align-items-center mb-1 p-4 ">';
 
-                            $output .= '<h4 class="mb-3" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
+                            $output .= '<h4 class="mb-3" style="color:' . $poll_data[0]['color'] . ' !important;" id="Title" data-vote-count="' . $poll_data[0]['min_votes'] . '" data-show-results="' . $poll_data[0]['real_time_result_text'] . '">' . $poll_data[0]['title'] . '</h4>';
                             $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
                             $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
                             $ratings = $wpdb->get_results($query, ARRAY_A);
@@ -1030,11 +1026,11 @@ class PollSurveyXpress
 
                             $output .= '</div>'; // Close the Rating space-between div
 
-                            $output .= '<div class="p-4">';
+                            $output .= '<div class="p-4" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;">';
                             foreach ($questions as $index => $question) {
                                 // Start of the rating card
                                 $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll_card d-flex justify-content-between align-items-center mb-4">';
-                                $output .= '<h6 class="m-0 text-break" data-question-id="' . ($index + 1) . ") " . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
+                                $output .= '<h6 class="m-0 text-break" style="color:' . $poll_data[0]['color'] . ' !important;" data-question-id="' . ($index + 1) . ") " . $question['question_id'] . '">' . $question['question_text'] . '</h6>';
 
                                 // Fetch answers for each question
                                 $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -1084,14 +1080,15 @@ class PollSurveyXpress
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
             // Sanitize inputs
             $poll_id = absint($poll_data_array["poll_id"]);
+
             $start_date = sanitize_text_field($poll_data_array["start_date"]);
             $end_date = sanitize_text_field($poll_data_array["end_date"]);
             $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
             $sharing = $poll_data_array["sharing"] ? true : false;
-            $real_time_result_text = sanitize_text_field($poll_data_array["real_time_result_text"]);
-            $real_time_check = $poll_data_array["real_time_check"] ? true : false;
+            $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
+
             $min_votes = absint($poll_data_array["min_votes"]);
             $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
             $table_name = $wpdb->prefix . "polls_psx_polls";
@@ -1165,6 +1162,12 @@ class PollSurveyXpress
                 ));
             }
 
+            $poll_questions = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT question_id FROM {$wpdb->prefix}polls_psx_survey_questions WHERE poll_id = %d",
+                    $poll_id
+                )
+            );
             $response_ids = $wpdb->get_col(
                 $wpdb->prepare(
                     "SELECT response_id FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d",
@@ -1181,8 +1184,36 @@ class PollSurveyXpress
                 );
                 $responses_data[] = $response_data;
             }
+            $answers_for_each_question = array();
+            foreach ($poll_questions as $question) {
+                //get the answers for each question
+                $question_id = $question->question_id;
+                $question_answers = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT answer_id FROM {$wpdb->prefix}polls_psx_survey_answers WHERE question_id = %d",
+                        $question_id
+                    )
+                );
+                $answers_for_each_question[$question_id] = $question_answers;
+            }
+            $allAnswerChoices = array();
+            foreach ($poll_questions as $question) {
+                $questionId = $question->question_id;
+                $questionAnswers = $answers_for_each_question[$questionId];
+                $allAnswerChoices[$questionId] = array_column($questionAnswers, 'answer_id');
+            }
+            $chosenAnswerChoices = array();
+            foreach ($responses_data as $response) {
+                foreach ($response as $answer) {
+                    $questionId = $answer->question_id;
+                    $answerId = $answer->answer_id;
+                    $chosenAnswerChoices[$questionId][$answerId] = true;
+                }
+            }
+
 
             $answerCounts = array();
+            $answeredQuestions = array();
             foreach ($responses_data as $response) {
                 foreach ($response as $answer) {
                     $questionId = $answer->question_id;
@@ -1190,32 +1221,51 @@ class PollSurveyXpress
 
                     if (!isset($answerCounts[$questionId])) {
                         $answerCounts[$questionId] = array();
+                        $answeredQuestions[$questionId] = array(); // Keep track of answered questions
                     }
 
                     if (!isset($answerCounts[$questionId][$answerId])) {
                         $answerCounts[$questionId][$answerId] = 0;
+                        $answeredQuestions[$questionId][] = $answerId;
                     }
 
                     $answerCounts[$questionId][$answerId]++;
                 }
             }
 
-            // Step 2: Calculate total response count
+            $questions = array();
+            foreach ($answerCounts as $questionId => $answerData) {
+                if (!isset($questions[$questionId])) {
+                    $questions[$questionId] = array();
+                }
+
+                $answeredAnswers = $answeredQuestions[$questionId]; // Maintain order of creation
+                foreach ($answeredAnswers as $answerId) {
+                    if (!isset($questions[$questionId][$answerId])) {
+                        $questions[$questionId][$answerId] = 0;
+                    }
+
+                    $questions[$questionId][$answerId] += $answerCounts[$questionId][$answerId];
+                }
+            }
+
+            // Calculate the total response count
             $totalResponses = count($responses_data);
 
             // Calculate percentages including unanswered questions
             $percentages = array();
-            foreach ($answerCounts as $questionId => $answerData) {
+            foreach ($allAnswerChoices as $questionId => $answerChoices) {
+                $totalAnswers = count($answerChoices);
                 $percentages[$questionId] = array();
 
-                $totalAnswers = 0; // To calculate the total answers for each question
+                foreach ($answerChoices as $answerId) {
+                    if (isset($chosenAnswerChoices[$questionId][$answerId])) {
+                        $count = isset($answerCounts[$questionId][$answerId]) ? $answerCounts[$questionId][$answerId] : 0;
+                    } else {
+                        $count = 0;
+                    }
 
-                foreach ($answerData as $answerId => $count) {
-                    $totalAnswers += $count;
-                }
-
-                foreach ($answerData as $answerId => $count) {
-                    $percentage = ($totalAnswers > 0) ? (($count / $totalResponses) * 100) : 0; // Handle division by zero
+                    $percentage = ($totalResponses > 0) ? (($count / $totalResponses) * 100) : 0;
                     $formattedPercentage = number_format($percentage, 2);
                     $percentages[$questionId][$answerId] = $formattedPercentage;
                 }
@@ -1225,8 +1275,9 @@ class PollSurveyXpress
             $totalPercentages = array();
             foreach ($percentages as $questionId => $answerData) {
                 $totalPercentage = array_sum($answerData);
-                $totalPercentages[$questionId] = $totalPercentage;
+                $totalPercentages[$questionId] = number_format($totalPercentage, 2);
             }
+
 
             $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; // Replace 'prefix' with your database table prefix
             $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE session_id = %s", $session_id);

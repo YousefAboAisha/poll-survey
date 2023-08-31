@@ -21,7 +21,7 @@
                 <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                 <div class="form-group">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="email" name="email">
+                        <input class="form-check-input" type="checkbox" id="email" name="email" <?php echo get_option('PSX_email') ?  "checked" : '' ?>>
                         <label class="form-check-label" for="email">
                             <?php _e('Email on survey deactivation', 'psx-poll-survey-plugin'); ?>
                         </label>
@@ -31,16 +31,15 @@
                         <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="ashrafweb@gmail.com" placeholder="Enter your email" disabled="" style="display: none;">
                     </div>
 
-
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" checked="">
+                        <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php echo get_option('PSX_gdpr') ? "checked" : '' ?>>
                         <label class="form-check-label" for="gdpr">
                             <?php _e('General Data Protection Regulations(GDBR) integrity', 'psx-poll-survey-plugin'); ?>
                         </label>
                     </div>
 
                     <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" checked="">
+                        <input class="form-check-input" type="checkbox" id="clear_data" name="clear_data" <?php echo get_option('PSX_clear_data') ? "checked" : '' ?>>
                         <label class="form-check-label" for="clear_data">
                             <?php _e('Clear tables data when plugin uninstalled', 'psx-poll-survey-plugin'); ?>
                         </label>
@@ -53,13 +52,13 @@
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
                         <p class="m-0"><?php _e('When poll status is (inactive)', 'psx-poll-survey-plugin'); ?></p>
                         <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is inactive) ', 'psx-poll-survey-plugin'); ?></p>
-                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="">
+                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="<?php echo get_option('PSX_status_message') ?>">
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
-                        <p class="m-0"><?php _e('When poll is (expired)<', 'psx-poll-survey-plugin'); ?></p>
+                        <p class="m-0"><?php _e('When poll is (expired)', 'psx-poll-survey-plugin'); ?></p>
                         <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is date expired)', 'psx-poll-survey-plugin'); ?> </p>
-                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="" placeholder="Enter expire message...">
+                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="<?php echo get_option('PSX_expire_message') ?>" placeholder="Enter expire message...">
                     </div>
 
                 </div>
@@ -111,14 +110,6 @@
                 email_input.disabled = true;
             }
         });
-        finalObj = {
-            email: emailRadioButton.checked,
-            gdpr: document.getElementById("gdpr").checked,
-            clear_data: document.getElementById("clear_data").checked,
-            admin_email: email_input.value,
-            expire_message: expire_message.value,
-            status_message: status_message.value,
-        }
         save_changes.addEventListener("click", function() {
             save_changes.disabled = true;
             save_changes.innerHTML =
@@ -175,6 +166,5 @@
     </script>
 
 </body>
-
 
 </html>
