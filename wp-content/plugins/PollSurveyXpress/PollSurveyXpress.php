@@ -3,7 +3,7 @@
 Plugin Name:  #PollSurveyXpress
 Plugin URI:   http://localhost/wordpress/wp-admin/admin.php?page=test-plugin-page 
 Description:  Poll & Survey Plugin
-Text Domain: 
+Text Domain: psx-poll-survey-plugin
 Version:      1.0
 Author:       Ibrahim 
 Author URI:   http://localhost/wordpress/   

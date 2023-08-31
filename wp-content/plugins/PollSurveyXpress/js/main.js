@@ -130,7 +130,7 @@ jQuery(document).ready(function (jQuery) {
               var popoverContent = document.createElement("div");
               popoverContent.className =
                 "position-relative d-flex flex-column gap-2 "; // Customize the class
-
+              console.log("question_data", question_data);
               // Iterate over the questionData object and create HTML elements
               for (var key in question_data) {
                 if (question_data.hasOwnProperty(key)) {
