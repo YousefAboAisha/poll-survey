@@ -668,16 +668,24 @@ class PollSurveyXpress
                     // Sanitize the template type
                     $template_type = sanitize_text_field($poll_data[0]['template']);
 
-    
-                    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                        // Check if multiple IP addresses are provided via proxies
-                        $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                        $userIP = $ipList[0];
-                    } else {
-                        $userIP = $_SERVER['REMOTE_ADDR'];
+                    $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+                    $isUserVoted = false;
+                    if ($user_id != 0){
+                        $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE poll_id = %d AND user_id = %s", $poll_id, $user_id);
+                        $votesCount = $wpdb->get_var($query);
+                        $isUserVoted = ($votesCount > 0); // Convert the result to a boolean value
                     }
+                    
+                    // Make a unique fingerprint for the user
+                    $userAgent = $_SERVER['HTTP_USER_AGENT'];
+                    $ipAddress = $_SERVER['REMOTE_ADDR'];
+                    $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+                    $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
+                
+                
+                    // Concatenate and hash the attributes to create a unique fingerprint
+                    $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
 
-                    $check = hash('sha256', $userIP);
                     $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; 
 
 
@@ -687,8 +695,8 @@ class PollSurveyXpress
                     
                     $output = '<div>';
 
-                    // If the count is greater than 0, the session ID is found in the table
-                    if ( ($count > 0)){
+                    // If the count is greater than ), the session ID is found in the table
+                    if ( ($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
                         <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -1164,10 +1172,15 @@ class PollSurveyXpress
                 $userIP = $_SERVER['REMOTE_ADDR'];
             }
 
-            $session_id = hash('sha256', $userIP);
             if (!(get_option('PSX_gdpr') === '')) {
                 $userIP = '';
             }
+            $userAgent = $_SERVER['HTTP_USER_AGENT'];
+            $ipAddress = $_SERVER['REMOTE_ADDR'];
+            $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
+
+            $session_id = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
 
 
             $responses = $poll_response['responses'];
