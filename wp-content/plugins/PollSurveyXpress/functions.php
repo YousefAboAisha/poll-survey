@@ -667,9 +667,40 @@ class PollSurveyXpress
                 } else {
                     // Sanitize the template type
                     $template_type = sanitize_text_field($poll_data[0]['template']);
-                    if ($length > 1) {
 
+    
+                    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                        // Check if multiple IP addresses are provided via proxies
+                        $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                        $userIP = $ipList[0];
+                    } else {
+                        $userIP = $_SERVER['REMOTE_ADDR'];
+                    }
+
+                    $check = hash('sha256', $userIP);
+                    $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; 
+
+
+                    //check if the session ID is alrea=dy voted for this poll
+                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d AND session_id = %s", $poll_id, $check);
+                    $count = $wpdb->get_var($query);
+                    
+                    $output = '<div>';
+
+                    // If the count is greater than 0, the session ID is found in the table
+                    if ( ($count > 0)){
                         $output = '<div>';
+                        $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
+                        <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                        <h3 class="m-0 text-dark fw-bolder p-0 text-center">You Can`t Vote another Time</h3>
+                        <p class="m-0 text-center" style="font-size: 13px;">You voted before this time</p>
+                        </div>
+                        ';
+                        $output .= '</div>';
+
+                    }elseif ($length > 1) {
+                        $output = '<div>';
+
                         if ($template_type === 'Multiple Choice') {
 
                             $output .= '<button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#mcq_data">' . $poll_data[0]['cta_Text'] . '</button>';
@@ -783,7 +814,7 @@ class PollSurveyXpress
                             $output .= '<button disabled id="open_ended_save_button"
                         class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
                         Save
-                    </button>';
+                        </button>';
 
                             $output .= '</div>'; // Close the Modal body
                             $output .= '</div>'; // Close the Modal content
@@ -1086,6 +1117,7 @@ class PollSurveyXpress
             $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
+            $real_time_check = $poll_data_array["real_time_check"] ? true : false;
             $sharing = $poll_data_array["sharing"] ? true : false;
             $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
 
@@ -1122,20 +1154,18 @@ class PollSurveyXpress
             // Extract data from the poll_response object
             $poll_id = $poll_response['poll_id'];
             $user_id = is_user_logged_in() ? get_current_user_id() : 0;
-            if (!isset($_SESSION['my_session_id'])) {
-                $_SESSION['my_session_id'] = uniqid();
-            }
-            $session_id = $_SESSION['my_session_id'];
 
-            if (get_option('PSX_gdpr') === '') {
-                if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                    // Check if multiple IP addresses are provided via proxies
-                    $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                    $userIP = $ipList[0];
-                } else {
-                    $userIP = $_SERVER['REMOTE_ADDR'];
-                }
+            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                // Check if multiple IP addresses are provided via proxies
+                $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $userIP = $ipList[0];
+
             } else {
+                $userIP = $_SERVER['REMOTE_ADDR'];
+            }
+
+            $session_id = hash('sha256', $userIP);
+            if (!(get_option('PSX_gdpr') === '')) {
                 $userIP = '';
             }
 
@@ -1280,12 +1310,11 @@ class PollSurveyXpress
 
 
             $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; // Replace 'prefix' with your database table prefix
-            $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE session_id = %s", $session_id);
-            $count = $wpdb->get_var($query);
+            $query = $wpdb->prepare("SELECT count(*) FROM $table_name WHERE poll_id = %s", $poll_id);
+            $votes = $wpdb->get_var($query);
 
             // If the count is greater than 0, the session ID is found in the table
-            $isSessionSaved = ($count > 0);
-            $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"isSessionSaved":' . json_encode($isSessionSaved) . '}';
+            $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"min_votes":' . json_encode($votes) . '}';
 
             echo json_encode($jsonResponse);
         }
@@ -1293,3 +1322,4 @@ class PollSurveyXpress
     }
 }
 $survey_plugin = new PollSurveyXpress();
+    

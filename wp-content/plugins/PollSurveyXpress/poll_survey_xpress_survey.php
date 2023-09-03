@@ -140,7 +140,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                             <i class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
-                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&page_id=test') ?>">
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit');?>">
                                                             <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
@@ -148,7 +148,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                         </a>
 
                                                         <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
-
                                                     </td>
                                                 </tr>
                                             <?php } ?>

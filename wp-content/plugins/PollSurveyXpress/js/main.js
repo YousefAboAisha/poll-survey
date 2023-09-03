@@ -101,8 +101,8 @@ jQuery(document).ready(function (jQuery) {
 
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
-
-        if (poll_results != null && poll_results != "") {
+        const votes = jsonData.votes;
+        if ((poll_results != null && poll_results != "") || poll_count <= votes) {
           mcq_container.innerHTML = "";
           mcq_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
