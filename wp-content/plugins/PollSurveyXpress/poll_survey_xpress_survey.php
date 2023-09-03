@@ -61,8 +61,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">
-                                                <?php _e('Title', 'psx-poll-survey-plugin'); ?> <?php _e('ID', 'psx-poll-survey-plugin'); ?>
-
+                                                <?php _e('Title', 'psx-poll-survey-plugin'); ?>
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">

@@ -22,14 +22,14 @@
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Pull/Survey title" id="surveyTitleValue" value="Pull/Survey title" />
+            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Pull/Survey title" id="surveyTitle" value="Pull/Survey title" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
-                <label for="surveyTitle" class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
+                <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
                 <input type="text" class="form-control mb-2 border p-2" placeholder="Question title" id="questionTitle" />
 
                 <div class="mt-2 mb-2">
-                    <label for="surveyTitle" class="form-label"><?php _e('Add new option', 'psx-poll-survey-plugin'); ?></label>
+                    <label class="form-label"><?php _e('Add new option', 'psx-poll-survey-plugin'); ?></label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="text" class="form-control border p-2" placeholder="Option title" id="optionInput" />
                         <button id="addOption" class="text-primary border btn text-sm font-weight-bold mb-0 shadow-none d-flex justify-content-center align-items-center p-3 rounded-1">
@@ -45,6 +45,11 @@
                     <?php _e('Create', 'psx-poll-survey-plugin'); ?>
                     <i class="fas fa-plus text-sm ms-1" aria-hidden="true"></i>
                 </button>
+
+                <div class="d-flex flex-column gap-1 mt-4 ">
+                    <p style="font-size: 12px;" class="m-0 text-dark">- You must add add at least one question</p>
+                    <p style="font-size: 12px;" class="m-0 text-dark">- Each question must contain at least two options</p>
+                </div>
             </div>
 
             <!-- Final output cards -->
@@ -55,6 +60,7 @@
             <button type="submit" id="save_button" disabled class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-5">
                 <?php _e('Save', 'psx-poll-survey-plugin'); ?>
             </button>
+
         </div>
     </main>
 
@@ -77,7 +83,7 @@
                 </div>
 
                 <!-- Modal body -->
-                <form class="modal-body card">
+                <div class="modal-body card">
                     <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                     <div>
                         <label><?php _e('Change plugin Theme', 'psx-poll-survey-plugin'); ?></label>
@@ -98,7 +104,6 @@
 
                         <div>
                             <label class="m-0" <?php _e('Ends', 'psx-poll-survey-plugin'); ?>></label>
-
                             <input type="datetime-local" class="form-control" id="end_date" placeholder="Select a date" />
                         </div>
                     </div>
@@ -147,7 +152,7 @@
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -183,7 +188,7 @@
             let createPollButton = document.getElementById("createPoll");
             let questionTitle = document.getElementById("questionTitle");
             let cardsContainer = document.getElementById("cardsContainer");
-            let surveyTitleValue = document.getElementById("surveyTitleValue").value;
+            let surveyTitle = document.getElementById("surveyTitle");
             let optionsHTMLArray = [];
             // Data will be sent
             let optionsArray = [];
@@ -277,19 +282,18 @@
             function createPollCard() {
                 const newPollCard = document.createElement("div");
                 newPollCard.className =
-                    "position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4";
+                    "poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4";
 
                 const optionsContainer = document.createElement("div");
-                optionsContainer.className = "d-flex flex-column gap-1";
+                optionsContainer.className = "options-container d-flex flex-column gap-1";
 
                 const newQuestionDivs = optionsArray.map((option, index) => {
                     const newQuestionDiv = document.createElement("div");
                     newQuestionDiv.className =
-                        "d-flex justify-content-between align-items-center w-100 mb-3";
+                        "option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3";
                     newQuestionDiv.setAttribute("data-card-id", index);
 
                     newQuestionDiv.innerHTML = `
-                        <div class="d-flex align-items-center w-100 gap-3">
                         <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-circle-xmark text-danger"></i>
 
                         <input 
@@ -299,14 +303,14 @@
                             placeholder="Add option #${index + 1}" 
                             value="${option}"
                         >
-                        </div>
                     `;
 
                     const inputElement = newQuestionDiv.querySelector("input");
 
 
+                    // Upodate the poll card 
                     inputElement.addEventListener("input", (event) => {
-                        const parentElement = event.target.parentNode.parentNode.parentNode.parentNode;
+                        const parentElement = event.target.parentNode.parentNode.parentNode;
                         const cardId = parentElement.getAttribute("data-card-id");
 
                         console.log("Card ID", cardId);
@@ -327,12 +331,14 @@
 
                     // Delete option function
                     delete_icon.addEventListener("click", (event) => {
-                        const parentElement = event.target.parentNode.parentNode.parentNode.parentNode;
+                        const parentElement = event.target.parentNode.parentNode.parentNode;
                         const cardId = parentElement.getAttribute("data-card-id");
                         const optionIndex = event.target.getAttribute("data-delete-id");
 
+                        console.log("[Parent element, cardID]", [parentElement, cardId]);
+
                         // Remove the option's parent div from DOM
-                        const optionDivToRemove = event.target.parentNode.parentNode;
+                        const optionDivToRemove = event.target.parentNode;
                         optionDivToRemove.remove();
 
                         deleteOption(cardId, optionIndex);
@@ -479,79 +485,118 @@
             }
 
             save_button.addEventListener("click", () => {
-                save_button.disabled = true;
-                save_button.innerHTML =
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                settingObj = {
-                    cta_Text: cta_input.value,
-                    start_date: start_date.value || new Date().toISOString(),
-                    end_date: end_date.value ||
-                        new Date(
-                            new Date().getFullYear() + 100,
-                            11,
-                            31,
-                            23,
-                            59,
-                            59
-                        ).toISOString(),
-                    status: active_plugin.checked,
-                    color: text_color.value,
-                    bgcolor: bg_color.value,
-                    sharing: share_plugin.checked,
-                    real_time_result_text: show_results_input.value,
-                    real_time_check: show_results.checked,
-                    min_votes: min_votes_input.value,
-                };
+                // Select all input fields within .options-container
+                let inputs = document.querySelectorAll(".options-container .option-container input");
 
-                finalObj = {
-                    surveyTitle: surveyTitleValue,
-                    pollCards: pollsCardsArray,
-                    settings: settingObj,
-                    template: "Multiple Choice",
-                };
+                // Initialize a flag to track if any empty field is found
+                let isEmptyField = false;
 
-                console.log(finalObj);
+                inputs.forEach((input, index) => {
+                    if (input.value == "") {
+                        input.style.cssText = "border: 1px solid red !important";
+                        isEmptyField = true;
+                    } else {
+                        input.style.border = "none"; // Remove the red border if the field is not empty
+                    }
+                });
 
-                jQuery.ajax({
-                    type: "POST",
-                    url: my_ajax_object.ajaxurl,
-                    data: {
-                        action: "PSX_save_poll_Multiple_data",
-                        nonce: nonce, // Pass the nonce
-                        poll_data: JSON.stringify(finalObj),
-                    },
-                    success: function(shortcode) {
-                        console.log("Done");
-                        save_button.textContent = "Save";
-                        save_button.disabled = false;
+                if (surveyTitle.value.trim() == "") {
+                    surveyTitle.style.cssText = "border: 1px solid red !important";
+                    surveyTitle.scrollIntoView({
+                        behavior: "smooth"
+                    });
 
-                        // Create a new toast element
-                        var toast = document.createElement("div");
-                        toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                        toast.className =
-                            "position-fixed p-2 px-4 bg-success border rounded-2";
-                        toast.innerHTML = `
+                    return;
+                } else {
+                    surveyTitle.style.border = "none"; // Remove the red border if the field is not empty
+                }
+
+                if (isEmptyField) {
+                    // If any empty field is found, scroll to the first empty field
+                    inputs.forEach((input, index) => {
+                        if (input.value == "") {
+                            input.scrollIntoView({
+                                behavior: "smooth"
+                            });
+                            return; // Exit the loop after scrolling to the first empty field
+                        }
+                    });
+                } else {
+
+                    save_button.disabled = true;
+                    save_button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                    settingObj = {
+                        cta_Text: cta_input.value,
+                        start_date: start_date.value || new Date().toISOString(),
+                        end_date: end_date.value ||
+                            new Date(
+                                new Date().getFullYear() + 100,
+                                11,
+                                31,
+                                23,
+                                59,
+                                59
+                            ).toISOString(),
+                        status: active_plugin.checked,
+                        color: text_color.value,
+                        bgcolor: bg_color.value,
+                        sharing: share_plugin.checked,
+                        real_time_result_text: show_results_input.value,
+                        real_time_check: show_results.checked,
+                        min_votes: min_votes_input.value,
+                    };
+
+                    finalObj = {
+                        surveyTitle: surveyTitle.value,
+                        pollCards: pollsCardsArray,
+                        settings: settingObj,
+                        template: "Multiple Choice",
+                    };
+
+                    console.log(finalObj);
+
+                    jQuery.ajax({
+                        type: "POST",
+                        url: my_ajax_object.ajaxurl,
+                        data: {
+                            action: "PSX_save_poll_Multiple_data",
+                            nonce: nonce, // Pass the nonce
+                            poll_data: JSON.stringify(finalObj),
+                        },
+                        success: function(shortcode) {
+                            console.log("Done");
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+
+                            // Create a new toast element
+                            var toast = document.createElement("div");
+                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                            toast.className =
+                                "position-fixed p-2 px-4 bg-success border rounded-2";
+                            toast.innerHTML = `
                                 <p class="m-0 fw-bold text-xs text-white">
                                 New survey has been added successfully!
                                 </p>
                             `;
-                        // Append the toast to the document
-                        document.body.appendChild(toast);
+                            // Append the toast to the document
+                            document.body.appendChild(toast);
 
-                        // Initialize the Bootstrap toast
-                        var bootstrapToast = new bootstrap.Toast(toast);
-                        bootstrapToast.show();
+                            // Initialize the Bootstrap toast
+                            var bootstrapToast = new bootstrap.Toast(toast);
+                            bootstrapToast.show();
 
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 500)
-                    },
-                    error: function(error) {
-                        console.error("Error:", error);
-                        save_button.textContent = "Save";
-                        save_button.disabled = false;
-                    },
-                });
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500)
+                        },
+                        error: function(error) {
+                            console.error("Error:", error);
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+                        },
+                    });
+                }
             });
         });
     </script>
