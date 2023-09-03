@@ -1,12 +1,3 @@
-<?php 
-
-if (isset($_GET['action'])){
-    echo "action is set";
-}  else {
-    echo "action is not set";
-}
-?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -304,7 +295,7 @@ if (isset($_GET['action'])){
                     newQuestionDiv.setAttribute("data-card-id", index);
 
                     newQuestionDiv.innerHTML = `
-                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-circle-xmark text-danger"></i>
+                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-minus text-danger"></i>
 
                         <input 
                             type="text" 

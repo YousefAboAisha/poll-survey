@@ -178,7 +178,7 @@
 
                 newQuestionDiv.innerHTML = `
               <div class="question-container d-flex align-items-center w-100 gap-3">
-                <i onclick="deleteQuestion(${counter})" style="cursor: pointer" class="fas fa-trash text-danger"></i>
+                <i onclick="deleteQuestion(${counter})" style="cursor: pointer"class="fas fa-minus text-danger"></i>
                 <textarea
                   class="form-control"
                   id="questionTitle_${counter}"
