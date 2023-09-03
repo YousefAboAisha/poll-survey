@@ -325,7 +325,6 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = $settings['sharing'] ? 'true' : 'false';
             $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
@@ -340,7 +339,7 @@ class PollSurveyXpress
                 'Short_Code' => '',
                 'color' => $color,
                 'bgcolor' => $bgcolor,
-                'sharing' => $sharing,
+                'sharing' => 'false',
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
@@ -406,7 +405,6 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = $settings['sharing'] ? 'true' : 'false';
             $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
@@ -421,7 +419,7 @@ class PollSurveyXpress
                 'Short_Code' => '',
                 'color' => $color,
                 'bgcolor' => $bgcolor,
-                'sharing' => $sharing,
+                'sharing' => 'false',
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
@@ -487,7 +485,6 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $sharing = $settings['sharing'] ? 'true' : 'false';
             $real_time_result_text = sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
@@ -502,7 +499,7 @@ class PollSurveyXpress
                 'Short_Code' => '',
                 'color' => $color,
                 'bgcolor' => $bgcolor,
-                'sharing' => $sharing,
+                'sharing' => 'false',
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
@@ -1108,7 +1105,6 @@ class PollSurveyXpress
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
             $real_time_check = $poll_data_array["real_time_check"] ? true : false;
-            $sharing = $poll_data_array["sharing"] ? true : false;
             $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
 
             $min_votes = absint($poll_data_array["min_votes"]);
@@ -1122,7 +1118,7 @@ class PollSurveyXpress
                     "status" => $status ? 'active' : 'inactive',
                     "color" => $color,
                     "bgcolor" => $bgcolor,
-                    "sharing" => $sharing,
+                    "sharing" => 'false',
                     "real_time_result_text" => $real_time_check ? '' : $real_time_result_text,
                     "min_votes" => $min_votes,
                     "cta_Text" => $cta_text
