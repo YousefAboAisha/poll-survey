@@ -652,33 +652,33 @@ class PollSurveyXpress
 
                     $user_id = is_user_logged_in() ? get_current_user_id() : 0;
                     $isUserVoted = false;
-                    if ($user_id != 0){
+                    if ($user_id != 0) {
                         $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE poll_id = %d AND user_id = %s", $poll_id, $user_id);
                         $votesCount = $wpdb->get_var($query);
                         $isUserVoted = ($votesCount > 0); // Convert the result to a boolean value
                     }
-                    
+
                     // Make a unique fingerprint for the user
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
                     $ipAddress = $_SERVER['REMOTE_ADDR'];
                     $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
                     $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
-                
-                
-                    // Concatenate and hash the attributes to create a unique fingerprint
-                    $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
 
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_responses'; 
+
+                    // Concatenate and hash the attributes to create a unique fingerprint
+                    $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding);
+
+                    $table_name = $wpdb->prefix . 'polls_psx_survey_responses';
 
 
                     //check if the session ID is alrea=dy voted for this poll
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d AND session_id = %s", $poll_id, $check);
                     $count = $wpdb->get_var($query);
-                    
+
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if ( ($count > 0 || $isUserVoted)) {
+                    if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
                         <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -687,8 +687,7 @@ class PollSurveyXpress
                         </div>
                         ';
                         $output .= '</div>';
-
-                    }elseif ($length > 1) {
+                    } elseif ($length > 1) {
                         $output = '<div>';
 
                         if ($template_type === 'Multiple Choice') {
@@ -723,8 +722,6 @@ class PollSurveyXpress
                             foreach ($questions as $index => $question) {
                                 $output .= '<div id="poll_card" data-card-id="' . $poll_id . '" class="poll-question-container position-relative flex-column gap-2 border border-dark rounded-3 p-4 m-0 mt-3">';
 
-                                // Show results button
-                                $output .= '<button disabled id="percentage_result_btn" tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="Poll Results" data-content="And heres some amazing content. Its very engaging. Right?" data-question-id="' . $question['question_id'] . '" style="font-size:11px" class="btn btn-white shadow-none border p-2 position-absolute top-5 end-3 text-primary bg-white percentage-result-btn"> Show results </button>';
 
                                 // Poll title     
                                 $output .= '<h6 class="mb-4" style="color:' . $poll_data[0]['color'] . ' !important;">' . ($index + 1) . ") " . $question['question_text'] . '</h6>';
@@ -735,12 +732,20 @@ class PollSurveyXpress
                                 $answers = $wpdb->get_results($query, ARRAY_A);
 
                                 foreach ($answers as $answer) {
-                                    $output .= '<div class="poll-answer position-relative d-flex align-items-center mb-2 p-2 gap-3">';
-                                    $output .= '<div class="d-flex align-items-center">';
-                                    $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
-                                    $output .= '</div>';
-                                    $output .= '<label for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
-                                    $output .= '</div>';
+                                    $output .= '<ul class="poll-answer position-relative d-flex align-items-center mb-2 p-2 gap-3">';
+                                    $output .= '<li class="d-flex align-items-center">';
+                                    $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio m-0" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
+                                    $output .= '</li>';
+                                    $output .= '<label class="m-0" for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
+
+                                    $output .= '<div class="result-container position-absolute bottom-0 d-none align-items-center justify-content-between gap-2 w-100" .data-question-id="' . $question['question_id'] . '" >
+                                    <div class="progress-bar bg-transparent">
+                                    <p style="z-index:5" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                                    <p style="width:100%; background-color:#DDD;" class="m-0 rounded-2"></p>
+                                    </div>                    
+                                    <p style="font-size:12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                                    </div>';
+                                    $output .= '</ul>';
                                 }
 
                                 $output .= '</div>'; // Close the poll structure div
@@ -1149,7 +1154,6 @@ class PollSurveyXpress
                 // Check if multiple IP addresses are provided via proxies
                 $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
                 $userIP = $ipList[0];
-
             } else {
                 $userIP = $_SERVER['REMOTE_ADDR'];
             }
@@ -1162,7 +1166,7 @@ class PollSurveyXpress
             $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
             $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
 
-            $session_id = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
+            $session_id = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding);
 
 
             $responses = $poll_response['responses'];
@@ -1317,4 +1321,3 @@ class PollSurveyXpress
     }
 }
 $survey_plugin = new PollSurveyXpress();
-    
