@@ -311,6 +311,31 @@ class PollSurveyXpress
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
             // Extract necessary data from $poll_data_array
+            $form_type = sanitize_text_field($poll_data_array['type']);
+
+            if ($form_type =='Edit'){
+                $poll_id = sanitize_text_field($poll_data_array['poll_id']);
+                $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
+                $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
+                $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+
+                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
+
+                foreach ($responses_id as $response) {
+                    $response_id = $response['response_id'];
+                    $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
+                }
+
+                // Delete from survey responses
+                $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
+
+                // Delete from survey answers
+                $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
+
+                // Delete from survey questions
+                $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
+            }
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $pollCards = $poll_data_array['pollCards'];
             $settings = $poll_data_array['settings'];
@@ -343,10 +368,13 @@ class PollSurveyXpress
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
-
-            // Insert the poll data into the polls_psx_polls table
-            $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
-            $poll_id = $wpdb->insert_id;
+            if ($form_type =='Edit'){
+                $poll_data_array_insert['poll_id'] = $poll_id;
+                $wpdb->update($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert, array('poll_id' => $poll_id)); 
+            }else{
+                $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
+                $poll_id = $wpdb->insert_id;
+            }
 
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_psx ' . $poll_id;
@@ -389,6 +417,31 @@ class PollSurveyXpress
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
+            $form_type = sanitize_text_field($poll_data_array['type']);
+
+            if ($form_type =='Edit'){
+                $poll_id = sanitize_text_field($poll_data_array['poll_id']);
+                $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
+                $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
+                $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+
+                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
+
+                foreach ($responses_id as $response) {
+                    $response_id = $response['response_id'];
+                    $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
+                }
+
+                // Delete from survey responses
+                $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
+
+                // Delete from survey answers
+                $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
+
+                // Delete from survey questions
+                $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
+            }
             // Extract necessary data from $poll_data_array
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $questions = $poll_data_array['questions'];
@@ -423,10 +476,14 @@ class PollSurveyXpress
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
-
-            // Insert the poll data into the polls_psx_polls table
-            $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
-            $poll_id = $wpdb->insert_id;
+            if ($form_type =='Edit'){
+                $poll_data_array_insert['poll_id'] = $poll_id;
+                $wpdb->update($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert, array('poll_id' => $poll_id)); 
+            }else{
+                $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
+                $poll_id = $wpdb->insert_id;
+            }
+           
 
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_psx ' . $poll_id;
@@ -470,9 +527,35 @@ class PollSurveyXpress
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
+            $form_type = sanitize_text_field($poll_data_array['type']);
+
+            if ($form_type =='Edit'){
+                $poll_id = sanitize_text_field($poll_data_array['poll_id']);
+                $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
+                $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
+                $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+
+                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
+
+                foreach ($responses_id as $response) {
+                    $response_id = $response['response_id'];
+                    $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
+                }
+
+                // Delete from survey responses
+                $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
+
+                // Delete from survey answers
+                $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
+
+                // Delete from survey questions
+                $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
+            }
             // Extract necessary data from $poll_data_array
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $questions = $poll_data_array['questions'];
+            $ratesArray = $poll_data_array['ratesArray'];
             $settings = $poll_data_array['settings'];
             $template = sanitize_text_field($poll_data_array['template']);
 
@@ -485,7 +568,7 @@ class PollSurveyXpress
             $status = $settings['status'] ? 'active' : 'inactive';
             $color = sanitize_hex_color($settings['color']);
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
-            $real_time_result_text = sanitize_text_field($settings['real_time_result_text']);
+            $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
 
             // Insert data into polls_psx_polls table
@@ -503,11 +586,14 @@ class PollSurveyXpress
                 'real_time_result_text' => $real_time_result_text,
                 'min_votes' => $min_votes
             );
-
-            // Insert the poll data into the polls_psx_polls table
-            $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
-            $poll_id = $wpdb->insert_id;
-
+            if ($form_type =='Edit'){
+                $poll_data_array_insert['poll_id'] = $poll_id;
+                $wpdb->update($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert, array('poll_id' => $poll_id)); 
+            }else{
+                $wpdb->insert($wpdb->prefix . 'polls_psx_polls', $poll_data_array_insert);
+                $poll_id = $wpdb->insert_id;
+            }
+           
             // Generate the shortcode based on title and ID
             $shortcode = 'poll_psx ' . $poll_id;
 

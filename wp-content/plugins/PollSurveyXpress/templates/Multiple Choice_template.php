@@ -37,6 +37,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
     $poll_data_json = json_encode($poll_data);
     $questions_json = json_encode($questions);
     $questions_with_answers_json = json_encode($questions_with_answers);
+    $type = json_encode($isItEditPage);
 }
 
 ?>
@@ -68,7 +69,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Pull/Survey title" id="surveyTitle" value="Pull/Survey title" />
+        <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
@@ -585,6 +586,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
                     finalObj = {
                         surveyTitle: surveyTitle.value,
+                        type : surveyTitle.getAttribute("data-type"),
+                        poll_id : surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
                         pollCards: pollsCardsArray,
                         settings: settingObj,
                         template: "Multiple Choice",

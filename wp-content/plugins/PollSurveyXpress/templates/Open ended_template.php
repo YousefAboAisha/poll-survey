@@ -72,7 +72,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-            <input type="text" class="form-control p-2 border rounded-1" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
+        <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
             <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mt-4 mb-2">
@@ -181,7 +181,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
     <script>
         const save_button = document.getElementById("save_button");
-        const pullTitle = document.getElementById("pullTitle");
+        const pullTitle = document.getElementById("surveyTitle");
         const addQuestionButton = document.getElementById("addQuestion");
         const questionInput = document.getElementById("questionInput");
         const questionsGroup = document.getElementById("questionsGroup");
@@ -271,6 +271,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
             finalObj = {
                 surveyTitle: pullTitle.value,
                 questions: questionsArray,
+                type : pullTitle.getAttribute("data-type"),
+
             };
             console.log(finalObj);
         });
@@ -351,6 +353,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     questions: questionsArray,
                     settings: settingObj,
                     template: "Open Ended",
+                    type : pullTitle.getAttribute("data-type"),
+                    poll_id : pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
+
                 };
                 jQuery.ajax({
                     type: "POST",

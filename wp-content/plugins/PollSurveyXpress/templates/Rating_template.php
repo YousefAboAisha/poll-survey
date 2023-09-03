@@ -79,7 +79,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
 
             <div class="d-flex justify-content-between align-items-center w-100 mb-4">
-                <input type="text" class="w-100 text-lg p-2 px-0 bg-white border-0 rounded-1 m-0 p-0" placeholder="Pull/Survey title" id="pullTitle" value="Pull/Survey title" />
+            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
 
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
                     <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #1" value="Rate #1" />
@@ -214,7 +214,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
             // };
         }
         const save_button = document.getElementById("save_button");
-        const pullTitle = document.getElementById("pullTitle");
+        const pullTitle = document.getElementById("surveyTitle");
         const addOptionButton = document.getElementById("addQuestion");
         const optionInput = document.getElementById("questionInput");
         const questionsGroup = document.getElementById("questionsGroup");
@@ -429,6 +429,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     ratesArray: ratesArray,
                     settings: settingObj,
                     template: "Rating",
+                    type: pullTitle.getAttribute("data-type"),
+                    poll_id : pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
                 };
                 jQuery.ajax({
                     type: "POST",
