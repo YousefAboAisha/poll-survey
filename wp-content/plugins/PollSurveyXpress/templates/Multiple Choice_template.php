@@ -1,10 +1,10 @@
-<?php 
-global $wpdb ;
-$isItEditPage= false;
-if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
+<?php
+global $wpdb;
+$isItEditPage = false;
+if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
     $isItEditPage = true;
     $poll_id = $_GET['poll_id']; // Get the poll ID from the URL parameter
-    
+
     // Query to fetch poll data
     $query = $wpdb->prepare("
                 SELECT * FROM {$wpdb->prefix}polls_psx_polls
@@ -19,25 +19,26 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                 SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
                 WHERE poll_id = %d
             ", $poll_id);
-    
+
     $questions = $wpdb->get_results($questions_query);
-    
-    
+
+
     $questions_with_answers = array();
-    
+
     foreach ($questions as &$question) {
         $answers_query = $wpdb->prepare("
                 SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
                 WHERE question_id = %d and poll_id = %d
                 ", $question->question_id, $poll_id);
-    
+
         $question->answers = $wpdb->get_results($answers_query);
         $questions_with_answers[] = $question;
     }
     $poll_data_json = json_encode($poll_data);
     $questions_json = json_encode($questions);
-    $questions_with_answers_json = json_encode($questions_with_answers);
     $type = json_encode($isItEditPage);
+    $questions_with_answers_json = json_encode($questions_with_answers);
+    $jsonDataEncoded = htmlspecialchars($questions_with_answers_json, ENT_QUOTES, 'UTF-8');
 }
 
 ?>
@@ -57,11 +58,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
         <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Home', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <?php if ($isItEditPage){?>
+            <?php if ($isItEditPage) { ?>
                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Surveys', 'psx-poll-survey-plugin'); ?></a>
                 <i class="fas fa-angle-right"></i>
                 <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Multiple Choice Survey Edit', 'psx-poll-survey-plugin'); ?></h6>
-                <?php }else{ ?>
+            <?php } else { ?>
                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark"><?php _e('Templates', 'psx-poll-survey-plugin'); ?></a>
                 <i class="fas fa-angle-right"></i>
                 <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Multiple Choice Survey Add', 'psx-poll-survey-plugin'); ?></h6>
@@ -69,7 +70,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-        <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
@@ -101,13 +102,39 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
             <!-- Final output cards -->
             <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5">
-                <!-- Cards will be rendered here -->
-            </div>
 
+                <?php
+                // Check if decoding was successful
+                if ($questions_with_answers !== null) {
+                    foreach ($questions_with_answers as $index => $question) {
+                ?>
+                        <div data-card-id="<?php echo $question->poll_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
+                            <textarea class="form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
+
+                            <div class="position-absolute bottom-4 end-2 p-0">
+                                <i data-delete-card-id="<?php echo $question->poll_id ?>" class="fas fa-trash text-sm ms-1 text-danger delete-card" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" style="cursor: pointer;"></i>
+                            </div>
+
+                            <div class="options-container d-flex flex-column gap-1">
+                                <?php foreach ($question->answers as $index => $answer) { ?>
+                                    <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
+                                        <i data-delete-option-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger delete-option" style="cursor: pointer"></i>
+                                        <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Add option #1" value="<?php echo $answer->answer_text; ?>">
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                <?php
+                    }
+                } else {
+                    echo "Error decoding JSON.";
+                }
+                ?>
+
+            </div>
             <button type="submit" id="save_button" disabled class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-5">
                 <?php _e('Save', 'psx-poll-survey-plugin'); ?>
             </button>
-
         </div>
     </main>
 
@@ -159,7 +186,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     <div class="card-body pt-sm-3 p-0">
                         <div class="form-group d-flex flex-column">
                             <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data[0]->status === 'active' ? 'checked' : ''; ?> />
+                                <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data[0]->status === 'active' ? 'checked' : ''; ?> />
                                 <label class="form-check-label" for="active_plugin">
                                     <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?>
                                 </label>
@@ -178,16 +205,15 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
                                     <?php _e('Show results after', 'psx-poll-survey-plugin'); ?>
-
                                 </label>
                                 <input type="number" class="form-control border rounded-1 p-1 w-55" placeholder="Number of votes" id="min_votes_input" value="<?php echo $poll_data[0]->min_votes; ?>" />
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                            <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
-                            <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                <?php echo $poll_data[0]->cta_Text; ?>
-                            </button>
+                                <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
+                                <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                                    <?php echo $poll_data[0]->cta_Text; ?>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -249,6 +275,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
             const cta_input = document.getElementById("cta_input");
             const save_button = document.getElementById("save_button");
             const nonce = jQuery("#my-ajax-nonce").val();
+
+            // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"))
+            // console.log("Array", cards_array);
 
             function createOption(optionTitle) {
                 const newOption = document.createElement("div");
@@ -344,7 +373,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     `;
 
                     const inputElement = newQuestionDiv.querySelector("input");
-
 
                     // Upodate the poll card 
                     inputElement.addEventListener("input", (event) => {
@@ -515,7 +543,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                 const emptyCardExists = pollsCardsArray.some(card => card.options.length === 0);
                 const insufficientOptions = pollsCardsArray.some(card => card.options.length < 2);
 
-                if (emptyCardExists || insufficientOptions || pollsCardsArray <= 0) {
+                if (emptyCardExists || insufficientOptions || cardsContainer.childElementCount <= 0) {
                     save_button.disabled = true;
                 } else {
                     save_button.disabled = false;
@@ -586,8 +614,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
                     finalObj = {
                         surveyTitle: surveyTitle.value,
-                        type : surveyTitle.getAttribute("data-type"),
-                        poll_id : surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
+                        type: surveyTitle.getAttribute("data-type"),
+                        poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
                         pollCards: pollsCardsArray,
                         settings: settingObj,
                         template: "Multiple Choice",
