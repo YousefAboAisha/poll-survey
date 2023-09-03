@@ -36,15 +36,15 @@ $templateCount = count($previewFiles);
 <?php $cardData = [
     [
         'details' => 'Questions are presented with a set of questions and a predefined list of answer choices for each question. Respondents select one or more answers from the provided options.',
-        'icon' => 'fas fa-hashtag fa-lg',
+        'icon' => 'fas fa-hashtag fa-md',
     ],
     [
         'details' => 'Questions prompting respondents to provide free-form, open-ended responses. Participants have the freedom to express their thoughts',
-        'icon' => 'fas fa-paragraph fa-lg',
+        'icon' => 'fas fa-paragraph fa-md',
     ],
     [
         'details' => 'Participants are asked to assign ratings or scores to specific items or statements based on their preferences, opinions, or experiences.',
-        'icon' => 'fas fa-circle-dot fa-lg',
+        'icon' => 'fas fa-percent fa-md',
     ],
 ]; ?>
 

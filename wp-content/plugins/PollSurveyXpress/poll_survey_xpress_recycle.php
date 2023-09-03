@@ -43,9 +43,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
                                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="btn btn-dark m-0"> <?php _e('All surveys', 'psx-poll-survey-plugin'); ?>
-
-                                    <i style="cursor: pointer" class="fas fa-square-poll-vertical text-white ms-2 text-lg"></i>
-
+                                    <i style="cursor: pointer" class="fas fa-chart-bar text-white ms-2 text-lg"></i>
                                 </a>
                             </div>
                         </div>

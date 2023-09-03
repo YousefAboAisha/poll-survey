@@ -45,7 +45,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
                                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0">New Survey
-                                    <i style="cursor: pointer" class="fas fa-add text-white ms-2 text-lg"></i>
+                                    <i style="cursor: pointer" class="fas fa-plus text-white ms-2"></i>
                                 </a>
                                 <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0">Recycle Bin <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
                             </div>
@@ -61,8 +61,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">
-                                                <?php _e('Title', 'psx-poll-survey-plugin'); ?> <?php _e('ID', 'psx-poll-survey-plugin'); ?>
-
+                                                <?php _e('Title', 'psx-poll-survey-plugin'); ?>
                                             </th>
 
                                             <th class="text-uppercase text-xxs p-4">
@@ -144,7 +143,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                             <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
-                                                            <i class="fas fa-gear text-sm text-dark" style="cursor: pointer"></i>
+                                                            <i class="fa fa-gear text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
                                                         <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>

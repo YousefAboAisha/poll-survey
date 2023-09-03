@@ -225,13 +225,13 @@
                 newQuestionDiv.setAttribute("data-card-id", counter);
 
                 newQuestionDiv.innerHTML = `
-                <div class="d-flex align-items-center w-100 gap-3">
+                <div class="question-container d-flex align-items-center w-100 gap-3">
                 <i onclick="deleteQuestion(${counter})" style="cursor: pointer" class="fas fa-trash text-danger"></i>
                 <input
                     type="text"
                     class="form-control border p-2"
                     id="questionTitle_${counter}"
-                    placeholder="Edit Question title"
+                    placeholder="Edit question title"
                     value="${questionTitle}"
                     data-card-id="${counter}"
                     />
@@ -310,72 +310,134 @@
 
 
         save_button.addEventListener("click", () => {
-            save_button.disabled = true;
-            save_button.innerHTML =
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-            settingObj = {
-                cta_Text: cta_input.value,
-                start_date: start_date.value,
-                end_date: end_date.value,
-                status: active_plugin.checked,
-                color: text_color.value,
-                bgcolor: bg_color.value,
-                sharing: share_plugin.checked,
-                real_time_result_text: show_results_input.value,
-                real_time_check: show_results.checked,
-                min_votes: min_votes_input.value,
-            };
+            const textFields = document.querySelectorAll(".question-container input")
 
-            finalObj = {
-                surveyTitle: pullTitle.value,
-                questions: questionsArray,
-                ratesArray: ratesArray,
-                settings: settingObj,
-                template: "Rating",
-            };
-            jQuery.ajax({
-                type: "POST",
-                url: my_ajax_object.ajaxurl,
-                data: {
-                    action: "PSX_save_poll_rating_data",
-                    poll_data: JSON.stringify(finalObj),
-                    nonce: nonce,
-                },
-                success: function(shortcode) {
-                    console.log("Done");
-                    save_button.textContent = "Save";
-                    save_button.disabled = false;
+            // Initialize a flag to track if any empty field is found
+            let isEmptyField_question = false;
+            let isEmptyField_rate = false;
 
 
-                    // Create a new toast element
-                    var toast = document.createElement("div");
-                    toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                    toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-                    toast.innerHTML = `
+            // Questions fields validation
+            textFields.forEach((input, index) => {
+                if (input.value == "") {
+                    input.style.cssText = "border: 1px solid red !important";
+                    isEmptyField_question = true;
+                } else {
+                    input.style.border = "none"; // Remove the red border if the field is not empty
+                }
+            });
+
+            rateInputs.forEach((input, index) => {
+                if (input.value == "") {
+                    input.style.cssText = "border: 1px solid red !important";
+                    isEmptyField_rate = true;
+                } else {
+                    input.style.border = "none"; // Remove the red border if the field is not empty
+                }
+            });
+
+
+
+            if (pullTitle.value.trim() == "") {
+                pullTitle.style.cssText = "border: 1px solid red !important";
+                pullTitle.scrollIntoView({
+                    behavior: "smooth",
+                    top: middleOfElement - window.innerHeight / 2,
+                });
+                return;
+            } else {
+                pullTitle.style.border = "none"; // Remove the red border if the field is not empty
+            }
+
+            if (isEmptyField_question) {
+                // If any empty field is found, scroll to the first empty field
+                textFields.forEach((input, index) => {
+                    if (input.value == "") {
+                        input.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                        return; // Exit the loop after scrolling to the first empty field
+                    }
+                });
+            } else if (isEmptyField_rate) {
+                // If any empty field is found, scroll to the first empty field
+                rateInputs.forEach((input, index) => {
+                    if (input.value == "") {
+                        input.scrollIntoView({
+                            behavior: "smooth"
+                        });
+                        return; // Exit the loop after scrolling to the first empty field
+                    }
+                });
+            } else {
+                save_button.disabled = true;
+                save_button.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                settingObj = {
+                    cta_Text: cta_input.value,
+                    start_date: start_date.value,
+                    end_date: end_date.value,
+                    status: active_plugin.checked,
+                    color: text_color.value,
+                    bgcolor: bg_color.value,
+                    sharing: share_plugin.checked,
+                    real_time_result_text: show_results_input.value,
+                    real_time_check: show_results.checked,
+                    min_votes: min_votes_input.value,
+                };
+
+                finalObj = {
+                    surveyTitle: pullTitle.value,
+                    questions: questionsArray,
+                    ratesArray: ratesArray,
+                    settings: settingObj,
+                    template: "Rating",
+                };
+                jQuery.ajax({
+                    type: "POST",
+                    url: my_ajax_object.ajaxurl,
+                    data: {
+                        action: "PSX_save_poll_rating_data",
+                        poll_data: JSON.stringify(finalObj),
+                        nonce: nonce,
+                    },
+                    success: function(shortcode) {
+                        console.log("Done");
+                        save_button.textContent = "Save";
+                        save_button.disabled = false;
+
+
+                        // Create a new toast element
+                        var toast = document.createElement("div");
+                        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+                        toast.innerHTML = `
                     <p class="m-0 fw-bold text-xs text-white">
                     New survey has been added successfully!
                     </p>
                 `;
-                    // Append the toast to the document
-                    document.body.appendChild(toast);
+                        // Append the toast to the document
+                        document.body.appendChild(toast);
 
-                    // Initialize the Bootstrap toast with custom options
-                    var bootstrapToast = new bootstrap.Toast(toast, {
-                        autohide: true, // Set to true to enable automatic hiding
-                        delay: 2000,
-                    });
-                    bootstrapToast.show();
+                        // Initialize the Bootstrap toast with custom options
+                        var bootstrapToast = new bootstrap.Toast(toast, {
+                            autohide: true, // Set to true to enable automatic hiding
+                            delay: 2000,
+                        });
+                        bootstrapToast.show();
 
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500)
-                },
-                error: function(error) {
-                    console.error("Error:", error);
-                    save_button.textContent = "Save";
-                    save_button.disabled = false;
-                },
-            });
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500)
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                        save_button.textContent = "Save";
+                        save_button.disabled = false;
+                    },
+                });
+            }
+
         })
 
         const voteCheckbox = document.getElementById("show_results");
@@ -388,9 +450,6 @@
             }
         });
     </script>
-    <!-- Github buttons -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 </body>
 
 </html>
