@@ -33,3 +33,7 @@ input[type="radio"] {
   min-height: 20px !important;
   z-index: 10;
 }
+
+.transition-progress-bar .percentage-bar {
+  transition: width 1.5s ease-in-out; /* Adjust duration and easing as needed */
+}

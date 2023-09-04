@@ -822,13 +822,13 @@ class PollSurveyXpress
                                     $output .= '</div>';
                                     $output .= '<label class="m-0" for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
 
-                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" >
-                                    <div class="progress-bar bg-transparent">
-                                        <p class="percentage-bar m-0 bg-primary rounded-2"></p>
-                                        <p style="width:100%; background-color:#DDD;" class="m-0 rounded-2"></p>
-                                    </div>                    
-                                    <p style="font-size:12px" class="percentage-value text-primary m-0 fw-bolder"></p>
-                                         </div>';
+                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
+                                        <div class="progress-bar bg-transparent transition-progress-bar">
+                                            <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                                            <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
+                                        </div>
+                                        <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                                    </div>';
 
                                     $output .= '</div>';
                                 }
@@ -1036,13 +1036,13 @@ class PollSurveyXpress
                                     $output .= '</div>';
                                     $output .= '<label class="m-0" for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
 
-                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" >
-                                    <div class="progress-bar bg-transparent">
-                                        <p class="percentage-bar m-0 bg-primary rounded-2"></p>
-                                        <p style="width:100%; background-color:#DDD;" class="m-0 rounded-2"></p>
-                                    </div>                    
-                                    <p style="font-size:12px" class="percentage-value text-primary m-0 fw-bolder"></p>
-                                         </div>';
+                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
+                                    <div class="progress-bar bg-transparent transition-progress-bar">
+                                        <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                                        <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
+                                    </div>
+                                    <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                                </div>';
 
                                     $output .= '</div>';
                                 }
