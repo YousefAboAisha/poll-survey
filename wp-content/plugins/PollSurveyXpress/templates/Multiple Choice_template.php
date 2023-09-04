@@ -74,7 +74,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
-                <input type="text" class="form-control mb-2 border p-2" placeholder="Question title" id="question_text" />
+                <input type="text" class="form-control mb-2 border p-2" placeholder="Question title" id="questionTitle" />
 
                 <div class="mt-2 mb-2">
                     <label class="form-label"><?php _e('Add new option', 'psx-poll-survey-plugin'); ?></label>
@@ -87,7 +87,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 </div>
 
                 <!-- Radio Buttons group -->
-                <div id="answersGroup"></div>
+                <div id="optionsGroup"></div>
 
                 <button disabled id="createPoll" class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
                     <?php _e('Create', 'psx-poll-survey-plugin'); ?>
@@ -96,7 +96,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                 <div class="d-flex flex-column gap-1 mt-4 ">
                     <p style="font-size: 12px;" class="m-0 text-dark">- You must add add at least one question</p>
-                    <p style="font-size: 12px;" class="m-0 text-dark">- Each question must contain at least two answers</p>
+                    <p style="font-size: 12px;" class="m-0 text-dark">- Each question must contain at least two options</p>
                 </div>
             </div>
 
@@ -108,18 +108,18 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 if ($questions_with_answers !== null) {
                     foreach ($questions_with_answers as $index => $question) {
                 ?>
-                        <div data-card-id="<?php echo $question->poll_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
-                            <textarea class="form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
+                        <div data-card-id="<?php echo $question->question_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
+                            <textarea class="question-text form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
 
                             <div class="position-absolute bottom-4 end-2 p-0">
-                                <i data-delete-card-id="<?php echo $question->poll_id ?>" class="fas fa-trash text-sm ms-1 text-danger delete-card" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" style="cursor: pointer;"></i>
+                                <i data-card-id="<?php echo $question->question_id ?>" class="delete-card fas fa-trash text-sm ms-1 text-danger " aria-hidden="true" style="cursor: pointer;"></i>
                             </div>
 
-                            <div class="answers-container d-flex flex-column gap-1">
+                            <div class="options-container d-flex flex-column gap-1">
                                 <?php foreach ($question->answers as $index => $answer) { ?>
                                     <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
-                                        <i data-delete-option-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger delete-option" style="cursor: pointer"></i>
-                                        <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Add option #1" value="<?php echo $answer->answer_text; ?>">
+                                        <i id="delete_option" data-deleteOption-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger" style="cursor: pointer"></i>
+                                        <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Edit option" value="<?php echo $answer->answer_text; ?>">
                                     </div>
                                 <?php } ?>
                             </div>
@@ -249,17 +249,21 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             // Add Poll cards variables
             let addOptionButton = document.getElementById("addOption");
             let optionInput = document.getElementById("optionInput");
-            let answersGroup = document.getElementById("answersGroup");
+            let optionsGroup = document.getElementById("optionsGroup");
             let createPollButton = document.getElementById("createPoll");
-            let question_text = document.getElementById("question_text");
+            let questionTitle = document.getElementById("questionTitle");
             let cardsContainer = document.getElementById("cardsContainer");
             let surveyTitle = document.getElementById("surveyTitle");
-            let answersHTMLArray = [];
-            const retrieved_data = JSON.parse(surveyTitle.getAttribute("data-json-data")); // Retrieved Data
+            let optionsHTMLArray = [];
+            const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+
+            jQuery(document).ready(function(jQuery) {
+                console.log(cards_array);
+            })
 
             // Data will be sent
-            let answersArray = [];
-            let pollsCardsArray = [...retrieved_data];
+            let optionsArray = [];
+            let pollsCardsArray = [];
             // Final object data
             let finalObj = {};
 
@@ -278,12 +282,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             const save_button = document.getElementById("save_button");
             const nonce = jQuery("#my-ajax-nonce").val();
 
+            if (cardsContainer.childElementCount > 0) {
+                save_button.disabled = false
+            }
 
-            jQuery(document).ready(function(jQuery) {
-                if (pollsCardsArray.length > 0) {
-                    save_button.disabled = false
-                }
-            })
 
             function createOption(optionTitle) {
                 const newOption = document.createElement("div");
@@ -292,82 +294,72 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     ${optionTitle}
                     </span>
                 `;
-                answersGroup.appendChild(newOption);
-                answersArray.push(optionTitle);
-                console.log(answersArray);
-
-                answersHTMLArray.push(newOption);
+                optionsGroup.appendChild(newOption);
+                optionsArray.push(optionTitle);
+                console.log(optionsArray);
+                optionsHTMLArray.push(newOption);
             }
 
-            optionInput.addEventListener("keydown", function(event) {
-                if (event.key === 13) {
-                    createOption();
-                }
-            });
+            function updateButtonStates() {
+                // Check if any card has no options or insufficient options
+                const cards = document.querySelectorAll('.poll-card');
+                let enableButton = true
+                cards.forEach(card => {
+                    const options = card.querySelectorAll('.option-container');
+                    if (options.length < 2) {
+                        enableButton = false;
+                        return; // No need to check other cards, button should be disabled
+                    }
+                });
 
-            // Function to enable or disable the createPollButton
-            function updateCreatePollButton() {
-                const question_textValue = question_text.value.trim();
+                // Check if there are no cards
+                const noCards = cardsContainer.childElementCount <= 0;
 
-                const enableButton =
-                    question_textValue !== "" && answersHTMLArray.length >= 2;
-                createPollButton.disabled = !enableButton;
+                // Update the save button
+                save_button.disabled = !enableButton || noCards;
+
+                // Update the create poll button
+                const enableCreatePollButton = optionsHTMLArray.length >= 2;
+                createPollButton.disabled = !enableCreatePollButton;
             }
-            // Event listener for question_text change
-            question_text.addEventListener("change", updateCreatePollButton);
+
+            updateButtonStates();
 
             function addOption() {
                 const optionTitle = optionInput.value.trim();
                 if (optionTitle !== "") {
                     createOption(optionTitle);
                     optionInput.value = "";
-                    updateCreatePollButton();
+                    updateButtonStates();
                 }
             }
 
             optionInput.addEventListener("keydown", function(event) {
-                if (event.keyCode === 13) {
+                if (event.key === "Enter" && event.target === optionInput) {
                     addOption();
                 }
             });
 
-            // Event listener for addOptionButton click
             addOptionButton.addEventListener("click", addOption);
-            const question_textValue = question_text.value.trim();
 
-            const enableButton =
-                question_textValue !== "" && answersHTMLArray.length >= 2;
-            createPollButton.disabled = !enableButton;
-
-            // Event listener for question_text change
-            question_text.addEventListener("keyup", updateCreatePollButton);
-
-            // Event listener for addOptionButton click
-            addOptionButton.addEventListener("click", function() {
-                const optionTitle = optionInput.value.trim();
-                if (optionTitle !== "") {
-                    createOption(optionTitle);
-                    optionInput.value = "";
-                    updateCreatePollButton();
-                }
-            });
 
             function createPollCard() {
                 const newPollCard = document.createElement("div");
                 newPollCard.className =
                     "poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4";
+                newPollCard.setAttribute("data-card-id", new Date().toString());
 
-                const answersContainer = document.createElement("div");
-                answersContainer.className = "answers-container d-flex flex-column gap-1";
+                const optionsContainer = document.createElement("div");
+                optionsContainer.className = "options-container d-flex flex-column gap-1";
 
-                const newQuestionDivs = answersArray.map((option, index) => {
+                const newQuestionDivs = optionsArray.map((option, index) => {
                     const newQuestionDiv = document.createElement("div");
                     newQuestionDiv.className =
                         "option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3";
                     newQuestionDiv.setAttribute("data-card-id", index);
 
                     newQuestionDiv.innerHTML = `
-                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-minus text-danger"></i>
+                        <i id="delete_option" data-deleteOption-id="${index}" style="cursor: pointer" class="fas fa-minus text-danger"></i>
 
                         <input 
                             type="text" 
@@ -378,155 +370,45 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         >
                     `;
 
-                    const inputElements = document.querySelectorAll(".option-container input");
-                    // Update the poll card 
-                    inputElements.forEach((input) => {
-                        input.addEventListener("input", (event) => {
-                            const parentElement = event.target.parentNode.parentNode.parentNode;
-                            const cardId = parentElement.getAttribute("data-card-id");
-
-                            console.log("Card ID", cardId);
-
-                            const targetCardIndex = pollsCardsArray.findIndex(
-                                (elem) => elem.id == cardId
-                            );
-
-                            if (targetCardIndex !== -1) {
-                                const newanswersArray = [...pollsCardsArray[targetCardIndex].answers];
-                                newanswersArray[index] = event.target.value;
-                                pollsCardsArray[targetCardIndex].answers = newanswersArray;
-                                console.log(pollsCardsArray); // Make sure the array is being updated
-                            }
-                        });
-                    })
-
-
-
-                    const delete_icons = document.querySelectorAll(".option-container input i")
-                    // Delete option function
-                    delete_icons.forEach((delete_option_icon) => {
-                        delete_option_icon.addEventListener("click", (event) => {
-                            const parentElement = event.target.parentNode.parentNode.parentNode;
-                            const cardId = parentElement.getAttribute("data-card-id");
-                            const optionIndex = event.target.getAttribute("data-delete-id");
-
-                            console.log("[Parent element, cardID]", [parentElement, cardId]);
-
-                            // Remove the option's parent div from DOM
-                            const optionDivToRemove = event.target.parentNode;
-                            optionDivToRemove.remove();
-
-                            deleteOption(cardId, optionIndex);
-                            updateDeleteIds(cardId); // Update the data-delete-id attributes
-                            updateSaveButtonState();
-                        });
-                    })
-
                     return newQuestionDiv;
                 });
 
-                // Delete option function
-                function deleteOption(cardId, index) {
-                    const targetCardIndex = pollsCardsArray.findIndex((card) => card.id === cardId);
-
-                    if (targetCardIndex !== -1) {
-                        const newanswersArray = [...pollsCardsArray[targetCardIndex].answers];
-                        newanswersArray.splice(index, 1);
-                        pollsCardsArray[targetCardIndex].answers = newanswersArray;
-                        updateDeleteIds(cardId); // Update the data-delete-id attributes
-                        console.log(pollsCardsArray); // Check if the array is updated after deletion
-                    }
-                }
-
-                function updateDeleteIds(cardId) {
-                    const deleteIconsContainer = document.querySelector(`[data-card-id="${cardId}"]`);
-                    const deleteIcons = deleteIconsContainer.querySelectorAll("#delete_option");
-
-                    deleteIcons.forEach((icon, newIndex) => {
-                        icon.setAttribute("data-delete-id", newIndex);
-                    });
-                }
 
                 newQuestionDivs.forEach((newQuestionDiv) => {
-                    answersContainer.appendChild(newQuestionDiv);
+                    optionsContainer.appendChild(newQuestionDiv);
                 });
 
                 // Append the icons div to the newPollCard
-                const iconsDiv = document.createElement("div");
-                iconsDiv.className = "position-absolute bottom-4 end-2 p-0";
+                const delete_poll_icon = document.createElement("div");
+                delete_poll_icon.className = "position-absolute bottom-4 end-2 p-0";
 
-                const deleteIcon = document.createElement("i");
-                deleteIcon.style.cursor = "pointer";
-                deleteIcon.className = "fas fa-trash text-sm ms-1 text-danger";
-                deleteIcon.setAttribute("aria-hidden", "true");
-                deleteIcon.setAttribute("data-bs-toggle", "modal");
-                deleteIcon.setAttribute("data-bs-target", "#deleteModal");
+                const delete_option_icon = document.createElement("i");
+                delete_option_icon.style.cursor = "pointer";
+                delete_option_icon.className = "fas fa-trash text-sm ms-1 text-danger";
 
-                iconsDiv.appendChild(deleteIcon);
-                newPollCard.appendChild(iconsDiv);
+                delete_poll_icon.appendChild(delete_option_icon);
+                newPollCard.appendChild(delete_poll_icon);
 
                 // Add the title
                 const pollTitle = document.createElement("textarea");
-                pollTitle.className = "form-control mb-2 w-100 border-0 fw-bolder";
+                pollTitle.className = "question-text form-control mb-2 w-100 border-0 fw-bolder";
                 pollTitle.placeholder = "Edit the poll question title";
 
-                pollTitle.addEventListener("input", (e) => {
-                    const parentElement = event.target.parentNode;
-                    const cardId = parentElement.getAttribute("data-card-id");
-                    const targetCardIndex = pollsCardsArray.findIndex(
-                        (elem) => elem.id == cardId
-                    );
-
-                    if (targetCardIndex !== -1) {
-                        pollsCardsArray[targetCardIndex].question_text = e.target.value;
-                    }
-                    if (pollsCardsArray.length <= 0) {
-                        save_button.disabled = true;
-                        createPollButton.disabled = true;
-                    }
-                });
-
-                pollTitle.value = `${question_text.value.trim()}`;
+                pollTitle.value = `${questionTitle.value.trim()}`;
                 newPollCard.appendChild(pollTitle);
 
-                // Append the answersContainer
-                newPollCard.appendChild(answersContainer);
+                // Append the optionsContainer
+                newPollCard.appendChild(optionsContainer);
 
                 const newPollCardObj = {
-                    question_id: new Date().toString(),
-                    question_text: question_text.value.trim(),
-                    answers: answersArray,
+                    id: new Date().toString(),
+                    questionTitle: questionTitle.value.trim(),
+                    options: optionsArray,
                 };
 
 
-                deleteIcon.setAttribute("data-card-id", newPollCardObj.id);
-                // Delete whole the poll card 
-                deleteIcon.addEventListener("click", (event) => {
-                    const cardId = event.target.getAttribute("data-card-id");
+                delete_option_icon.setAttribute("data-card-id", newPollCardObj.id);
 
-                    // Remove the card from the DOM
-                    const cardToRemove = document.querySelector(`[data-card-id="${cardId}"]`);
-
-                    if (cardToRemove) {
-                        cardToRemove.remove();
-
-                        // Find the index of the card in the pollsCardsArray
-                        const cardIndex = pollsCardsArray.findIndex(
-                            (card) => card.id === cardId
-                        );
-
-                        // If the card was found in the array, remove it
-                        if (cardIndex !== -1) {
-                            pollsCardsArray.splice(cardIndex, 1);
-                        }
-                    }
-
-                    // Disable button if there is no cards to send
-                    if (pollsCardsArray.length <= 0) {
-                        save_button.disabled = true;
-                        createPollButton.disabled = true;
-                    }
-                });
 
                 // Append the new poll card to the document
                 newPollCard.setAttribute("data-card-id", newPollCardObj.id);
@@ -535,34 +417,84 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 updateSaveButtonState();
 
                 // Reset Input fields
-                answersHTMLArray = [];
-                answersArray = [];
-                answersGroup.innerHTML = "";
-                question_text.value = "";
+                optionsHTMLArray = [];
+                optionsArray = [];
+                optionsGroup.innerHTML = "";
+                questionTitle.value = "";
             }
 
+            // Create Poll card
             createPollButton.addEventListener("click", () => {
-                if (question_text.value !== "" && answersHTMLArray.length >= 2) {
+                if (questionTitle.value !== "" && optionsHTMLArray.length >= 2) {
                     createPollCard();
                 }
             });
 
             // Update save_button status
             function updateSaveButtonState() {
-                const emptyCardExists = pollsCardsArray.some(card => card.answers.length === 0);
-                const insufficientanswers = pollsCardsArray.some(card => card.answers.length < 2);
+                const emptyCardExists = pollsCardsArray.some(card => card.options.length === 0);
+                const insufficientOptions = pollsCardsArray.some(card => card.options.length < 2);
 
-                if (emptyCardExists || insufficientanswers || cardsContainer.childElementCount <= 0) {
+                if (emptyCardExists || insufficientOptions || cardsContainer.childElementCount <= 0) {
                     save_button.disabled = true;
                 } else {
                     save_button.disabled = false;
                 }
             }
 
+            // Event listener for removing a poll card
+            document.addEventListener("click", function(event) {
+                if (event.target.classList.contains("fa-trash")) {
+                    const cardId = event.target.getAttribute("data-card-id");
+
+                    const card = document.querySelector(`[data-card-id="${cardId}"]`);
+                    if (card) {
+                        card.remove();
+                        updateButtonStates();
+                    }
+                }
+            });
+
+            // Event listener for removing an option container
+            document.addEventListener("click", function(event) {
+                if (event.target.classList.contains("fa-minus")) {
+                    const optionId = event.target.getAttribute("data-deleteOption-id");
+
+                    const optionContainer = document.querySelector(`[data-deleteOption-id="${optionId}"]`);
+                    if (optionContainer) {
+                        optionContainer.parentNode.remove();
+                        updateButtonStates();
+                    }
+
+                    // Prevent the click event from propagating to the card deletion event listener
+                    event.stopPropagation();
+                }
+            });
+
+
             save_button.addEventListener("click", () => {
-                console.log("retrieved_data", retrieved_data);
-                // Select all input fields within .answers-container
-                let inputs = document.querySelectorAll(".answers-container .option-container input");
+                // Select all input fields within .options-container
+                let inputs = document.querySelectorAll(".option-container input");
+
+                const pollCards = document.querySelectorAll(".poll-card");
+                const data = {
+                    pollCards: []
+                };
+
+                pollCards.forEach((card) => {
+                    const questionText = card.querySelector(".question-text").value;
+                    const options = Array.from(card.querySelectorAll("input"))
+                        .map(option => option.value)
+                        .filter(option => option.trim() !== "");
+
+                    data.pollCards.push({
+                        question_text: questionText,
+                        options: options
+                    });
+                });
+
+                // console.log("Final Data", data); // Output the JSON data to the console
+
 
                 // Initialize a flag to track if any empty field is found
                 let isEmptyField = false;
@@ -598,10 +530,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         }
                     });
                 } else {
-
-                    // save_button.disabled = true;
-                    // save_button.innerHTML =
-                    //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                    save_button.disabled = true;
+                    save_button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
                     settingObj = {
                         cta_Text: cta_input.value,
                         start_date: start_date.value || new Date().toISOString(),
@@ -626,53 +557,53 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         surveyTitle: surveyTitle.value,
                         type: surveyTitle.getAttribute("data-type"),
                         poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
-                        pollCards: pollsCardsArray,
+                        pollCards: data.pollCards,
                         settings: settingObj,
                         template: "Multiple Choice",
                     };
 
-                    console.log(finalObj);
+                    // console.log("FinalObj", finalObj);
 
-                    // jQuery.ajax({
-                    //     type: "POST",
-                    //     url: my_ajax_object.ajaxurl,
-                    //     data: {
-                    //         action: "PSX_save_poll_Multiple_data",
-                    //         nonce: nonce, // Pass the nonce
-                    //         poll_data: JSON.stringify(finalObj),
-                    //     },
-                    //     success: function(shortcode) {
-                    //         console.log("Done");
-                    //         save_button.textContent = "Save";
-                    //         save_button.disabled = false;
+                    jQuery.ajax({
+                        type: "POST",
+                        url: my_ajax_object.ajaxurl,
+                        data: {
+                            action: "PSX_save_poll_Multiple_data",
+                            nonce: nonce, // Pass the nonce
+                            poll_data: JSON.stringify(finalObj),
+                        },
+                        success: function(shortcode) {
+                            console.log("Done");
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
 
-                    //         // Create a new toast element
-                    //         var toast = document.createElement("div");
-                    //         toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                    //         toast.className =
-                    //             "position-fixed p-2 px-4 bg-success border rounded-2";
-                    //         toast.innerHTML = `
-                    //             <p class="m-0 fw-bold text-xs text-white">
-                    //             New survey has been added successfully!
-                    //             </p>
-                    //         `;
-                    //         // Append the toast to the document
-                    //         document.body.appendChild(toast);
+                            // Create a new toast element
+                            var toast = document.createElement("div");
+                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                            toast.className =
+                                "position-fixed p-2 px-4 bg-success border rounded-2";
+                            toast.innerHTML = `
+                                <p class="m-0 fw-bold text-xs text-white">
+                                New survey has been added successfully!
+                                </p>
+                            `;
+                            // Append the toast to the document
+                            document.body.appendChild(toast);
 
-                    //         // Initialize the Bootstrap toast
-                    //         var bootstrapToast = new bootstrap.Toast(toast);
-                    //         bootstrapToast.show();
+                            // Initialize the Bootstrap toast
+                            var bootstrapToast = new bootstrap.Toast(toast);
+                            bootstrapToast.show();
 
-                    //         setTimeout(() => {
-                    //             window.location.reload();
-                    //         }, 500)
-                    //     },
-                    //     error: function(error) {
-                    //         console.error("Error:", error);
-                    //         save_button.textContent = "Save";
-                    //         save_button.disabled = false;
-                    //     },
-                    // });
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500)
+                        },
+                        error: function(error) {
+                            console.error("Error:", error);
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+                        },
+                    });
                 }
             });
         });
