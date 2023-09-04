@@ -8,7 +8,7 @@ body {
 
 button:disabled,
 input:disabled {
-  opacity: 0.3 !important;
+  opacity: 0.6 !important;
   cursor: not-allowed !important;
 }
 
@@ -27,8 +27,13 @@ input:disabled {
 }
 
 input[type="radio"] {
-  width: 25px !important;
-  min-width: 25px !important;
-  height: 25px !important;
-  min-height: 25px !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  z-index: 10;
+}
+
+.transition-progress-bar .percentage-bar {
+  transition: width 1.5s ease-in-out; /* Adjust duration and easing as needed */
 }

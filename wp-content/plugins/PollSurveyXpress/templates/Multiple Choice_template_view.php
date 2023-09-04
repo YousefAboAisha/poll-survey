@@ -174,7 +174,6 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                                 $answers = json_decode(($questions_with_answers_json), true); ?>
 
                                 <ul>
-
                                     <?php foreach ($answers as $answer) { ?>
                                         <li class="alpha-numeric m-0 text-sm ">
                                             <?php echo $answer['answer_text'];  ?>
