@@ -73,13 +73,6 @@ $poll_data_json = json_encode($poll_data);
                         </label>
                     </div>
 
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="share_plugin" <?php echo $poll_data->sharing == 'true' ? 'checked' : ''; ?> />
-                        <label class="form-check-label" for="share_plugin">
-                            <?php _e('Share with my friends', 'psx-poll-survey-plugin'); ?>
-                        </label>
-                    </div>
-
                     <div>
 
                         <div>
@@ -177,7 +170,6 @@ $poll_data_json = json_encode($poll_data);
                     status: active_plugin.checked,
                     color: text_color.value,
                     bgcolor: bg_color.value,
-                    sharing: share_plugin.checked,
                     real_time_result_text: show_results_input.value,
                     real_time_check: show_results.checked,
                     min_votes: min_votes_input.value,

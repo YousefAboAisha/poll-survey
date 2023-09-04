@@ -83,7 +83,7 @@ jQuery(document).ready(function (jQuery) {
       responses: responses_arr,
     };
     const show_results_containers =
-      document.querySelectorAll(".result-container");
+      document.querySelectorAll("#result-container");
     const radio_buttons = document.querySelectorAll(".poll-answer-radio");
 
     jQuery.ajax({
@@ -98,54 +98,46 @@ jQuery(document).ready(function (jQuery) {
         save_button.textContent = "DONE!";
         save_button.style.display = "none";
 
+        // window.location.reload();
+        radio_buttons.forEach((radio) => {
+          radio.disabled = true;
+        });
+
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
-        const votes = jsonData.votes;
-        if (
-          (poll_results != null && poll_results != "") ||
-          poll_count <= votes
-        ) {
-          mcq_container.innerHTML = "";
-          mcq_container.style.cssText = "display:none !important";
-          message.style.cssText = "display:flex !important";
-        }
 
+        const votes = jsonData.votes;
+        // if ((poll_results != null && poll_results != "") || poll_count <= votes)
         // Now you can work with the decoded data
-        console.log("JSON data:", jsonData);
-        console.log("Percentages:", percentages);
+        // console.log("JSON Data", jsonData);
+
+        // console.log(show_results_containers);
+
+        // Assuming you have the 'percentages' object available
 
         show_results_containers.forEach((elem) => {
           elem.style.cssText = "display:flex !important";
           var questionId = elem.getAttribute("data-question-id");
+          var answerId = elem.getAttribute("data-answer-id");
           const percentage_bar = elem.querySelector(
             ".progress-bar .percentage-bar"
           );
           const percentage_value = elem.querySelector(".percentage-value");
 
-          // Customize the popover content with a <div>
-          var question_data = percentages[questionId];
-          console.log("Question Data", question_data);
+          // Check if the percentages data for this question exists
+          if (percentages.hasOwnProperty(questionId)) {
+            var question_data = percentages[questionId];
 
-          for (var key in question_data) {
-            if (question_data.hasOwnProperty(key)) {
-              var percentageValue = question_data[key];
+            // Check if the percentage data for this answer exists
+            if (question_data.hasOwnProperty(answerId)) {
+              var percentageValue = parseFloat(question_data[answerId]);
+              percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
 
-              // Check if the percentageValue is defined (not null or undefined)
-              percentageValue =
-                percentageValue !== null && percentageValue !== undefined
-                  ? percentageValue
-                  : "0";
-
-              console.log(percentageValue);
-
-              percentage_bar.style.cssText = `width:${percentageValue}% !important`;
-              percentage_value.textContent = `${percentageValue}%`;
+              // Update the percentage bar and value for this specific answer
+              percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5`;
+              percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
             }
           }
-        });
-        // window.location.reload();
-        radio_buttons.forEach((radio) => {
-          radio.disabled = true;
         });
       },
       error: function (error) {
