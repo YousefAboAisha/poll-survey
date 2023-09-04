@@ -28,7 +28,7 @@
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
-                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="ashrafweb@gmail.com" placeholder="Enter your email" disabled="" style="display: none;">
+                    <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="<?php echo (get_option('PSX_survey_email') != '') ? get_option('PSX_survey_email') : get_option('admin_email'); ?>" placeholder="Enter your email" disabled="" style="display: none;">
                     </div>
 
                     <div class="form-check mt-2">

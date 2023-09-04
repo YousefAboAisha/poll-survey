@@ -6,6 +6,7 @@ class PollSurveyXpress
 
     public function __construct()
     {
+
         add_action('admin_enqueue_scripts', array($this, 'PSX_enqueue_admin_scripts'));
         add_action('admin_menu', array($this, 'PSX_add_admin_menu_link'));
         add_action('admin_bar_menu', array($this, 'PSX_toolbar_link'), 99);
@@ -1082,6 +1083,7 @@ class PollSurveyXpress
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
             // Sanitize inputs
             $poll_id = absint($poll_data_array["poll_id"]);
+            
 
             $start_date = sanitize_text_field($poll_data_array["start_date"]);
             $end_date = sanitize_text_field($poll_data_array["end_date"]);
@@ -1090,10 +1092,33 @@ class PollSurveyXpress
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
             $real_time_check = $poll_data_array["real_time_check"] ? true : false;
             $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
-
             $min_votes = absint($poll_data_array["min_votes"]);
             $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
             $table_name = $wpdb->prefix . "polls_psx_polls";
+            $old_status_result = $wpdb->get_results($wpdb->prepare("SELECT status FROM $table_name WHERE poll_id = %d", $poll_id));
+            $title = $wpdb->get_results($wpdb->prepare("SELECT title FROM $table_name WHERE poll_id = %d", $poll_id));
+
+
+            if (get_option('PSX_email') != '') {
+           
+                if (!empty($old_status_result)) {
+                    $old_status = $old_status_result[0]->status; // Access the 'status' property
+                    
+                    if ($old_status === 'active' && ($status === false)) {
+                            if (get_option('PSX_survey_email') != '') {
+                                $to = get_option('PSX_survey_email');
+                            } else {
+                                $to = get_option('admin_email');
+                            }
+                
+                        }
+                        $subject = 'Poll Survey Xpress has been deactivated';
+                        $body = 'Poll '.$title[0]->title .' that has the ID ' . $poll_id . ' has been deactivated';
+            
+                        wp_mail($to, $subject, $body);
+                }
+            }
+
             $wpdb->update(
                 $table_name,
                 array(
@@ -1296,6 +1321,7 @@ class PollSurveyXpress
         }
         wp_die();
     }
+
 }
 $survey_plugin = new PollSurveyXpress();
     
