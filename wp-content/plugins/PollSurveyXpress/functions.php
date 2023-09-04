@@ -15,7 +15,7 @@ class PollSurveyXpress
 
 
         add_action('wp_ajax_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_data'));
-        add_action('wp_ajax_nopriv_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_dataa'));
+        add_action('wp_ajax_nopriv_PSX_save_poll_Multiple_data', array($this, 'PSX_save_poll_Multiple_data'));
         add_action('wp_ajax_PSX_save_poll_rating_data', array($this, 'PSX_save_poll_rating_data'));
         add_action('wp_ajax_nopriv_PSX_save_poll_rating_data', array($this, 'PSX_save_poll_rating_data'));
         add_action('wp_ajax_PSX_save_poll_open_ended_data', array($this, 'PSX_save_poll_open_ended_data'));
@@ -175,6 +175,8 @@ class PollSurveyXpress
         // Decode the JSON string into an associative array
         $settings_data = json_decode(stripslashes($_POST['settings_data']), true);
         update_option('PSX_gdpr', $settings_data['gdpr']);
+        update_option('PSX_response_email', $settings_data['response_email']);
+
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
         update_option('PSX_expire_message', $settings_data['expire_message']);
@@ -205,7 +207,7 @@ class PollSurveyXpress
         if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["poll_data"])) {
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
             // Extract necessary data from $poll_data_array
-            $form_type = sanitize_text_field($poll_data_array['type']);
+            $form_type = $poll_data_array['type'];
 
             if ($form_type == 'Edit') {
                 $poll_id = sanitize_text_field($poll_data_array['poll_id']);
@@ -1219,6 +1221,35 @@ class PollSurveyXpress
                 ));
             }
 
+            if (true){
+                if (get_option('PSX_survey_email') != '') {
+                    $to = get_option('PSX_survey_email');
+                } else {
+                    $to = get_option('admin_email');
+                }
+                $site_name = get_bloginfo('name'); // Get the name of your WordPress site
+                $plugin_name = 'Poll Survey Xpress'; // Replace with the actual name of your plugin
+                $current_user = wp_get_current_user();
+
+                if ($current_user->ID !== 0) {
+                    $user_name = $current_user->display_name; // Get the display name of the logged-in user
+                } else {
+                    $user_name = 'User'; // Default to 'User' if no user is logged in
+                }
+                $title = $wpdb->get_results($wpdb->prepare("SELECT title FROM {$wpdb->prefix}polls_psx_polls WHERE poll_id = %d", $poll_id));
+                $subject = 'Poll Response Notification';
+                $body = 'Dear ' . $user_name . ',
+
+                This is to inform you that the poll "' . $title[0]->title . '" (ID: ' . $poll_id . ') on ' . $site_name . ' Site got a response.
+
+                Thank you for using ' . $plugin_name . '.
+
+                Sincerely,
+                [Poll Survey Xpress Plugin]'; // Replace [Your Name] with your name or the site's administrator name
+
+                wp_mail($to, $subject, $body);
+            }
+
             $poll_questions = $wpdb->get_results(
                 $wpdb->prepare(
                     "SELECT question_id FROM {$wpdb->prefix}polls_psx_survey_questions WHERE poll_id = %d",
@@ -1341,8 +1372,9 @@ class PollSurveyXpress
             $votes = $wpdb->get_var($query);
 
             // If the count is greater than 0, the session ID is found in the table
+            
             $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"min_votes":' . json_encode($votes) . '}';
-
+ 
             echo json_encode($jsonResponse);
         }
         wp_die();
