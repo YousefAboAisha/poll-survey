@@ -84,109 +84,6 @@ class PollSurveyXpress
         }
     }
 
-    //Add database tables and option when activate plugin
-    public function PSX_add_database_tables()
-    {
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $option_name = 'installation_time_of_PollSurveyXpress';
-
-        // Check if the option already exists
-        $existing_option = get_option($option_name);
-
-        if (!$existing_option) {
-            // Option doesn't exist, so add it with the current time
-            $current_time = current_time('timestamp');
-            add_option($option_name, $current_time);
-        }
-
-        // Define your table structures
-        $table_polls = "
-            CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_polls (
-                poll_id int(10) NOT NULL AUTO_INCREMENT,
-                title varchar(255),
-                cta_Text varchar(255),
-                start_date datetime,
-                end_date datetime,
-                status enum('active', 'inactive', 'archived'),
-                template enum('Multiple Choice', 'Open ended', 'Rating'),
-                Short_Code varchar(50),
-                color varchar(255),
-                bgcolor varchar(255),
-                sharing enum('true', 'false'),
-                real_time_result_text varchar(255),
-                min_votes int,
-                deleted_at datetime,
-                PRIMARY KEY (poll_id)
-            ) $charset_collate;
-        ";
-
-        $table_survey_questions = "
-            CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_questions (
-                question_id int(11) NOT NULL AUTO_INCREMENT,
-                poll_id int(10),
-                question_text varchar(255),
-                PRIMARY KEY (question_id),
-                FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
-            ) $charset_collate;
-        ";
-
-        $table_survey_answers = "
-            CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_answers (
-                answer_id int(11) NOT NULL AUTO_INCREMENT,
-                poll_id int(10),
-                question_id int(11),
-                answer_text varchar(255),
-                PRIMARY KEY (answer_id),
-                FOREIGN KEY (question_id) REFERENCES {$wpdb->prefix}polls_psx_survey_questions(question_id),
-                FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
-            ) $charset_collate;
-        ";
-
-        $table_survey_responses = "
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_responses (
-            response_id int(11) NOT NULL AUTO_INCREMENT,
-            poll_id int(10),
-            ip_address varchar(255),
-            user_id int(11),
-            session_id varchar(255),
-            PRIMARY KEY (response_id),
-            FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
-        ) $charset_collate;
-    ";
-
-        $table_survey_responses_data = "
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}polls_psx_survey_responses_data (
-            response_id int(11) NOT NULL,
-            question_id int(11),
-            answer_id int(11),
-            open_text_response varchar(255),
-            FOREIGN KEY (response_id) REFERENCES {$wpdb->prefix}polls_psx_survey_responses(response_id),
-            FOREIGN KEY (question_id) REFERENCES {$wpdb->prefix}polls_psx_survey_questions(question_id),
-            FOREIGN KEY (answer_id) REFERENCES {$wpdb->prefix}polls_psx_survey_answers(answer_id)
-        ) $charset_collate;
-    ";
-
-
-
-        // Include the upgrade script
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-        // Create tables
-        dbDelta($table_polls);
-        dbDelta($table_survey_questions);
-        dbDelta($table_survey_answers);
-        dbDelta($table_survey_responses);
-        dbDelta($table_survey_responses_data);
-
-        if (!$wpdb->last_error === '') {
-            add_action('admin_notices', function () use ($wpdb) {
-                echo '<div class="error"><p>Plugin can`t create Tables needed to work ,  contact your administrator to resolve this issue before activating the plugin. </p></div>';
-            });
-            return;
-        }
-    }
 
     // Add main menu page (PollSurveyXpress)
     public function PSX_add_admin_menu_link()
@@ -735,7 +632,8 @@ class PollSurveyXpress
 
                     $user_id = is_user_logged_in() ? get_current_user_id() : 0;
                     $isUserVoted = false;
-                    if ($user_id != 0){
+                    $table_name = $wpdb->prefix . 'polls_psx_survey_responses';
+                    if ($user_id != '0'){
                         $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE poll_id = %d AND user_id = %s", $poll_id, $user_id);
                         $votesCount = $wpdb->get_var($query);
                         $isUserVoted = ($votesCount > 0); // Convert the result to a boolean value
@@ -746,7 +644,7 @@ class PollSurveyXpress
                     $ipAddress = $_SERVER['REMOTE_ADDR'];
                     $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
                     $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
-                
+                    
                 
                     // Concatenate and hash the attributes to create a unique fingerprint
                     $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
@@ -1239,6 +1137,7 @@ class PollSurveyXpress
             if (!(get_option('PSX_gdpr') === '')) {
                 $userIP = '';
             }
+            
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
             $ipAddress = $_SERVER['REMOTE_ADDR'];
             $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
