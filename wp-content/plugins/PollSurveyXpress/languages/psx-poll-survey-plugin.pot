@@ -1,14 +1,14 @@
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: #PollSurveyXpress\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-04 10:27+0000\n"
-"PO-Revision-Date: 2023-09-04 10:44+0000\n"
-"Last-Translator: Admin\n"
-"Language-Team: Arabic\n"
-"Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100 >= 3 "
-"&& n%100<=10 ? 3 : n%100 >= 11 && n%100<=99 ? 4 : 5;\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,84 +22,79 @@ msgstr ""
 
 #: poll_survey_xpress_settings.php:60
 msgid "(This message will be shown to the user, when the poll is date expired)"
-msgstr "سيتم عرض هذه الرسالة للمستخدم عند انتهاء تاريخ الاستطلاع."
+msgstr ""
 
 #: poll_survey_xpress_settings.php:54
 msgid "(This message will be shown to the user, when the poll is inactive) "
 msgstr ""
-"سيتم عرض هذه الرسالة للمستخدم عند تعطيل الاستطلاع.\n"
-"\n"
-"\n"
-"\n"
-"\n"
 
 #: poll_survey_xpress_survey.php:84 poll_survey_xpress_recycle.php:81
 msgid "Actions"
-msgstr "الأدوات"
+msgstr ""
 
 #: templates/Open ended_template.php:147 templates/surveys_template_edit.php:71
 #: templates/Rating_template.php:165 templates/Multiple Choice_template.php:191
 msgid "Activate the survey"
-msgstr "تفعيل الاستطلاع"
+msgstr ""
 
 #: templates/Multiple Choice_template.php:80
 msgid "Add new option"
-msgstr "إضافة خيار جديد"
+msgstr ""
 
 #: templates/Open ended_template.php:80 templates/Rating_template.php:95
 msgid "Add new question"
-msgstr "إضافة سؤال جديد"
+msgstr ""
 
 #: templates/Multiple Choice_template.php:76
 msgid "Add question title"
-msgstr "إضافة عنوان للسؤال "
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:45
 msgid "All surveys"
-msgstr "جميع الاستطلاعات"
+msgstr ""
 
 #: poll_survey_xpress_add.php:59
 msgid "All Templates"
-msgstr "جميع القوالب"
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:42
 msgid "Archived Surveys"
-msgstr "الاستطلاعات المؤرشفة"
+msgstr ""
 
 #: templates/Open ended_template.php:122 templates/surveys_template_edit.php:45
 #: templates/Rating_template.php:140 templates/Multiple Choice_template.php:166
 msgid "Bg color"
-msgstr "لون الخلفية"
+msgstr ""
 
 #: templates/Open ended_template.php:119 templates/surveys_template_edit.php:42
 #: templates/Rating_template.php:137 templates/Multiple Choice_template.php:163
 msgid "Change plugin Theme"
-msgstr "تغيير سمة الإضافة"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:44
 msgid "Clear tables data when plugin uninstalled"
-msgstr "حذف الجداول من قاعدة البيانات عند حذف الإضافة"
+msgstr ""
 
 #: templates/Multiple Choice_template.php:93
 msgid "Create"
-msgstr "إضافة"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:26
 msgid "Email on survey deactivation"
-msgstr "إرسال رسالة عند تعطيل الاستطلاع"
+msgstr ""
 
 #: poll_survey_xpress_survey.php:76 poll_survey_xpress_recycle.php:72
 msgid "End Date"
-msgstr "تاريخ الانتهاء"
+msgstr ""
 
 #: templates/Open ended_template.php:136 templates/surveys_template_edit.php:59
 #: templates/Rating_template.php:154 templates/Multiple Choice_template.php:180
 msgid "Ends"
-msgstr "ينتهي"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:50
 msgid "Front-end messages"
-msgstr "الرسالة الظاهرة في الواجهة الأمامية"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:37
 msgid "General Data Protection Regulations(GDBR) integrity"
@@ -107,14 +102,14 @@ msgstr ""
 
 #: poll_survey_xpress_settings.php:17
 msgid "General settings"
-msgstr "الإعدادت العامة"
+msgstr ""
 
 #: poll_survey_xpress_add.php:57 templates/Rating_template_view.php:89
 #: templates/Open ended_template_view.php:75 templates/Open
 #: ended_template.php:59 templates/Multiple Choice_template_view.php:85
 #: templates/Rating_template.php:61 templates/Multiple Choice_template.php:59
 msgid "Home"
-msgstr "الصفحة الرئيسية"
+msgstr ""
 
 #. Author URI of the plugin
 msgid "http://localhost/wordpress/"
@@ -131,170 +126,170 @@ msgstr ""
 
 #: poll_survey_xpress_survey.php:60 poll_survey_xpress_recycle.php:57
 msgid "ID"
-msgstr "المعرف"
+msgstr ""
 
 #: templates/Multiple Choice_template.php:68
 msgid "Multiple Choice Survey Add"
-msgstr "إضافة استطلاع متعدد الخيارات"
+msgstr ""
 
 #: templates/Multiple Choice_template.php:64
 msgid "Multiple Choice Survey Edit"
-msgstr "تعديل استطلاع متعدد الخيارات"
+msgstr ""
 
 #: templates/Multiple Choice_template_view.php:87
 msgid "Multiple Choice Survey View"
-msgstr "عرض استطلاع متعدد الخيارات"
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:137
 msgid "Next"
-msgstr "التالي"
+msgstr ""
 
 #: templates/Open ended_template.php:68
 msgid "Open Ended Survey Add"
-msgstr "إضافة استطلاع مفتوح الإجابة"
+msgstr ""
 
 #: templates/Open ended_template.php:64
 msgid "Open Ended Survey Edit"
-msgstr "تعديل استطلاع مفتوح الإجابة"
+msgstr ""
 
 #: templates/Open ended_template_view.php:77
 msgid "Open-ended Survey View"
-msgstr "عرض استطلاع مفتوح الإجابة"
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:136
 msgid "Page 1"
-msgstr "صفحة"
+msgstr ""
 
 #. Description of the plugin
 msgid "Poll & Survey Plugin"
-msgstr "\"ضافة استطلاع أواستبيان"
+msgstr ""
 
 #: templates/Rating_template_view.php:104 templates/Open
 #: ended_template_view.php:90 templates/Multiple Choice_template_view.php:94
 msgid "Poll/survey Analysis"
-msgstr "تحليل استطلاع أواستبيان"
+msgstr ""
 
 #: templates/Rating_template_view.php:134 templates/Open
 #: ended_template_view.php:120 templates/Multiple Choice_template_view.php:131
 msgid "Poll/survey overview"
-msgstr "نظرة عامة استطلاع أواستبيان"
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:135
 msgid "Previous"
-msgstr "السابق"
+msgstr ""
 
 #: templates/Rating_template_view.php:109 templates/Open
 #: ended_template_view.php:95 templates/Multiple Choice_template_view.php:106
 msgid "Questions"
-msgstr "الأسئلة"
+msgstr ""
 
 #: templates/Rating_template.php:70
 msgid "Rating Survey Add"
-msgstr "إضافة استطلاع للتقييم"
+msgstr ""
 
 #: templates/Rating_template.php:66
 msgid "Rating Survey Edit"
-msgstr "تعديل استطلاع للتقييم"
+msgstr ""
 
 #: templates/Rating_template_view.php:91
 msgid "Rating Survey View"
-msgstr "عرض استطلاع للتقييم"
+msgstr ""
 
 #: poll_survey_xpress_recycle.php:12
 msgid "Recycle Bin"
-msgstr "سلة المحذوفات"
+msgstr ""
 
 #: templates/Open ended_template.php:96 templates/surveys_template_edit.php:110
 #: templates/Rating_template.php:114 templates/Multiple Choice_template.php:136
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:67
 msgid "Save changes"
-msgstr "حفظ التغييرات"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:5
 msgid "Settings"
-msgstr "الإعدادات"
+msgstr ""
 
 #: poll_survey_xpress_survey.php:72
 msgid "Shortcodes"
-msgstr "أكواد مختصرة"
+msgstr ""
 
 #: templates/Open ended_template.php:155 templates/surveys_template_edit.php:87
 #: templates/Rating_template.php:173 templates/Multiple Choice_template.php:199
 msgid "Show real-time results"
-msgstr "عرض نتائج بشكل فوري"
+msgstr ""
 
 #: templates/Open ended_template.php:163 templates/Rating_template.php:181
 #: templates/Multiple Choice_template.php:207
 msgid "Show results after"
-msgstr "عرض النتائج بعد "
+msgstr ""
 
 #: templates/Rating_template_view.php:119 templates/Open
 #: ended_template_view.php:105 templates/Multiple Choice_template_view.php:116
 msgid "Signed votes"
-msgstr "التصويتات المسجلة في الموقع"
+msgstr ""
 
 #: templates/Open ended_template.php:131 templates/surveys_template_edit.php:54
 #: templates/Rating_template.php:149 templates/Multiple Choice_template.php:175
 msgid "Starts"
-msgstr "يبدأ"
+msgstr ""
 
 #: poll_survey_xpress_survey.php:68 poll_survey_xpress_recycle.php:67
 msgid "Status"
-msgstr "الحالة"
+msgstr ""
 
 #: templates/Open ended_template.php:111 templates/Rating_template.php:129
 #: templates/Multiple Choice_template.php:155
 msgid "Survey Settings"
-msgstr "إعدادات الاستطلاع"
+msgstr ""
 
 #: templates/Open ended_template.php:62 templates/Rating_template.php:64
 #: templates/Multiple Choice_template.php:62
 msgid "Surveys"
-msgstr "الاستطلاعات"
+msgstr ""
 
 #: poll_survey_xpress_survey.php:81 poll_survey_xpress_recycle.php:77
 msgid "Template"
-msgstr "القالب"
+msgstr ""
 
 #: templates/Open ended_template.php:66 templates/Rating_template.php:68
 #: templates/Multiple Choice_template.php:66
 msgid "Templates"
-msgstr "القوالب"
+msgstr ""
 
 #: templates/Open ended_template.php:124 templates/surveys_template_edit.php:47
 #: templates/Rating_template.php:142 templates/Multiple Choice_template.php:168
 msgid "Text color"
-msgstr "لون الخط"
+msgstr ""
 
 #: templates/surveys_template_edit.php:80
 msgid "Thanking Message"
-msgstr "رسالة شكر"
+msgstr ""
 
 #: poll_survey_xpress_survey.php:64 poll_survey_xpress_recycle.php:62
 msgid "Title"
-msgstr "العنوان"
+msgstr ""
 
 #: templates/Rating_template_view.php:124 templates/Open
 #: ended_template_view.php:110 templates/Multiple Choice_template_view.php:121
 msgid "Unsigned votes"
-msgstr "التصويتات الغير مسجلة في الموقع"
+msgstr ""
 
 #: poll_survey_xpress_add.php:93
 msgid "View Template"
-msgstr "عرض القالب"
+msgstr ""
 
 #: templates/Rating_template_view.php:114 templates/Open
 #: ended_template_view.php:100 templates/Multiple Choice_template_view.php:111
 msgid "Votes"
-msgstr "التصويتات"
+msgstr ""
 
 #: poll_survey_xpress_settings.php:59
 msgid "When poll is (expired)"
-msgstr " عند انتهاء تاريخ الاستطلاع."
+msgstr ""
 
 #: poll_survey_xpress_settings.php:53
 msgid "When poll status is (inactive)"
-msgstr " عند تعطيل الاستطلاع."
+msgstr ""

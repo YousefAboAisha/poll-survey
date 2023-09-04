@@ -41,13 +41,13 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                     <div class="col-lg-12 col-xxl-10">
 
                         <div class=" w-100 pb-0 d-flex align-items-center justify-content-between mb-6">
-                            <h4 class="fw-bolder col-4 m-0 p-0">Recent Surveys</h4>
+                            <h4 class="fw-bolder col-4 m-0 p-0"> <?php _e('Recent Surveys', 'psx-poll-survey-plugin'); ?></h4>
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
-                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0">New Survey
+                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0"><?php _e('New Survey', 'psx-poll-survey-plugin'); ?>
                                     <i style="cursor: pointer" class="fas fa-plus text-white ms-2"></i>
                                 </a>
-                                <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0">Recycle Bin <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
+                                <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0"><?php _e('Recycle Bin', 'psx-poll-survey-plugin'); ?> <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
                             </div>
                         </div>
 
@@ -89,7 +89,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <tbody>
                                         <?php if (empty($polls)) { ?>
                                             <tr>
-                                                <td colspan="7" class=" text-xss text-center p-4">No surveys found,<a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>">add new record</a></td>
+                                                <td colspan="7" class=" text-xss text-center p-4"><?php _e('No surveys found,', 'psx-poll-survey-plugin'); ?><a class="text-primary ms-1 fw-bold" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>"><?php _e('add new record', 'psx-poll-survey-plugin'); ?></a></td>
                                             </tr>
                                         <?php } else { ?>
                                             <?php
@@ -158,9 +158,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                     </div>
 
                     <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                        <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage">Previous</button>
-                        <span class="m-0 p-0" id="currentPage">Page 1</span>
-                        <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage">Next</button>
+                        <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"><?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
+                        <span class="m-0 p-0" id="currentPage"><?php _e('Page', 'psx-poll-survey-plugin'); ?> 1</span>
+                        <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                     </div>
                 </div>
             </div>
@@ -207,18 +207,20 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="p-2 m-0">
-                        Are you sure you want to move this survey to trash?
+                    <?php _e('Are you sure you want to move this survey to trash?', 'psx-poll-survey-plugin'); ?>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex justify-content-start">
                     <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" id="moveButton">
-                        Move
+                    <?php _e('Move', 'psx-poll-survey-plugin'); ?>
+
                         <i class="fas fa-trash text-xs text-white m-1"></i>
                     </button>
                     <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
-                        Cancel
+                    <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
+
                     </button>
                 </div>
             </div>

@@ -11,7 +11,6 @@ class PollSurveyXpress
         add_action('admin_menu', array($this, 'PSX_add_admin_menu_link'));
         add_action('admin_bar_menu', array($this, 'PSX_toolbar_link'), 99);
         add_action('wp_enqueue_scripts', array($this, 'PSX_enqueue_frontend_scripts'));
-        add_action('plugins_loaded',  array($this, 'PSX_poll_survey_plugin_text_loaded'));
 
 
 
@@ -37,10 +36,7 @@ class PollSurveyXpress
     }
 
     //Add Translation
-    function PSX_poll_survey_plugin_text_loaded()
-    {
-        load_plugin_textdomain('psx-poll-survey-plugin', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-    }
+    
     // Enqueue scripts and styles for the frontend
     public function PSX_enqueue_frontend_scripts()
     {
@@ -725,7 +721,7 @@ class PollSurveyXpress
                                     $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
                                         <div class="progress-bar bg-transparent transition-progress-bar">
                                             <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
-                                            <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
+                                            <p style="width: 100%;   background-color: #DDD;" class="m-0 rounded-2"></p>
                                         </div>
                                         <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
                                     </div>';
@@ -1124,11 +1120,29 @@ class PollSurveyXpress
                                 $to = get_option('admin_email');
                             }
                 
-                        }
-                        $subject = 'Poll Survey Xpress has been deactivated';
-                        $body = 'Poll '.$title[0]->title .' that has the ID ' . $poll_id . ' has been deactivated';
-            
-                        wp_mail($to, $subject, $body);
+                    }
+                    $site_name = get_bloginfo('name'); // Get the name of your WordPress site
+                    $plugin_name = 'Poll Survey Xpress'; // Replace with the actual name of your plugin
+
+                    $current_user = wp_get_current_user();
+
+                    if ($current_user->ID !== 0) {
+                        $user_name = $current_user->display_name; // Get the display name of the logged-in user
+                    } else {
+                        $user_name = 'User'; // Default to 'User' if no user is logged in
+                    }
+
+                    $subject = 'Poll Deactivation Notification';
+                    $body = 'Dear ' . $user_name . ',
+
+                    This is to inform you that the poll "' . $title[0]->title . '" (ID: ' . $poll_id . ') on ' . $site_name . ' Site has been deactivated.
+
+                    Thank you for using ' . $plugin_name . '.
+
+                    Sincerely,
+                    [Poll Survey Xpress Plugin]'; // Replace [Your Name] with your name or the site's administrator name
+
+                    wp_mail($to, $subject, $body);
                 }
             }
 

@@ -32,7 +32,7 @@ $poll_data_json = json_encode($poll_data);
 
 <body>
     <main class="col-xl-5 col-lg-8 col-md-9 col-10 mx-auto main-content position-relative d-flex flex-column justify-content-center align-items-center max-height-vh-100 h-100 mt-4 border-radius-lg">
-        <h6 class="font-weight-bolder mb-4 align-self-start">Survey Settings</h6>
+        <h6 class="font-weight-bolder mb-4 align-self-start"><?php _e('Survey Settings', 'psx-poll-survey-plugin'); ?></h6>
 
 
         <form id="update_form" data-form-id=<?php echo ($poll_id) ?> class="d-flex flex-column p-4 rounded-3 border w-100 bg-white">
@@ -88,7 +88,7 @@ $poll_data_json = json_encode($poll_data);
                             </label>
                         </div>
 
-                        <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
+                        <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="<?php _e('Add Thank Message', 'psx-poll-survey-plugin'); ?>" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                     </div>
 
                     <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
@@ -98,7 +98,7 @@ $poll_data_json = json_encode($poll_data);
                     </div>
 
                     <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                        <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
+                        <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add CTA Button Title', 'psx-poll-survey-plugin'); ?>" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
                         <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                             <?php echo $poll_data->cta_Text; ?>
                         </button>

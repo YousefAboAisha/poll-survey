@@ -1,13 +1,12 @@
 <?php
 /*
 Plugin Name:  #PollSurveyXpress
-Plugin URI:   http://localhost/wordpress/wp-admin/admin.php?page=test-plugin-page 
+Plugin URI:   http://localhost/wordpress/wp-admin/admin.php?page=poll-survey-xpress-surveys
 Description:  Poll & Survey Plugin
 Text Domain: psx-poll-survey-plugin
 Version:      1.0
 Author:       Ibrahim 
 Author URI:   http://localhost/wordpress/   
-Text Domain: psx-poll-survey-plugin
 */
 
 register_activation_hook(__FILE__, 'PSX_add_database_tables');
@@ -23,20 +22,26 @@ if( $wpdb->get_var("SHOW TABLES LIKE '$polls_table'") !== $polls_table){
 
 if($allowed_to_run){
     require_once(plugin_dir_path(__FILE__) . 'functions.php');
+
 }else{
     add_action( 'after_plugin_row', 'PSX_custom_after_plugin_row_content', 10, 3 );
 
 }
+add_action( 'init', 'PSX_load_textdomain' );
+function PSX_load_textdomain() {
+  load_plugin_textdomain( 'psx-poll-survey-plugin', false, dirname( plugin_basename( __FILE__ ) ) .'/languages' );
+ 
+}
+
 
 $plugin_name = plugin_basename(__FILE__);
-add_filter('plugin_action_links_' . $plugin_name, 'nc_settings_link');
-
-function nc_settings_link($links)
+add_filter('plugin_action_links_' . $plugin_name, 'PSX_settings_link');
+function PSX_settings_link($links)
 {
     // Build and escape the URL.
     $url = esc_url(add_query_arg(
         'page',
-        'poll-survey-xpress-surveys',
+        'poll-survey-xpress-settings',
         get_admin_url() . 'admin.php'
     ));
 
@@ -143,7 +148,6 @@ function PSX_add_database_tables()
 
 
 }
- 
             
 // Add custom content after a plugin's row in plugin settings page
 function PSX_custom_after_plugin_row_content( $plugin_file, $plugin_data, $status ) {
