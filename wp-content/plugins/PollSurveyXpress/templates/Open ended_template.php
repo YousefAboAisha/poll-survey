@@ -72,7 +72,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-            <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+            <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]-> title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
             <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mt-2 mb-2">
@@ -89,6 +89,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             <div id="questionsGroup" class="flex flex-column gap-2 w-100 mt-2">
                 <?php
+                if ($isItEditPage){
+
                 foreach ($questions as $index => $question) {
                 ?>
                     <div data-card-id="<?php echo $question->question_id ?>" class="question-container d-flex align-items-center w-100 gap-3 mb-3">
@@ -96,7 +98,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         <textarea class="question-text form-control" id="questionTitle_<?php echo $index; ?>" placeholder="Edit question title"> <?php echo $question->question_text ?></textarea>
                     </div>
                 <?php
-                } ?>
+                }
+            }
+                ?>
             </div>
         </div>
 

@@ -75,8 +75,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         <!-- Final output Survey -->
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
             <div class="d-flex justify-content-between align-items-center w-100 mb-4">
-                <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
-
+                <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]-> title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
                     <?php
                     $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -116,6 +115,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             <div id="questionsGroup" class="flex flex-column gap-2 w-100">
 
                 <?php
+                if ($isItEditPage){
+
                 // Check if decoding was successful
                 if ($questions_with_answers !== null) {
                     foreach ($questions_with_answers as $index => $question) {
@@ -139,6 +140,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 } else {
                     echo "Error decoding JSON.";
                 }
+            }
                 ?>
 
             </div>

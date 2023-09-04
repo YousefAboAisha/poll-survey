@@ -33,6 +33,9 @@ class PollSurveyXpress
         add_action('wp_ajax_nopriv_PSX_save_poll_response', array($this, 'PSX_save_poll_response')); // For non-logged-in users
         add_action('wp_ajax_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings'));
         add_action('wp_ajax_nopriv_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings')); // For non-logged-in users
+        add_action('wp_ajax_PSX_delete_poll_response', array($this, 'PSX_delete_poll_response'));
+        add_action('wp_ajax_nopriv_PSX_delete_poll_response', array($this, 'PSX_delete_poll_response')); // For non-logged-in users
+        
     }
 
     //Add Translation
@@ -210,27 +213,28 @@ class PollSurveyXpress
             $form_type = $poll_data_array['type'];
 
             if ($form_type == 'Edit') {
+                
                 $poll_id = sanitize_text_field($poll_data_array['poll_id']);
                 $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
                 $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
                 $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
-                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
-
-                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
-
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
+                
+                
+                $responses_id = $wpdb->get_results("SELECT response_id FROM {$table_survey_responses} WHERE poll_id = $poll_id", ARRAY_A);
+                
                 foreach ($responses_id as $response) {
                     $response_id = $response['response_id'];
                     $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
                 }
-
-                // Delete from survey responses
                 $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
-
+                
                 // Delete from survey answers
                 $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
-
+                
                 // Delete from survey questions
                 $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
+                
             }
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $pollCards = $poll_data_array['pollCards'];
@@ -285,7 +289,7 @@ class PollSurveyXpress
             foreach ($pollCards as $pollCard) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => sanitize_text_field($pollCard['questionTitle']),
+                    'question_text' => sanitize_text_field($pollCard['question_text']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
@@ -320,9 +324,9 @@ class PollSurveyXpress
                 $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
                 $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
                 $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
-                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
 
-                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
+                $responses_id = $wpdb->get_results("SELECT response_id FROM $table_survey_responses  WHERE poll_id = $poll_id", ARRAY_A);
 
                 foreach ($responses_id as $response) {
                     $response_id = $response['response_id'];
@@ -394,7 +398,7 @@ class PollSurveyXpress
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => sanitize_text_field($question['questionTitle']),
+                    'question_text' => sanitize_text_field($question['question_text']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 $question_id = $wpdb->insert_id;
@@ -430,9 +434,9 @@ class PollSurveyXpress
                 $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
                 $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
                 $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
-                $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+                $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
 
-                $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}  WHERE poll_id = $poll_id", ARRAY_A);
+                $responses_id = $wpdb->get_results("SELECT response_id FROM $table_survey_responses  WHERE poll_id = $poll_id", ARRAY_A);
 
                 foreach ($responses_id as $response) {
                     $response_id = $response['response_id'];
@@ -503,7 +507,7 @@ class PollSurveyXpress
             foreach ($questions as $question) {
                 $question_data = array(
                     'poll_id' => $poll_id,
-                    'question_text' => sanitize_text_field($question['questionTitle']),
+                    'question_text' => sanitize_text_field($question['question_text']),
                 );
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_questions', $question_data);
                 // Add an answer for each question
@@ -658,7 +662,7 @@ class PollSurveyXpress
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (!($count > 0 || $isUserVoted)) {
+                    if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -1220,7 +1224,7 @@ class PollSurveyXpress
                 ));
             }
 
-            if (true) {
+            if ('PSX_response_email' != '') {
                 if (get_option('PSX_survey_email') != '') {
                     $to = get_option('PSX_survey_email');
                 } else {
@@ -1386,6 +1390,27 @@ class PollSurveyXpress
  
             echo json_encode($jsonResponse);
         }
+        wp_die();
+    }
+    public function PSX_delete_poll_response(){
+        global $wpdb;
+        $poll_id = intval($_POST['poll_id']); // Use intval to ensure it's treated as an integer
+        var_dump($poll_id); 
+ 
+
+        $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
+        $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
+
+        $responses_id = $wpdb->get_results("SELECT response_id FROM $table_survey_responses  WHERE poll_id = $poll_id", ARRAY_A);
+
+        foreach ($responses_id as $response) {
+            $response_id = $response['response_id'];
+            $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
+        }
+
+        // Delete from survey responses
+        $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
+
         wp_die();
     }
 

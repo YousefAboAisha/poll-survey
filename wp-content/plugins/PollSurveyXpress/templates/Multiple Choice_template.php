@@ -70,7 +70,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" data-json-data="<?php echo $jsonDataEncoded ?>" />
+        <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey Title" id="surveyTitle" value="<?php echo $poll_data[0]->title; ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" data-json-data="<?php echo $jsonDataEncoded; ?>" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
@@ -95,8 +95,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 </button>
 
                 <div class="d-flex flex-column gap-1 mt-4 ">
-                    <p style="font-size: 12px;" class="m-0 text-dark">- You must add add at least one question</p>
-                    <p style="font-size: 12px;" class="m-0 text-dark">- Each question must contain at least two options</p>
+                    <p style="font-size: 12px;" class="m-0 text-dark"> <?php _e('- You must add add at least one question', 'psx-poll-survey-plugin'); ?></p>
+                    <p style="font-size: 12px;" class="m-0 text-dark"> <?php _e('- Each question must contain at least two options', 'psx-poll-survey-plugin'); ?></p>
                 </div>
             </div>
 
@@ -104,32 +104,43 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5">
 
                 <?php
-                // Check if decoding was successful
-                if ($questions_with_answers !== null) {
-                    foreach ($questions_with_answers as $index => $question) {
-                ?>
-                        <div data-card-id="<?php echo $question->question_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
-                            <textarea class="question-text form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
+                if ($isItEditPage){
+                    // Check if decoding was successful
+                    if ($questions_with_answers !== null) {
+                        foreach ($questions_with_answers as $index => $question) {
+                    ?>
+                            <div data-card-id="<?php echo $question->question_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
+                                <textarea class="question-text form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
 
-                            <div class="position-absolute bottom-4 end-2 p-0">
-                                <i data-card-id="<?php echo $question->question_id ?>" class="delete-card fas fa-trash text-sm ms-1 text-danger " aria-hidden="true" style="cursor: pointer;"></i>
-                            </div>
+                                <div class="position-absolute bottom-4 end-2 p-0">
+                                    <i data-card-id="<?php echo $question->question_id ?>" class="delete-card fas fa-trash text-sm ms-1 text-danger " aria-hidden="true" style="cursor: pointer;"></i>
+                                </div>
 
-                            <div class="options-container d-flex flex-column gap-1">
-                                <?php foreach ($question->answers as $index => $answer) { ?>
-                                    <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
-                                        <i id="delete_option" data-deleteOption-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger" style="cursor: pointer"></i>
-                                        <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Edit option" value="<?php echo $answer->answer_text; ?>">
-                                    </div>
-                                <?php } ?>
+                                <div class="options-container d-flex flex-column gap-1">
+                                    <?php foreach ($question->answers as $index => $answer) { ?>
+                                        <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
+                                            <i id="delete_option" data-deleteOption-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger" style="cursor: pointer"></i>
+                                            <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Edit option" value="<?php echo $answer->answer_text; ?>">
+                                        </div>
+                                    <?php } ?>
+                                </div>
                             </div>
-                        </div>
-                <?php
+                    <?php
+                        }
+                    } else {
+                        echo "Error decoding JSON.";
                     }
-                } else {
-                    echo "Error decoding JSON.";
-                }
-                ?>
+                }else{ ?>
+                    <div data-card-id="" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
+                                <div class="position-absolute bottom-4 end-2 p-0">
+                                </div>
+
+                                <div class="options-container d-flex flex-column gap-1">
+                                    
+                                </div>
+                            </div>
+              <?php  }
+                    ?>   
 
             </div>
             <button type="submit" id="save_button" disabled class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-5">
@@ -562,7 +573,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         template: "Multiple Choice",
                     };
 
-                    // console.log("FinalObj", finalObj);
+                    console.log("FinalObj", finalObj);
 
                     jQuery.ajax({
                         type: "POST",
@@ -595,7 +606,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             bootstrapToast.show();
 
                             setTimeout(() => {
-                                window.location.reload();
+                                // window.location.reload();
                             }, 500)
                         },
                         error: function(error) {

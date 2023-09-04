@@ -143,7 +143,9 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                 </div>
             </div>
         </div>
-
+        <button data-poll-id = "<?php echo $poll_id?>" id="delete_button" type="button" class="align-self-start text-white btn bg-primary col-lg-3 col-md-4 col-4 text-sm font-weight-bold mb-0 mb-5 mt-2">
+            <?php _e('Delete Responses for this survey', 'psx-poll-survey-plugin'); ?>
+        </button>
         <div class="mt-6 p-0 pb-4">
             <h4 class="mb-4 align-self-start p-0">
                 <?php echo ((json_decode(($poll_data_json), true)['title'])); ?></h4>
@@ -190,6 +192,7 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                 ?>
 
             </div>
+            
         </div>
     </main>
 
@@ -381,6 +384,26 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                 },
             },
         });
+
+        const delete_button = document.getElementById("delete_button");
+
+        delete_button.addEventListener("click", () => {
+            jQuery.ajax({
+                url: my_ajax_object.ajaxurl,
+                type: "POST",
+                data: {
+                    action: "PSX_delete_poll_response",
+                    poll_id: delete_button.getAttribute("data-poll-id"), 
+                },
+                success: function() {
+                    console.log('response');
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
     </script>
 </body>
 
