@@ -1107,7 +1107,7 @@ class PollSurveyXpress
             $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
             $table_name = $wpdb->prefix . "polls_psx_polls";
             $old_status_result = $wpdb->get_results($wpdb->prepare("SELECT status FROM $table_name WHERE poll_id = %d", $poll_id));
-            $title = $wpdb->get_results($wpdb->prepare("SELECT title FROM $table_name WHERE poll_id = %d", $poll_id));
+            $title = $wpdb->get_results($wpdb->prepare("SELECT title , template FROM $table_name WHERE poll_id = %d", $poll_id));
 
 
             if (get_option('PSX_email') != '') {
@@ -1138,7 +1138,6 @@ class PollSurveyXpress
                     $body = 'Dear ' . $user_name . ',
 
                     This is to inform you that the poll "' . $title[0]->title . '" (ID: ' . $poll_id . ') on ' . $site_name . ' Site has been deactivated.
-
                     Thank you for using ' . $plugin_name . '.
 
                     Sincerely,
@@ -1221,7 +1220,7 @@ class PollSurveyXpress
                 ));
             }
 
-            if (true){
+            if (true) {
                 if (get_option('PSX_survey_email') != '') {
                     $to = get_option('PSX_survey_email');
                 } else {
@@ -1230,25 +1229,35 @@ class PollSurveyXpress
                 $site_name = get_bloginfo('name'); // Get the name of your WordPress site
                 $plugin_name = 'Poll Survey Xpress'; // Replace with the actual name of your plugin
                 $current_user = wp_get_current_user();
-
+            
                 if ($current_user->ID !== 0) {
                     $user_name = $current_user->display_name; // Get the display name of the logged-in user
                 } else {
                     $user_name = 'User'; // Default to 'User' if no user is logged in
                 }
-                $title = $wpdb->get_results($wpdb->prepare("SELECT title FROM {$wpdb->prefix}polls_psx_polls WHERE poll_id = %d", $poll_id));
+                $title = $wpdb->get_results($wpdb->prepare("SELECT title,template FROM {$wpdb->prefix}polls_psx_polls WHERE poll_id = %d", $poll_id));
                 $subject = 'Poll Response Notification';
+                
+                // Modify the template name to replace spaces with '+'
+                $template_name = str_replace(' ', '+', $title[0]->template);
+            
+                // Generate the link
+                $link = admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $template_name . '&poll_id=' . $poll_id);
+            
                 $body = 'Dear ' . $user_name . ',
-
+            
                 This is to inform you that the poll "' . $title[0]->title . '" (ID: ' . $poll_id . ') on ' . $site_name . ' Site got a response.
-
-                Thank you for using ' . $plugin_name . '.
-
-                Sincerely,
+            
+                You can view the poll and its responses by clicking on the following link:
+                ' . $link . '
+            
+                Thank you for using ' . $plugin_name . '.'.
+                'Sincerely,
                 [Poll Survey Xpress Plugin]'; // Replace [Your Name] with your name or the site's administrator name
-
+            
                 wp_mail($to, $subject, $body);
             }
+            
 
             $poll_questions = $wpdb->get_results(
                 $wpdb->prepare(
