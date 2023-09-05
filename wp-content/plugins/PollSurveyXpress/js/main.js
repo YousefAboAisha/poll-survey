@@ -111,6 +111,10 @@ jQuery(document).ready(function (jQuery) {
           (poll_results != null && poll_results != "") ||
           poll_count <= votes
         ) {
+          mcq_container.innerHTML = "";
+          mcq_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+        } else {
           show_results_containers.forEach((elem) => {
             elem.style.cssText = "display:flex !important";
             var questionId = elem.getAttribute("data-question-id");
@@ -135,10 +139,6 @@ jQuery(document).ready(function (jQuery) {
               }
             }
           });
-        } else {
-          mcq_container.innerHTML = "";
-          mcq_container.style.cssText = "display:none !important";
-          message.style.cssText = "display:flex !important";
         }
       },
       error: function (error) {
@@ -286,18 +286,17 @@ jQuery(document).ready(function (jQuery) {
         radio_buttons.forEach((radio) => {
           radio.disabled = true;
         });
-        rating_container.innerHTML = "";
-        rating_container.style.cssText = "display:none !important";
-        message.style.cssText = "display:flex !important";
-        // if (poll_results != null && poll_results != "") {
-        //   rating_container.innerHTML = "";
-        //   rating_container.style.cssText = "display:none !important";
-        //   result_chart.style.cssText = "display:block !important";
-        // } else {
-        //   rating_container.innerHTML = "";
-        //   rating_container.style.cssText = "display:none !important";
-        //   message.style.cssText = "display:flex !important";
-        // }
+
+        if (poll_results != null && poll_results != "") {
+          rating_container.innerHTML = "";
+          rating_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+        } else {
+          rating_container.innerHTML = "";
+          rating_container.style.cssText = "display:none !important";
+          result_chart.style.cssText =
+            "display:block !important;height: 300px; width: 100%;";
+        }
       },
       error: function (error) {
         console.error("Error:", error);
