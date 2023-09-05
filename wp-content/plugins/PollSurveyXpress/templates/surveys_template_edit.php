@@ -46,6 +46,8 @@ $poll_data_json = json_encode($poll_data);
                     <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $poll_data->bgcolor; ?>" />
                     <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                     <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="<?php echo $poll_data->color; ?>" />
+                    <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
                 </div>
             </div>
 
@@ -146,6 +148,7 @@ $poll_data_json = json_encode($poll_data);
             const min_votes_input = document.getElementById("min_votes_input");
             const cta_input = document.getElementById("cta_input");
             const save_button = document.getElementById("save_button");
+            const button_color = document.getElementById("button_color");
             let settingObj = {}
             var nonce = jQuery('#my-ajax-nonce').val();
             save_button.addEventListener("click", (e) => {
@@ -173,6 +176,7 @@ $poll_data_json = json_encode($poll_data);
                     real_time_result_text: show_results_input.value,
                     real_time_check: show_results.checked,
                     min_votes: min_votes_input.value,
+                    button_color: button_color.value,
 
                 };
 

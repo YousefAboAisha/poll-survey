@@ -186,6 +186,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $isItEditPage ? $poll_data[0]->bgcolor : "#f8f9fa"; ?>" />
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="text_color" value="<?php echo $isItEditPage ? $poll_data[0]->color : "#344767"; ?>" />
+                            <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
+
                         </div>
                     </div>
 
@@ -271,6 +274,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const addOptionButton = document.getElementById("addQuestion");
         const optionInput = document.getElementById("questionInput");
         const questionsGroup = document.getElementById("questionsGroup");
+        const button_color = document.getElementById("button_color");
+
         let questionsArray = [];
         let counter = 1;
         let finalObj = {};
@@ -507,6 +512,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     real_time_result_text: show_results_input.value,
                     real_time_check: show_results.checked,
                     min_votes: min_votes_input.value,
+                    button_color : button_color.value,
                 };
 
                 finalObj = {
