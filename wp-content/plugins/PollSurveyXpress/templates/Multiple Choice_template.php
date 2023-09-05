@@ -70,7 +70,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-        <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey Title" id="surveyTitle" value="<?php echo $poll_data[0]->title; ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" data-json-data="<?php echo $jsonDataEncoded; ?>" />
+            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey Title" id="surveyTitle" value="<?php echo $poll_data[0]->title; ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" data-json-data="<?php echo $jsonDataEncoded; ?>" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
@@ -101,14 +101,14 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             </div>
 
             <!-- Final output cards -->
-            <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5">
+            <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5 mb-3">
 
                 <?php
-                if ($isItEditPage){
+                if ($isItEditPage) {
                     // Check if decoding was successful
                     if ($questions_with_answers !== null) {
                         foreach ($questions_with_answers as $index => $question) {
-                    ?>
+                ?>
                             <div data-card-id="<?php echo $question->question_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
                                 <textarea class="question-text form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
 
@@ -125,24 +125,13 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                                     <?php } ?>
                                 </div>
                             </div>
-                    <?php
+                <?php
                         }
-                    } else {
-                        echo "Error decoding JSON.";
-                    }
-                }else{ ?>
-                    <div data-card-id="" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
-                                <div class="position-absolute bottom-4 end-2 p-0">
-                                </div>
-
-                                <div class="options-container d-flex flex-column gap-1">
-                                    
-                                </div>
-                            </div>
-              <?php  }
-                    ?>   
-
+                    } // This is the missing closing curly brace for the inner if statement
+                } // This is the missing closing curly brace for the outer if statement
+                ?>
             </div>
+
             <button type="submit" id="save_button" disabled class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-5">
                 <?php _e('Save', 'psx-poll-survey-plugin'); ?>
             </button>
@@ -266,11 +255,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             let cardsContainer = document.getElementById("cardsContainer");
             let surveyTitle = document.getElementById("surveyTitle");
             let optionsHTMLArray = [];
-            const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+            // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
 
-            jQuery(document).ready(function(jQuery) {
-                console.log(cards_array);
-            })
+            // jQuery(document).ready(function(jQuery) {
+            //     console.log(cards_array);
+            // })
 
             // Data will be sent
             let optionsArray = [];
@@ -606,7 +595,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             bootstrapToast.show();
 
                             setTimeout(() => {
-                                // window.location.reload();
+                                window.location.reload();
                             }, 500)
                         },
                         error: function(error) {

@@ -72,7 +72,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-            <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]-> title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+            <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]->title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
             <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mt-2 mb-2">
@@ -89,17 +89,17 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             <div id="questionsGroup" class="flex flex-column gap-2 w-100 mt-2">
                 <?php
-                if ($isItEditPage){
+                if ($isItEditPage) {
 
-                foreach ($questions as $index => $question) {
+                    foreach ($questions as $index => $question) {
                 ?>
-                    <div data-card-id="<?php echo $question->question_id ?>" class="question-container d-flex align-items-center w-100 gap-3 mb-3">
-                        <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger"></i>
-                        <textarea class="question-text form-control" id="questionTitle_<?php echo $index; ?>" placeholder="Edit question title"> <?php echo $question->question_text ?></textarea>
-                    </div>
+                        <div data-card-id="<?php echo $question->question_id ?>" class="question-container d-flex align-items-center w-100 gap-3 mb-3">
+                            <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger"></i>
+                            <textarea class="question-text form-control" id="questionTitle_<?php echo $index; ?>" placeholder="Edit question title"> <?php echo $question->question_text ?></textarea>
+                        </div>
                 <?php
+                    }
                 }
-            }
                 ?>
             </div>
         </div>
@@ -212,11 +212,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
         var nonce = jQuery('#my-ajax-nonce').val();
-        const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
 
-        jQuery(document).ready(function(jQuery) {
-            console.log(cards_array);
-        })
+        // jQuery(document).ready(function(jQuery) {
+        //     console.log(cards_array);
+        // })
 
 
         // Update save_button status
@@ -361,49 +361,49 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 };
 
                 console.log(finalObj);
-                // jQuery.ajax({
-                //     type: "POST",
-                //     url: my_ajax_object.ajaxurl,
-                //     data: {
-                //         action: "PSX_save_poll_open_ended_data",
-                //         poll_data: JSON.stringify(finalObj),
-                //         nonce: nonce,
-                //     },
-                //     success: function() {
-                //         console.log("Done");
-                //         save_button.textContent = "Save";
-                //         save_button.disabled = false;
+                jQuery.ajax({
+                    type: "POST",
+                    url: my_ajax_object.ajaxurl,
+                    data: {
+                        action: "PSX_save_poll_open_ended_data",
+                        poll_data: JSON.stringify(finalObj),
+                        nonce: nonce,
+                    },
+                    success: function() {
+                        console.log("Done");
+                        save_button.textContent = "Save";
+                        save_button.disabled = false;
 
-                //         // Create a new toast element
-                //         var toast = document.createElement("div");
-                //         toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                //         toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-                //         toast.innerHTML = `
-                //             <p class="m-0 fw-bold text-xs text-white">
-                //             New survey has been added successfully!
-                //             </p>
-                //         `;
-                //         // Append the toast to the document
-                //         document.body.appendChild(toast);
+                        // Create a new toast element
+                        var toast = document.createElement("div");
+                        toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+                        toast.innerHTML = `
+                            <p class="m-0 fw-bold text-xs text-white">
+                            New survey has been added successfully!
+                            </p>
+                        `;
+                        // Append the toast to the document
+                        document.body.appendChild(toast);
 
-                //         // Initialize the Bootstrap toast with custom options
-                //         var bootstrapToast = new bootstrap.Toast(toast, {
-                //             autohide: true, // Set to true to enable automatic hiding
-                //             delay: 2000,
-                //         });
-                //         bootstrapToast.show();
+                        // Initialize the Bootstrap toast with custom options
+                        var bootstrapToast = new bootstrap.Toast(toast, {
+                            autohide: true, // Set to true to enable automatic hiding
+                            delay: 2000,
+                        });
+                        bootstrapToast.show();
 
-                //         setTimeout(() => {
-                //             window.location.reload();
-                //         }, 500)
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500)
 
-                //     },
-                //     error: function(error) {
-                //         console.error("Error:", error);
-                //         save_button.textContent = "Save";
-                //         save_button.disabled = false;
-                //     },
-                // });
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                        save_button.textContent = "Save";
+                        save_button.disabled = false;
+                    },
+                });
             }
         })
     </script>

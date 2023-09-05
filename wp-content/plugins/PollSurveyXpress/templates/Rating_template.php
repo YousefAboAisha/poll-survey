@@ -75,7 +75,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         <!-- Final output Survey -->
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
             <div class="d-flex justify-content-between align-items-center w-100 mb-4">
-                <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]-> title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+                <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]->title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
                     <?php
                     $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
@@ -115,32 +115,32 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             <div id="questionsGroup" class="flex flex-column gap-2 w-100">
 
                 <?php
-                if ($isItEditPage){
+                if ($isItEditPage) {
 
-                // Check if decoding was successful
-                if ($questions_with_answers !== null) {
-                    foreach ($questions_with_answers as $index => $question) {
+                    // Check if decoding was successful
+                    if ($questions_with_answers !== null) {
+                        foreach ($questions_with_answers as $index => $question) {
                 ?>
-                        <div class="poll-card d-flex justify-content-between align-items-center w-100 mb-3" data-card-id="<?php echo $question->question_id ?>">
-                            <div class="question-container d-flex align-items-center w-100 gap-3">
-                                <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger" aria-hidden="true"></i>
-                                <input type="text" class="question-text form-control border p-2" placeholder="Edit question title" value="<?php echo $question->question_text; ?>">
-                            </div>
+                            <div class="poll-card d-flex justify-content-between align-items-center w-100 mb-3" data-card-id="<?php echo $question->question_id ?>">
+                                <div class="question-container d-flex align-items-center w-100 gap-3">
+                                    <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger" aria-hidden="true"></i>
+                                    <input type="text" class="question-text form-control border p-2" placeholder="Edit question title" value="<?php echo $question->question_text; ?>">
+                                </div>
 
-                            <div class="form-check d-flex justify-content-around align-items-center col-8">
-                                <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio1">
-                                <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio2">
-                                <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio3">
-                                <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio4">
-                                <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio5">
+                                <div class="form-check d-flex justify-content-around align-items-center col-8">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio1">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio2">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio3">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio4">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio5">
+                                </div>
                             </div>
-                        </div>
                 <?php
+                        }
+                    } else {
+                        echo "Error decoding JSON.";
                     }
-                } else {
-                    echo "Error decoding JSON.";
                 }
-            }
                 ?>
 
             </div>
@@ -266,11 +266,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         let counter = 1;
         let finalObj = {};
 
-        const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
 
-        jQuery(document).ready(function(jQuery) {
-            console.log(cards_array);
-        })
+        // jQuery(document).ready(function(jQuery) {
+        //     console.log(cards_array);
+        // })
 
 
         // Plugin Settings variables
