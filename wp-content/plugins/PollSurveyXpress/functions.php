@@ -36,7 +36,7 @@ class PollSurveyXpress
         add_action('wp_ajax_nopriv_PSX_save_changes_settings', array($this, 'PSX_save_changes_settings')); // For non-logged-in users
         add_action('wp_ajax_PSX_delete_poll_response', array($this, 'PSX_delete_poll_response'));
         add_action('wp_ajax_nopriv_PSX_delete_poll_response', array($this, 'PSX_delete_poll_response')); // For non-logged-in users
-        
+
     }
 
     // Enqueue scripts and styles for the frontend
@@ -44,7 +44,8 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.3', true);
+        wp_enqueue_script('Piechart', "https://cdn.canvasjs.com/canvasjs.min.js");
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.4', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
@@ -66,7 +67,7 @@ class PollSurveyXpress
         if (isset($_GET['page']) && (($_GET['page'] === 'poll-survey-xpress-surveys' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page'] === 'poll-survey-xpress-add' || $_GET['page'] === 'poll-survey-xpress-settings' || $_GET['page'] === 'view_template_page' || $_GET['page'] === 'edit_template_page' || $_GET['page'] === 'poll-survey-xpress-recycle' || $_GET['page']
             === 'show_template_page'))) {
             wp_enqueue_script('jquery');
-            wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.3', true);
+            wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '2.0', true);
             wp_enqueue_script('bootstrap-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
             wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
             wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
@@ -211,28 +212,27 @@ class PollSurveyXpress
             $form_type = $poll_data_array['type'];
 
             if ($form_type == 'Edit') {
-                
+
                 $poll_id = sanitize_text_field($poll_data_array['poll_id']);
                 $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
                 $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
                 $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
                 $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
-                
-                
+
+
                 $responses_id = $wpdb->get_results("SELECT response_id FROM {$table_survey_responses} WHERE poll_id = $poll_id", ARRAY_A);
-                
+
                 foreach ($responses_id as $response) {
                     $response_id = $response['response_id'];
                     $wpdb->delete($table_survey_responses_data, array("response_id" => $response_id));
                 }
                 $wpdb->delete($table_survey_responses, array("poll_id" => $poll_id));
-                
+
                 // Delete from survey answers
                 $wpdb->delete($table_survey_answers, array("poll_id" => $poll_id));
-                
+
                 // Delete from survey questions
                 $wpdb->delete($table_survey_questions, array("poll_id" => $poll_id));
-                
             }
             $surveyTitle = sanitize_text_field($poll_data_array['surveyTitle']);
             $pollCards = $poll_data_array['pollCards'];
@@ -633,7 +633,7 @@ class PollSurveyXpress
                     $user_id = is_user_logged_in() ? get_current_user_id() : 0;
                     $isUserVoted = false;
                     $table_name = $wpdb->prefix . 'polls_psx_survey_responses';
-                    if ($user_id != '0'){
+                    if ($user_id != '0') {
 
                         $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE poll_id = %d AND user_id = %s", $poll_id, $user_id);
                         $votesCount = $wpdb->get_var($query);
@@ -645,9 +645,9 @@ class PollSurveyXpress
                     $ipAddress = $_SERVER['REMOTE_ADDR'];
                     $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
                     $encoding = $_SERVER['HTTP_ACCEPT_ENCODING'];
-                    
+
                     // Concatenate and hash the attributes to create a unique fingerprint
-                    $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding );
+                    $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding);
 
 
                     $table_name = $wpdb->prefix . 'polls_psx_survey_responses';
@@ -659,7 +659,7 @@ class PollSurveyXpress
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (($count > 0 || $isUserVoted)) {
+                    if (!($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -756,7 +756,6 @@ class PollSurveyXpress
 
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
 
-                            // if (!empty($poll_data[0]['real_time_result_text'])) {
                             $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                                 <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . ($poll_data[0]['real_time_result_text'] ? $poll_data[0]['real_time_result_text'] : "Thx for submitting!")
@@ -764,7 +763,6 @@ class PollSurveyXpress
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                                 </div>
                                 ';
-                            // }
 
                             $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
                             $output .= '<div id="open_ended_container"  class="modal-body">';
@@ -813,6 +811,8 @@ class PollSurveyXpress
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                                 </div>
                                 ';
+                            } else {
+                                $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none bg-danger"></div>';
                             }
 
                             $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
@@ -996,13 +996,16 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the container-fluid div
 
                         } else if ($poll_data[0]['template'] === 'Rating') {
+
                             if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+                                $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                                 <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                                 </div>
                                 ';
+                            } else {
+                                $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none bg-danger"></div>';
                             }
 
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="rating_container">';
@@ -1069,7 +1072,7 @@ class PollSurveyXpress
 
                             $output .= '<div>';
                             $output .= '<button disabled type="submit" id="rating_save_button"
-                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0">
+                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0 mt-4">
                         Save
                         </button>';
                             $output .= '</div>';
@@ -1096,15 +1099,15 @@ class PollSurveyXpress
             $poll_data_array = json_decode(stripslashes($_POST["poll_data"]), true);
             // Sanitize inputs
             $poll_id = absint($poll_data_array["poll_id"]);
-            
+
 
             $start_date = sanitize_text_field($poll_data_array["start_date"]);
             $end_date = sanitize_text_field($poll_data_array["end_date"]);
             $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
-            $real_time_check = $poll_data_array["real_time_check"] ? true : false;
-            $real_time_result_text = $real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
+            $real_time_check = $poll_data_array["real_time_check"];
+            $real_time_result_text = !$real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
             $min_votes = absint($poll_data_array["min_votes"]);
             $cta_text = sanitize_text_field($poll_data_array["cta_Text"]);
             $table_name = $wpdb->prefix . "polls_psx_polls";
@@ -1113,17 +1116,16 @@ class PollSurveyXpress
 
 
             if (get_option('PSX_email') != '') {
-           
+
                 if (!empty($old_status_result)) {
                     $old_status = $old_status_result[0]->status; // Access the 'status' property
-                    
+
                     if ($old_status === 'active' && ($status === false)) {
-                            if (get_option('PSX_survey_email') != '') {
-                                $to = get_option('PSX_survey_email');
-                            } else {
-                                $to = get_option('admin_email');
-                            }
-                
+                        if (get_option('PSX_survey_email') != '') {
+                            $to = get_option('PSX_survey_email');
+                        } else {
+                            $to = get_option('admin_email');
+                        }
                     }
                     $site_name = get_bloginfo('name'); // Get the name of your WordPress site
                     $plugin_name = 'Poll Survey Xpress'; // Replace with the actual name of your plugin
@@ -1191,7 +1193,7 @@ class PollSurveyXpress
             if (!(get_option('PSX_gdpr') === '')) {
                 $userIP = '';
             }
-            
+
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
             $ipAddress = $_SERVER['REMOTE_ADDR'];
             $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -1231,7 +1233,7 @@ class PollSurveyXpress
                 $site_name = get_bloginfo('name'); // Get the name of your WordPress site
                 $plugin_name = 'Poll Survey Xpress'; // Replace with the actual name of your plugin
                 $current_user = wp_get_current_user();
-            
+
                 if ($current_user->ID !== 0) {
                     $user_name = $current_user->display_name; // Get the display name of the logged-in user
                 } else {
@@ -1239,13 +1241,13 @@ class PollSurveyXpress
                 }
                 $title = $wpdb->get_results($wpdb->prepare("SELECT title,template FROM {$wpdb->prefix}polls_psx_polls WHERE poll_id = %d", $poll_id));
                 $subject = 'Poll Response Notification';
-                
+
                 // Modify the template name to replace spaces with '+'
                 $template_name = str_replace(' ', '+', $title[0]->template);
-            
+
                 // Generate the link
                 $link = admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $template_name . '&poll_id=' . $poll_id);
-            
+
                 $body = 'Dear ' . $user_name . ',
             
                 This is to inform you that the poll "' . $title[0]->title . '" (ID: ' . $poll_id . ') on ' . $site_name . ' Site got a response.
@@ -1253,13 +1255,13 @@ class PollSurveyXpress
                 You can view the poll and its responses by clicking on the following link:
                 ' . $link . '
             
-                Thank you for using ' . $plugin_name . '.'.
-                'Sincerely,
+                Thank you for using ' . $plugin_name . '.' .
+                    'Sincerely,
                 [Poll Survey Xpress Plugin]'; // Replace [Your Name] with your name or the site's administrator name
-            
+
                 wp_mail($to, $subject, $body);
             }
-            
+
 
             $poll_questions = $wpdb->get_results(
                 $wpdb->prepare(
@@ -1383,20 +1385,21 @@ class PollSurveyXpress
             $votes = $wpdb->get_var($query);
 
             // If the count is greater than 0, the session ID is found in the table
-            
+
             $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"min_votes":' . json_encode($votes) . '}';
- 
+
             echo json_encode($jsonResponse);
         }
         wp_die();
     }
 
     // Method to delete a poll response for a given poll
-    public function PSX_delete_poll_response(){
+    public function PSX_delete_poll_response()
+    {
         global $wpdb;
         $poll_id = intval($_POST['poll_id']); // Use intval to ensure it's treated as an integer
-        var_dump($poll_id); 
- 
+        var_dump($poll_id);
+
 
         $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
         $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
@@ -1413,6 +1416,5 @@ class PollSurveyXpress
 
         wp_die();
     }
-
 }
 $survey_plugin = new PollSurveyXpress();

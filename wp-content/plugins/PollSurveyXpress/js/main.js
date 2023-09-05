@@ -107,38 +107,39 @@ jQuery(document).ready(function (jQuery) {
         const percentages = jsonData.percentages;
 
         const votes = jsonData.votes;
-        // if ((poll_results != null && poll_results != "") || poll_count <= votes)
-        // Now you can work with the decoded data
-        // console.log("JSON Data", jsonData);
+        if (
+          (poll_results != null && poll_results != "") ||
+          poll_count <= votes
+        ) {
+          show_results_containers.forEach((elem) => {
+            elem.style.cssText = "display:flex !important";
+            var questionId = elem.getAttribute("data-question-id");
+            var answerId = elem.getAttribute("data-answer-id");
+            const percentage_bar = elem.querySelector(
+              ".progress-bar .percentage-bar"
+            );
+            const percentage_value = elem.querySelector(".percentage-value");
 
-        // console.log(show_results_containers);
+            // Check if the percentages data for this question exists
+            if (percentages.hasOwnProperty(questionId)) {
+              var question_data = percentages[questionId];
 
-        // Assuming you have the 'percentages' object available
+              // Check if the percentage data for this answer exists
+              if (question_data.hasOwnProperty(answerId)) {
+                var percentageValue = parseFloat(question_data[answerId]);
+                percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
 
-        show_results_containers.forEach((elem) => {
-          elem.style.cssText = "display:flex !important";
-          var questionId = elem.getAttribute("data-question-id");
-          var answerId = elem.getAttribute("data-answer-id");
-          const percentage_bar = elem.querySelector(
-            ".progress-bar .percentage-bar"
-          );
-          const percentage_value = elem.querySelector(".percentage-value");
-
-          // Check if the percentages data for this question exists
-          if (percentages.hasOwnProperty(questionId)) {
-            var question_data = percentages[questionId];
-
-            // Check if the percentage data for this answer exists
-            if (question_data.hasOwnProperty(answerId)) {
-              var percentageValue = parseFloat(question_data[answerId]);
-              percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
-
-              // Update the percentage bar and value for this specific answer
-              percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5`;
-              percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
+                // Update the percentage bar and value for this specific answer
+                percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5`;
+                percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
+              }
             }
-          }
-        });
+          });
+        } else {
+          mcq_container.innerHTML = "";
+          mcq_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+        }
       },
       error: function (error) {
         console.error("Error:", error);
@@ -180,14 +181,12 @@ jQuery(document).ready(function (jQuery) {
       let response_obj = {};
       const question_id = elem.getAttribute("data-question-id");
 
-      // if (elem.value != "") {
       response_obj = {
         question_id: question_id, // Use the question_id
         answer_id: question_id, // Use the answer_id for the selected answer
         answer_text: elem.value,
       };
       responses_arr.push(response_obj);
-      // }
     });
 
     finalObj = {
@@ -227,6 +226,7 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("Title")
     .getAttribute("data-show-results");
   const message = document.getElementById("message");
+  const result_chart = document.getElementById("result_chart");
 
   const poll_id = document
     .getElementById("poll_card")
@@ -238,15 +238,14 @@ jQuery(document).ready(function (jQuery) {
   const radio_buttons = document.querySelectorAll(".poll-answer-radio");
 
   save_button.addEventListener("click", function (event) {
+    console.log("Hi");
+
     event.preventDefault(); // Prevent the default form submission behavior
     // Get the user ID if logged in
     save_button.disabled = true;
     save_button.innerHTML =
       '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
-    // Get the session ID from the browser
-    const session_id = sessionStorage.getItem("my_session_id");
-    // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
     var questions = document.querySelectorAll(".poll-answer-radio");
@@ -287,12 +286,18 @@ jQuery(document).ready(function (jQuery) {
         radio_buttons.forEach((radio) => {
           radio.disabled = true;
         });
-
-        if (poll_results != null && poll_results != "") {
-          rating_container.innerHTML = "";
-          rating_container.style.cssText = "display:none !important";
-          message.style.cssText = "display:flex !important";
-        }
+        rating_container.innerHTML = "";
+        rating_container.style.cssText = "display:none !important";
+        message.style.cssText = "display:flex !important";
+        // if (poll_results != null && poll_results != "") {
+        //   rating_container.innerHTML = "";
+        //   rating_container.style.cssText = "display:none !important";
+        //   result_chart.style.cssText = "display:block !important";
+        // } else {
+        //   rating_container.innerHTML = "";
+        //   rating_container.style.cssText = "display:none !important";
+        //   message.style.cssText = "display:flex !important";
+        // }
       },
       error: function (error) {
         console.error("Error:", error);
@@ -398,4 +403,44 @@ jQuery(document).ready(() => {
       });
     }
   }
+});
+
+jQuery(document).ready(() => {
+  var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    title: {
+      text: "Survey results",
+    },
+    data: [
+      {
+        type: "pie",
+        startAngle: 240,
+        yValueFormatString: '##0.00"%"',
+        indexLabel: "{label} {y}",
+        dataPoints: [
+          {
+            y: 20,
+            label: "Rate #1",
+          },
+          {
+            y: 20,
+            label: "Rate #2",
+          },
+          {
+            y: 20,
+            label: "Rate #3",
+          },
+          {
+            y: 20,
+            label: "Rate #4",
+          },
+          {
+            y: 20,
+            label: "Rate #5",
+          },
+        ],
+      },
+    ],
+  });
+  chart.render();
 });
