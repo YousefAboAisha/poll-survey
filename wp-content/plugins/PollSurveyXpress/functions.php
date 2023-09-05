@@ -1222,7 +1222,7 @@ class PollSurveyXpress
                 ));
             }
 
-            if ('PSX_response_email' != '') {
+            if (get_option('PSX_response_email') != '') {
                 if (get_option('PSX_survey_email') != '') {
                     $to = get_option('PSX_survey_email');
                 } else {
