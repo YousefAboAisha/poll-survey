@@ -584,7 +584,7 @@ class PollSurveyXpress
             $table_survey_questions = $wpdb->prefix . "polls_psx_survey_questions";
             $table_survey_answers = $wpdb->prefix . "polls_psx_survey_answers";
             $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
-            $table_survey_responses_data = $wpdb->prefix . "polls_psx_response_data";
+            $table_survey_responses_data = $wpdb->prefix . "polls_psx_survey_responses_data";
 
             $responses_id = $wpdb->get_results("SELECT response_id FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = $poll_id", ARRAY_A);
 
