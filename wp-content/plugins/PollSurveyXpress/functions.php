@@ -44,7 +44,7 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('Piechart', "https://cdn.canvasjs.com/canvasjs.min.js");
+        wp_enqueue_script('Piechart', plugin_dir_url(__FILE__) . '/js/Piechart.js', array('jquery'), '1.4', true);
         wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.4', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
@@ -803,17 +803,17 @@ class PollSurveyXpress
 
                             $output .= '<div class="modal fade" id="rating_data" tabindex="-1" role="dialog" aria-hidden="true">
                         ';
+                            // Thanking message
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
-                            if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
+                            $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                                 <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
                                 <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                                 </div>
                                 ';
-                            } else {
-                                $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none bg-danger"></div>';
-                            }
+
+                            // Show results container    
+                            $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none"></div>';
 
                             $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
                             $output .= '<div id="rating_container" class="modal-body">';
@@ -997,16 +997,17 @@ class PollSurveyXpress
 
                         } else if ($poll_data[0]['template'] === 'Rating') {
 
-                            if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
-                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
-                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
-                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
-                                </div>
-                                ';
-                            } else {
-                                $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none bg-danger"></div>';
-                            }
+                            // Thanking message
+                            $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content">  
+                                    <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                                    <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                                    <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                                    </div>
+                                    ';
+
+                            // Results container
+                            $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none"></div>';
+
 
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="rating_container">';
 
