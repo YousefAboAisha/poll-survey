@@ -4,6 +4,7 @@
 class PollSurveyXpress
 {
 
+    // Constructor for class includes all hooks
     public function __construct()
     {
 
@@ -38,8 +39,6 @@ class PollSurveyXpress
         
     }
 
-    //Add Translation
-    
     // Enqueue scripts and styles for the frontend
     public function PSX_enqueue_frontend_scripts()
     {
@@ -59,6 +58,7 @@ class PollSurveyXpress
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
         wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.8");
     }
+
     // Enqueue scripts and styles for the admin area
     public function PSX_enqueue_admin_scripts()
     {
@@ -83,7 +83,6 @@ class PollSurveyXpress
             wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.5");
         }
     }
-
 
     // Add main menu page (PollSurveyXpress)
     public function PSX_add_admin_menu_link()
@@ -168,7 +167,6 @@ class PollSurveyXpress
     }
 
     //Function to change settings values in database
-
     public function PSX_save_changes_settings()
     {
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_ajax_nonce')) {
@@ -606,8 +604,7 @@ class PollSurveyXpress
         wp_die();
     }
 
-    // Add shortcode form to the frontend of the website
-
+    // Method to add shortcode form to the frontend of the website
     public function PSX_poll_shortcode_handler($atts)
     {
         global $wpdb;
@@ -1087,7 +1084,8 @@ class PollSurveyXpress
         }
         return $output;
     }
-    // Function to update poll settings                                                                            
+
+    // Method to update poll settings                                                                            
     public function PSX_update_poll_settings()
     {
         global $wpdb;
@@ -1169,7 +1167,7 @@ class PollSurveyXpress
         }
     }
 
-    //Function to save poll response
+    //Method to save poll response
     public function PSX_save_poll_response()
     {
         global $wpdb;
@@ -1392,6 +1390,8 @@ class PollSurveyXpress
         }
         wp_die();
     }
+
+    // Method to delete a poll response for a given poll
     public function PSX_delete_poll_response(){
         global $wpdb;
         $poll_id = intval($_POST['poll_id']); // Use intval to ensure it's treated as an integer
