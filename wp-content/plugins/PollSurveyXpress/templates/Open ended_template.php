@@ -90,12 +90,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             <div id="questionsGroup" class="flex flex-column gap-2 w-100 mt-2">
                 <?php
                 if ($isItEditPage) {
-
-                    foreach ($questions as $index => $question) {
+                    foreach (json_decode($questions_json) as $index => $question) {
                 ?>
                         <div data-card-id="<?php echo $question->question_id ?>" class="question-container d-flex align-items-center w-100 gap-3 mb-3">
                             <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger"></i>
-                            <textarea class="question-text form-control" id="questionTitle_<?php echo $index; ?>" placeholder="Edit question title"> <?php echo $question->question_text ?></textarea>
+                            <textarea class="form-control" id="questionTitle_<?php echo $index; ?>" placeholder="Edit question title"><?php echo $question->question_text ?></textarea>
                         </div>
                 <?php
                     }
@@ -212,11 +211,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
         var nonce = jQuery('#my-ajax-nonce').val();
-        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+        const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
 
-        // jQuery(document).ready(function(jQuery) {
-        //     console.log(cards_array);
-        // })
+        jQuery(document).ready(function(jQuery) {
+            console.log(cards_array);
+        })
 
 
         // Update save_button status
@@ -336,9 +335,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     }
                 });
             } else {
-                // save_button.disabled = true;
-                // save_button.innerHTML =
-                //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                save_button.disabled = true;
+                save_button.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
                 settingObj = {
                     cta_Text: cta_input.value,
                     start_date: start_date.value,

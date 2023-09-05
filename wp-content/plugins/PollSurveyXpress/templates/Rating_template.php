@@ -77,26 +77,35 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             <div class="d-flex justify-content-between align-items-center w-100 mb-4">
                 <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]->title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
-                    <?php
-                    $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
-                    $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
-                    $ratings = $wpdb->get_results($query, ARRAY_A);
 
-                    $flag = false;
-                    $flag_text = $ratings[0]["answer_text"];
+                    <?php if (!$isItEditPage) { ?>
+                        <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #1" value="Rate #1" />
+                        <input type="text" id="rateInput2" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #2" value="Rate #2" />
+                        <input type="text" id="rateInput3" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #3" value="Rate #3" />
+                        <input type="text" id="rateInput4" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #4" value="Rate #4" />
+                        <input type="text" id="rateInput5" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #5" value="Rate #5" />
 
-                    foreach ($ratings as $index => $rating) {
-                        if ($flag_text === $rating["answer_text"] && $flag) {
-                            break;
+                    <?php } else { ?>
+                        <?php
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $ratings = $wpdb->get_results($query, ARRAY_A);
+
+                        $flag = false;
+                        $flag_text = $ratings[0]["answer_text"];
+
+                        foreach ($ratings as $index => $rating) {
+                            if ($flag_text === $rating["answer_text"] && $flag) {
+                                break;
+                            }
+                        ?>
+                            <input type="text" id="rateInput2_<?php echo $index; ?>" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate_<?php echo $index + 1; ?>" value="<?php echo $rating["answer_text"]; ?>" />
+                        <?php
+                            $flag = true;
                         }
-                    ?>
-                        <input type="text" id="rateInput2_<?php echo $index; ?>" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate_<?php echo $index + 1; ?>" value="<?php echo $rating["answer_text"]; ?>" />
-                    <?php
-                        $flag = true;
-                    }
-                    ?>
+                        ?>
+                    <?php } ?>
                 </div>
-
             </div>
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mb-4">
