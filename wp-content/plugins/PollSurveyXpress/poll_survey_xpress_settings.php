@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 
 </head>
 
@@ -77,51 +76,9 @@
                 </button>
             </form>
 
-            <div id="chartContainer" style="height: 300px; width: 100%;"></div>
-
-
         </div>
     </main>
 
-
-    <script>
-        window.onload = function() {
-            var chart = new CanvasJS.Chart("chartContainer", {
-                animationEnabled: true,
-                title: {
-                    text: "Survey results"
-                },
-                data: [{
-                    type: "pie",
-                    startAngle: 240,
-                    yValueFormatString: "##0.00\"%\"",
-                    indexLabel: "{label} {y}",
-                    dataPoints: [{
-                            y: 20,
-                            label: "Rate #1"
-                        },
-                        {
-                            y: 20,
-                            label: "Rate #2"
-                        },
-                        {
-                            y: 20,
-                            label: "Rate #3"
-                        },
-                        {
-                            y: 20,
-                            label: "Rate #4"
-                        },
-                        {
-                            y: 20,
-                            label: "Rate #5"
-                        }
-                    ]
-                }]
-            });
-            chart.render();
-        }
-    </script>
 
     <script>
         const nonce = document.getElementById("my-ajax-nonce").value;
