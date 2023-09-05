@@ -51,6 +51,18 @@ jQuery(document).ready(function (jQuery) {
   const save_button = document.getElementById("mcq_save_button");
   var nonce = jQuery("#my-ajax-nonce").val();
 
+  function generateRandomHexColor() {
+    // Generate random values for red, green, and blue components
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+
+    // Convert the values to hexadecimal format
+    const hexColor = `#${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
+
+    return hexColor;
+  }
+
   save_button.addEventListener("click", function (event) {
     console.log(poll_count);
 
@@ -100,7 +112,7 @@ jQuery(document).ready(function (jQuery) {
 
         // window.location.reload();
         radio_buttons.forEach((radio) => {
-          radio.disabled = true;
+          radio.style.display = "none";
         });
 
         const jsonData = JSON.parse(JSON.parse(response));
@@ -127,6 +139,7 @@ jQuery(document).ready(function (jQuery) {
             // Check if the percentages data for this question exists
             if (percentages.hasOwnProperty(questionId)) {
               var question_data = percentages[questionId];
+              const randomBgColor = generateRandomHexColor();
 
               // Check if the percentage data for this answer exists
               if (question_data.hasOwnProperty(answerId)) {
@@ -134,7 +147,7 @@ jQuery(document).ready(function (jQuery) {
                 percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
 
                 // Update the percentage bar and value for this specific answer
-                percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5`;
+                percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5; background-color:${randomBgColor} !important;`;
                 percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
               }
             }
@@ -280,6 +293,54 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce,
       },
       success: function (response) {
+
+        const jsonData = JSON.parse(JSON.parse(response));
+        const percentages = jsonData.percentages;
+        console.log(percentages);
+
+
+
+        const finalObjects = Object.values(percentages).map(innerObject => {
+          const newObj = {};
+          let letterIndex = 0;
+          const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+          Object.values(innerObject).forEach(value => {
+            const key = alphabet[letterIndex++];
+            newObj[key] = parseFloat(value); // Convert the value to a number if needed
+          });
+          return newObj;
+        });
+
+        console.log("finalObjects", finalObjects);
+
+
+        // Function to calculate percentages for each option and ensure the sum is 100%
+        function calculatePercentages(dataArray) {
+          const totalVotes = dataArray.reduce((acc, dataObject) => {
+            for (const key in dataObject) {
+              acc[key] = (acc[key] || 0) + dataObject[key];
+            }
+            return acc;
+          }, {});
+
+          const percentages = {};
+
+          for (const key in totalVotes) {
+            percentages[key] = `${((totalVotes[key] / (dataArray.length * 100)) * 100).toFixed(2)}`;
+          }
+
+          return percentages;
+        }
+
+        // Calculate percentages for each option and ensure the sum is 100%
+        const inputData = calculatePercentages(finalObjects);
+
+        // Display the result
+        console.log('result', inputData);
+
+
+        // Cal
         save_button.textContent = "DONE!";
         save_button.style.display = "none";
 
@@ -294,8 +355,46 @@ jQuery(document).ready(function (jQuery) {
         } else {
           rating_container.innerHTML = "";
           rating_container.style.cssText = "display:none !important";
+          var chart = new CanvasJS.Chart("result_chart", {
+            animationEnabled: true,
+            title: {
+              text: "Survey results",
+            },
+            data: [
+              {
+                type: "pie",
+                startAngle: 240,
+                yValueFormatString: '##0.00"%"',
+                indexLabel: "{label} {y}",
+                dataPoints: [
+                  {
+                    y: parseFloat(inputData["a"]),
+                    label: "A",
+                  },
+                  {
+                    y: parseFloat(inputData["b"]),
+                    label: "B",
+                  },
+                  {
+                    y: parseFloat(inputData["c"]),
+                    label: "C",
+                  },
+                  {
+                    y: parseFloat(inputData["d"]),
+                    label: "D",
+                  },
+                  {
+                    y: parseFloat(inputData["e"]),
+                    label: "E",
+                  },
+                ],
+              },
+            ],
+          });
+          chart.render();
           result_chart.style.cssText =
             "display:block !important;height: 300px; width: 100%;";
+
         }
       },
       error: function (error) {
@@ -404,42 +503,4 @@ jQuery(document).ready(() => {
   }
 });
 
-jQuery(document).ready(() => {
-  var chart = new CanvasJS.Chart("chartContainer", {
-    animationEnabled: true,
-    title: {
-      text: "Survey results",
-    },
-    data: [
-      {
-        type: "pie",
-        startAngle: 240,
-        yValueFormatString: '##0.00"%"',
-        indexLabel: "{label} {y}",
-        dataPoints: [
-          {
-            y: 20,
-            label: "Rate #1",
-          },
-          {
-            y: 20,
-            label: "Rate #2",
-          },
-          {
-            y: 20,
-            label: "Rate #3",
-          },
-          {
-            y: 20,
-            label: "Rate #4",
-          },
-          {
-            y: 20,
-            label: "Rate #5",
-          },
-        ],
-      },
-    ],
-  });
-  chart.render();
-});
+

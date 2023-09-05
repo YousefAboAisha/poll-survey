@@ -162,12 +162,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             </div>
 
                             <div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? 'checked' : ''; ?>onchange="toggleInputState()" />
-                                    <label class="form-check-label" for="show_results">
-                                        <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
-                                    </label>
-                                </div>
+                                
                                 <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data[0]->real_time_result_text; ?>" id="show_results_input" <?php echo !empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                             </div>
 
@@ -215,11 +210,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const button_color = document.getElementById("button_color");
 
         var nonce = jQuery('#my-ajax-nonce').val();
-        const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
 
-        jQuery(document).ready(function(jQuery) {
-            console.log(cards_array);
-        })
+        // jQuery(document).ready(function(jQuery) {
+        //     console.log(cards_array);
+        // })
 
 
         // Update save_button status

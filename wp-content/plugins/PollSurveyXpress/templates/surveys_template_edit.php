@@ -43,11 +43,11 @@ $poll_data_json = json_encode($poll_data);
 
                 <div class="d-flex align-items-center px-2 gap-2">
                     <span class="text-sm fw-bold"><?php _e('Bg color', 'psx-poll-survey-plugin'); ?> </span>
-                    <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $poll_data->bgcolor; ?>" />
+                    <input type="color" class="form-control form-control-color border-0 p-0 w-8 me-2" id="bg_color" value="<?php echo $poll_data->bgcolor; ?>" />
                     <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
-                    <input type="color" class="form-control form-control-color border-0 p-0 w-10" id="text_color" value="<?php echo $poll_data->color; ?>" />
+                    <input type="color" class="form-control form-control-color border-0 p-0 w-8" id="text_color" value="<?php echo $poll_data->color; ?>" />
                     <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-8 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
                 </div>
             </div>
 
@@ -82,14 +82,21 @@ $poll_data_json = json_encode($poll_data);
                                 <?php _e('Thanking Message', 'psx-poll-survey-plugin'); ?>
                             </label>
                         </div>
-
+                        <?php if (!($poll_data->template == 'Open ended')){
+                            ?>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? 'checked' : ''; ?> <?php echo $poll_data->template == 'Open ended' ? "hidden" : ''; ?> onchange="toggleInputState()" />
+                        <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                             <label class="form-check-label" for="show_results">
                                 <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                             </label>
                         </div>
-
+                        <?php
+                        } else{
+                            
+                        ?>
+                        <input class="form-check-input d-none" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
+                        <?php
+                        } ?>
                         <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="<?php _e('Add Thank Message', 'psx-poll-survey-plugin'); ?>" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                     </div>
 

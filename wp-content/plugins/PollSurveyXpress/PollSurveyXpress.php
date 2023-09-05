@@ -80,6 +80,7 @@ function PSX_add_database_tables()
             status enum('active', 'inactive', 'archived'),
             template enum('Multiple Choice', 'Open ended', 'Rating'),
             Short_Code varchar(50),
+            button_color varchar(255),
             color varchar(255),
             bgcolor varchar(255),
             sharing enum('true', 'false'),

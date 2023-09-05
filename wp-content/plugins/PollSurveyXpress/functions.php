@@ -44,7 +44,7 @@ class PollSurveyXpress
     {
 
         wp_enqueue_script('jquery');
-        wp_enqueue_script('Piechart', plugin_dir_url(__FILE__) . '/js/Piechart.js', array('jquery'), '1.4', true);
+        wp_enqueue_script('Piechart', plugin_dir_url(__FILE__) . 'js/Piechart.js');
         wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.4', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
@@ -52,12 +52,13 @@ class PollSurveyXpress
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my_ajax_nonce'),
         ));
+        wp_enqueue_script('canvasjs', 'https://cdn.canvasjs.com/canvasjs.min.js', array(), null, true);
 
 
         //enqueue Style files
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
-        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.8");
+        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.9");
     }
 
     // Enqueue scripts and styles for the admin area
@@ -250,7 +251,7 @@ class PollSurveyXpress
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
-
+            $button_color = sanitize_hex_color($settings['button_color']);
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
                 'title' => $surveyTitle,
@@ -259,6 +260,7 @@ class PollSurveyXpress
                 'end_date' => $end_date,
                 'status' => $status,
                 'template' => $template,
+                'button_color' => $button_color,
                 'Short_Code' => '',
                 'color' => $color,
                 'bgcolor' => $bgcolor,
@@ -346,7 +348,7 @@ class PollSurveyXpress
             $ratesArray = $poll_data_array['ratesArray'];
             $settings = $poll_data_array['settings'];
             $template = sanitize_text_field($poll_data_array['template']);
-
+            $button_color = sanitize_hex_color($settings['button_color']);
             // Sanitize and validate date inputs
             $start_date = empty($settings['start_date']) ? current_time('mysql') : sanitize_text_field($settings['start_date']);
             $end_date = empty($settings['end_date']) ? date('Y-m-d H:i:s', strtotime('+100 years')) : sanitize_text_field($settings['end_date']);
@@ -366,6 +368,7 @@ class PollSurveyXpress
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'status' => $status,
+                'button_color' => $button_color,
                 'template' => $template,
                 'Short_Code' => '',
                 'color' => $color,
@@ -468,6 +471,7 @@ class PollSurveyXpress
             $bgcolor = sanitize_hex_color($settings['bgcolor']);
             $real_time_result_text = $settings['real_time_check'] ? '' : sanitize_text_field($settings['real_time_result_text']);
             $min_votes = absint($settings['min_votes']);
+            $button_color = sanitize_hex_color($settings['button_color']);
 
             // Insert data into polls_psx_polls table
             $poll_data_array_insert = array(
@@ -477,6 +481,7 @@ class PollSurveyXpress
                 'end_date' => $end_date,
                 'status' => $status,
                 'template' => $template,
+                'button_color' => $button_color,
                 'Short_Code' => '',
                 'color' => $color,
                 'bgcolor' => $bgcolor,
@@ -659,7 +664,7 @@ class PollSurveyXpress
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (!($count > 0 || $isUserVoted)) {
+                    if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -721,7 +726,7 @@ class PollSurveyXpress
                                     $output .= '</div>';
                                     $output .= '<label class="m-0" for="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '" class="m-0" style="color:' . $poll_data[0]['color'] . ' !important;">' . $answer['answer_text'] .  '</label>';
 
-                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
+                                    $output .= '<div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
                                         <div class="progress-bar bg-transparent transition-progress-bar">
                                             <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
                                             <p style="width: 100%;   background-color: #DDD;" class="m-0 rounded-2"></p>
@@ -739,7 +744,7 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the col div
 
                             $output .= '<button id="mcq_save_button" disabled
-                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4" style="background-color:' . $poll_data[0]['button_color'] . ' !important;" >
                             Save
                         </button>';
                             $output .= '</div>'; // Close the Modal body
@@ -788,7 +793,7 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the col div
 
                             $output .= '<button disabled id="open_ended_save_button"
-                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4" style="background-color:' . $poll_data[0]['button_color'] . ' !important;">
                         Save
                         </button>';
 
@@ -813,7 +818,7 @@ class PollSurveyXpress
                                 ';
 
                             // Show results container    
-                            $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none"></div>';
+                            $output .= '<div id="result_chart" style="height: auto; width: 100%;" class="d-none"></div>';
 
                             $output .= '<div class="modal-content" style="background-color:"' . $poll_data[0]['bgcolor'] . '">';
                             $output .= '<div id="rating_container" class="modal-body">';
@@ -879,7 +884,7 @@ class PollSurveyXpress
                             $output .= '</div>';
 
                             $output .= '<div>';
-                            $output .= '<button disabled type="submit" id="rating_save_button"
+                            $output .= '<button disabled type="submit" id="rating_save_button" style="background-color:' . $poll_data[0]['button_color'] . ' !important;"
                         class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0 mt-4">
                         Save
                         </button>';
@@ -953,7 +958,7 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the col div
 
                             $output .= '<button id="mcq_save_button" disabled
-                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                            class="btn align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4" style="background-color:' . $poll_data[0]['button_color'] . ' !important;">
                             Save
                         </button>';
                             $output .= '</div>'; // Close the container-fluid div
@@ -990,7 +995,7 @@ class PollSurveyXpress
                             $output .= '</div>'; // Close the col div
 
                             $output .= '<button disabled id="open_ended_save_button"
-                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4">
+                        class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-0 mt-4" style="background-color:' . $poll_data[0]['button_color'] . ' !important;">
                         Save
                     </button>';
                             $output .= '</div>'; // Close the container-fluid div
@@ -1006,7 +1011,7 @@ class PollSurveyXpress
                                     ';
 
                             // Results container
-                            $output .= '<div id="result_chart" style="height: 300px; width: 100%;" class="d-none"></div>';
+                            $output .= '<div id="result_chart" style="height: auto; width: 100%;" class="d-none"></div>';
 
 
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="rating_container">';
@@ -1073,7 +1078,7 @@ class PollSurveyXpress
 
                             $output .= '<div>';
                             $output .= '<button disabled type="submit" id="rating_save_button"
-                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0 mt-4">
+                        class="text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold m-0 mt-4" style="background-color:' . $poll_data[0]['button_color'] . ' !important;">
                         Save
                         </button>';
                             $output .= '</div>';
@@ -1107,6 +1112,8 @@ class PollSurveyXpress
             $status = $poll_data_array["status"] ?  true : false;
             $color = sanitize_text_field($poll_data_array["color"]);
             $bgcolor = sanitize_text_field($poll_data_array["bgcolor"]);
+            $button_color = sanitize_text_field($poll_data_array["button_color"]);
+
             $real_time_check = $poll_data_array["real_time_check"];
             $real_time_result_text = !$real_time_check ? sanitize_text_field($poll_data_array["real_time_result_text"]) : '';
             $min_votes = absint($poll_data_array["min_votes"]);
@@ -1160,6 +1167,7 @@ class PollSurveyXpress
                     "status" => $status ? 'active' : 'inactive',
                     "color" => $color,
                     "bgcolor" => $bgcolor,
+                    'button_color' => $button_color,
                     "sharing" => 'false',
                     "real_time_result_text" => $real_time_check ? '' : $real_time_result_text,
                     "min_votes" => $min_votes,

@@ -196,7 +196,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                             <div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? 'checked' : ''; ?>onchange="toggleInputState()" />
+                                <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
