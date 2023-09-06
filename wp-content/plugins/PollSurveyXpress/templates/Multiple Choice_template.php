@@ -70,7 +70,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         </div>
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey Title" id="surveyTitle" value="<?php echo $poll_data[0]->title; ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" data-json-data="<?php echo $jsonDataEncoded; ?>" />
 
             <div class="d-flex w-100 flex-column border rounded-3 bg-white p-4">
                 <label class="form-label"><?php _e('Add question title', 'psx-poll-survey-plugin'); ?></label>
@@ -95,43 +95,44 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 </button>
 
                 <div class="d-flex flex-column gap-1 mt-4 ">
-                    <p style="font-size: 12px;" class="m-0 text-dark">- You must add add at least one question</p>
-                    <p style="font-size: 12px;" class="m-0 text-dark">- Each question must contain at least two options</p>
+                    <p style="font-size: 12px;" class="m-0 text-dark"> <?php _e('- You must add add at least one question', 'psx-poll-survey-plugin'); ?></p>
+                    <p style="font-size: 12px;" class="m-0 text-dark"> <?php _e('- Each question must contain at least two options', 'psx-poll-survey-plugin'); ?></p>
                 </div>
             </div>
 
             <!-- Final output cards -->
-            <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5">
+            <div id="cardsContainer" class="w-100 d-flex flex-column gap-3 my-5 mb-3">
 
                 <?php
-                // Check if decoding was successful
-                if ($questions_with_answers !== null) {
-                    foreach ($questions_with_answers as $index => $question) {
+                if ($isItEditPage) {
+                    // Check if decoding was successful
+                    if ($questions_with_answers !== null) {
+                        foreach ($questions_with_answers as $index => $question) {
                 ?>
-                        <div data-card-id="<?php echo $question->poll_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
-                            <textarea class="form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
+                            <div data-card-id="<?php echo $question->question_id ?>" class="poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4">
+                                <textarea class="question-text form-control mb-2 w-100 border-0 fw-bolder" placeholder="Edit the poll question title"><?php echo $question->question_text; ?></textarea>
 
-                            <div class="position-absolute bottom-4 end-2 p-0">
-                                <i data-delete-card-id="<?php echo $question->poll_id ?>" class="fas fa-trash text-sm ms-1 text-danger delete-card" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#deleteModal" style="cursor: pointer;"></i>
-                            </div>
+                                <div class="position-absolute bottom-4 end-2 p-0">
+                                    <i data-card-id="<?php echo $question->question_id ?>" class="delete-card fas fa-trash text-sm ms-1 text-danger " aria-hidden="true" style="cursor: pointer;"></i>
+                                </div>
 
-                            <div class="options-container d-flex flex-column gap-1">
-                                <?php foreach ($question->answers as $index => $answer) { ?>
-                                    <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
-                                        <i data-delete-option-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger delete-option" style="cursor: pointer"></i>
-                                        <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Add option #1" value="<?php echo $answer->answer_text; ?>">
-                                    </div>
-                                <?php } ?>
+                                <div class="options-container d-flex flex-column gap-1">
+                                    <?php foreach ($question->answers as $index => $answer) { ?>
+                                        <div data-card-id="<?php echo $answer->question_id ?>" class="option-container d-flex justify-content-between align-items-center w-100 mb-3 gap-3">
+                                            <i id="delete_option" data-deleteOption-id="<?php echo $answer->answer_id ?>" class="fas fa-minus text-danger" style="cursor: pointer"></i>
+                                            <input type="text" class="form-control border-0 w-100 p-2" id="surveyTitle_<?php echo $answer->answer_id ?>" placeholder="Edit option" value="<?php echo $answer->answer_text; ?>">
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                                <span style="font-size: 11px;" class="error-text position-absolute d-none bottom-3 left-0 text-danger fw-bold ">You need to add two options at least!</span>
                             </div>
-                        </div>
                 <?php
+                        }
                     }
-                } else {
-                    echo "Error decoding JSON.";
                 }
                 ?>
-
             </div>
+
             <button type="submit" id="save_button" disabled class="align-self-start text-white btn bg-primary col-lg-4 col-md-6 col-7 text-sm font-weight-bold mb-5">
                 <?php _e('Save', 'psx-poll-survey-plugin'); ?>
             </button>
@@ -142,9 +143,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
 
     <!-- Fixed plugin settings ICON -->
-    <div data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-white shadow-sm rounded-circle text-dark">
+    <div title="Edit survey settings" id="settings_icon" data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-primary shadow-sm rounded-circle text-white border">
         <i class="fa fa-cog py-2"> </i>
     </div>
+
 
     <!-- Fixed Plugin settings -->
     <div class="modal fade" id="settingsModal">
@@ -167,6 +169,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $isItEditPage ? $poll_data[0]->bgcolor : "#f8f9fa"; ?>" />
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="text_color" value="<?php echo $isItEditPage ? $poll_data[0]->color : "#344767"; ?>" />
+                            <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
                         </div>
                     </div>
 
@@ -194,7 +198,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                             <div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? 'checked' : ''; ?>onchange="toggleInputState()" />
+                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
@@ -214,6 +218,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     <?php echo $poll_data[0]->cta_Text; ?>
                                 </button>
+                                <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
+
                             </div>
                         </div>
                     </div>
@@ -254,7 +260,14 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             let questionTitle = document.getElementById("questionTitle");
             let cardsContainer = document.getElementById("cardsContainer");
             let surveyTitle = document.getElementById("surveyTitle");
+            const button_color = document.getElementById("button_color");
             let optionsHTMLArray = [];
+            // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+
+            // jQuery(document).ready(function(jQuery) {
+            //     console.log(cards_array);
+            // })
+
             // Data will be sent
             let optionsArray = [];
             let pollsCardsArray = [];
@@ -276,8 +289,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             const save_button = document.getElementById("save_button");
             const nonce = jQuery("#my-ajax-nonce").val();
 
-            // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"))
-            // console.log("Array", cards_array);
+            if (cardsContainer.childElementCount > 0) {
+                save_button.disabled = false
+            }
+
 
             function createOption(optionTitle) {
                 const newOption = document.createElement("div");
@@ -289,67 +304,57 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 optionsGroup.appendChild(newOption);
                 optionsArray.push(optionTitle);
                 console.log(optionsArray);
-
                 optionsHTMLArray.push(newOption);
             }
 
-            optionInput.addEventListener("keydown", function(event) {
-                if (event.key === 13) {
-                    createOption();
-                }
-            });
+            function updateButtonStates() {
+                // Check if any card has no options or insufficient options
+                const cards = document.querySelectorAll('.poll-card');
+                let enableButton = true
+                cards.forEach(card => {
+                    const options = card.querySelectorAll('.option-container');
+                    if (options.length < 2) {
+                        enableButton = false;
+                        return; // No need to check other cards, button should be disabled
+                    }
+                });
 
-            // Function to enable or disable the createPollButton
-            function updateCreatePollButton() {
-                const questionTitleValue = questionTitle.value.trim();
+                // Check if there are no cards
+                const noCards = cardsContainer.childElementCount <= 0;
 
-                const enableButton =
-                    questionTitleValue !== "" && optionsHTMLArray.length >= 2;
-                createPollButton.disabled = !enableButton;
+                // Update the save button
+                save_button.disabled = !enableButton || noCards;
+
+                // Update the create poll button
+                const enableCreatePollButton = optionsHTMLArray.length >= 2;
+                createPollButton.disabled = !enableCreatePollButton;
             }
-            // Event listener for questionTitle change
-            questionTitle.addEventListener("change", updateCreatePollButton);
+
+            updateButtonStates();
 
             function addOption() {
                 const optionTitle = optionInput.value.trim();
                 if (optionTitle !== "") {
                     createOption(optionTitle);
                     optionInput.value = "";
-                    updateCreatePollButton();
+                    updateButtonStates();
                 }
             }
 
             optionInput.addEventListener("keydown", function(event) {
-                if (event.keyCode === 13) {
+                if (event.key === "Enter" && event.target === optionInput) {
                     addOption();
                 }
             });
 
-            // Event listener for addOptionButton click
             addOptionButton.addEventListener("click", addOption);
-            const questionTitleValue = questionTitle.value.trim();
 
-            const enableButton =
-                questionTitleValue !== "" && optionsHTMLArray.length >= 2;
-            createPollButton.disabled = !enableButton;
-
-            // Event listener for questionTitle change
-            questionTitle.addEventListener("keyup", updateCreatePollButton);
-
-            // Event listener for addOptionButton click
-            addOptionButton.addEventListener("click", function() {
-                const optionTitle = optionInput.value.trim();
-                if (optionTitle !== "") {
-                    createOption(optionTitle);
-                    optionInput.value = "";
-                    updateCreatePollButton();
-                }
-            });
 
             function createPollCard() {
                 const newPollCard = document.createElement("div");
                 newPollCard.className =
                     "poll-card position-relative flex-column flex-wrap gap-2 border rounded-3 bg-white p-4";
+                newPollCard.setAttribute("data-card-id", new Date().toString());
 
                 const optionsContainer = document.createElement("div");
                 optionsContainer.className = "options-container d-flex flex-column gap-1";
@@ -361,7 +366,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     newQuestionDiv.setAttribute("data-card-id", index);
 
                     newQuestionDiv.innerHTML = `
-                        <i id="delete_option" data-delete-id="${index}" style="cursor: pointer" class="fas fa-minus text-danger"></i>
+                        <i id="delete_option" data-deleteOption-id="${index}" style="cursor: pointer" class="fas fa-minus text-danger"></i>
 
                         <input 
                             type="text" 
@@ -372,110 +377,29 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         >
                     `;
 
-                    const inputElement = newQuestionDiv.querySelector("input");
-
-                    // Upodate the poll card 
-                    inputElement.addEventListener("input", (event) => {
-                        const parentElement = event.target.parentNode.parentNode.parentNode;
-                        const cardId = parentElement.getAttribute("data-card-id");
-
-                        console.log("Card ID", cardId);
-
-                        const targetCardIndex = pollsCardsArray.findIndex(
-                            (elem) => elem.id == cardId
-                        );
-
-                        if (targetCardIndex !== -1) {
-                            const newOptionsArray = [...pollsCardsArray[targetCardIndex].options];
-                            newOptionsArray[index] = event.target.value;
-                            pollsCardsArray[targetCardIndex].options = newOptionsArray;
-                            console.log(pollsCardsArray); // Make sure the array is being updated
-                        }
-                    });
-
-                    const delete_icon = newQuestionDiv.querySelector("i")
-
-                    // Delete option function
-                    delete_icon.addEventListener("click", (event) => {
-                        const parentElement = event.target.parentNode.parentNode.parentNode;
-                        const cardId = parentElement.getAttribute("data-card-id");
-                        const optionIndex = event.target.getAttribute("data-delete-id");
-
-                        console.log("[Parent element, cardID]", [parentElement, cardId]);
-
-                        // Remove the option's parent div from DOM
-                        const optionDivToRemove = event.target.parentNode;
-                        optionDivToRemove.remove();
-
-                        deleteOption(cardId, optionIndex);
-                        updateDeleteIds(cardId); // Update the data-delete-id attributes
-                        updateSaveButtonState();
-                    });
-
-
                     return newQuestionDiv;
                 });
 
-                // Delete option function
-                function deleteOption(cardId, index) {
-                    const targetCardIndex = pollsCardsArray.findIndex((card) => card.id === cardId);
-
-                    if (targetCardIndex !== -1) {
-                        const newOptionsArray = [...pollsCardsArray[targetCardIndex].options];
-                        newOptionsArray.splice(index, 1);
-                        pollsCardsArray[targetCardIndex].options = newOptionsArray;
-                        updateDeleteIds(cardId); // Update the data-delete-id attributes
-                        console.log(pollsCardsArray); // Check if the array is updated after deletion
-                    }
-                }
-
-                function updateDeleteIds(cardId) {
-                    const deleteIconsContainer = document.querySelector(`[data-card-id="${cardId}"]`);
-                    const deleteIcons = deleteIconsContainer.querySelectorAll("#delete_option");
-
-                    deleteIcons.forEach((icon, newIndex) => {
-                        icon.setAttribute("data-delete-id", newIndex);
-                    });
-                }
 
                 newQuestionDivs.forEach((newQuestionDiv) => {
                     optionsContainer.appendChild(newQuestionDiv);
                 });
 
                 // Append the icons div to the newPollCard
-                const iconsDiv = document.createElement("div");
-                iconsDiv.className = "position-absolute bottom-4 end-2 p-0";
+                const delete_poll_icon = document.createElement("div");
+                delete_poll_icon.className = "position-absolute bottom-4 end-2 p-0";
 
-                const deleteIcon = document.createElement("i");
-                deleteIcon.style.cursor = "pointer";
-                deleteIcon.className = "fas fa-trash text-sm ms-1 text-danger";
-                deleteIcon.setAttribute("aria-hidden", "true");
-                deleteIcon.setAttribute("data-bs-toggle", "modal");
-                deleteIcon.setAttribute("data-bs-target", "#deleteModal");
+                const delete_option_icon = document.createElement("i");
+                delete_option_icon.style.cursor = "pointer";
+                delete_option_icon.className = "fas fa-trash text-sm ms-1 text-danger";
 
-                iconsDiv.appendChild(deleteIcon);
-                newPollCard.appendChild(iconsDiv);
+                delete_poll_icon.appendChild(delete_option_icon);
+                newPollCard.appendChild(delete_poll_icon);
 
                 // Add the title
                 const pollTitle = document.createElement("textarea");
-                pollTitle.className = "form-control mb-2 w-100 border-0 fw-bolder";
+                pollTitle.className = "question-text form-control mb-2 w-100 border-0 fw-bolder";
                 pollTitle.placeholder = "Edit the poll question title";
-
-                pollTitle.addEventListener("input", (e) => {
-                    const parentElement = event.target.parentNode;
-                    const cardId = parentElement.getAttribute("data-card-id");
-                    const targetCardIndex = pollsCardsArray.findIndex(
-                        (elem) => elem.id == cardId
-                    );
-
-                    if (targetCardIndex !== -1) {
-                        pollsCardsArray[targetCardIndex].questionTitle = e.target.value;
-                    }
-                    if (pollsCardsArray.length <= 0) {
-                        save_button.disabled = true;
-                        createPollButton.disabled = true;
-                    }
-                });
 
                 pollTitle.value = `${questionTitle.value.trim()}`;
                 newPollCard.appendChild(pollTitle);
@@ -490,38 +414,20 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 };
 
 
-                deleteIcon.setAttribute("data-card-id", newPollCardObj.id);
-                // Delete whole the poll card 
-                deleteIcon.addEventListener("click", (event) => {
-                    const cardId = event.target.getAttribute("data-card-id");
+                delete_option_icon.setAttribute("data-card-id", newPollCardObj.id);
 
-                    // Remove the card from the DOM
-                    const cardToRemove = document.querySelector(`[data-card-id="${cardId}"]`);
-
-                    if (cardToRemove) {
-                        cardToRemove.remove();
-
-                        // Find the index of the card in the pollsCardsArray
-                        const cardIndex = pollsCardsArray.findIndex(
-                            (card) => card.id === cardId
-                        );
-
-                        // If the card was found in the array, remove it
-                        if (cardIndex !== -1) {
-                            pollsCardsArray.splice(cardIndex, 1);
-                        }
-                    }
-
-                    // Disable button if there is no cards to send
-                    if (pollsCardsArray.length <= 0) {
-                        save_button.disabled = true;
-                        createPollButton.disabled = true;
-                    }
-                });
 
                 // Append the new poll card to the document
                 newPollCard.setAttribute("data-card-id", newPollCardObj.id);
                 cardsContainer.appendChild(newPollCard);
+
+                // Add the error text span
+                const error_text = document.createElement("span");
+                error_text.className = "error-text position-absolute d-none bottom-3 left-0 text-danger fw-bold "
+                error_text.style.fontSize = "11px";
+                error_text.textContent = "You need to add two options at least!"
+                newPollCard.appendChild(error_text)
+
                 pollsCardsArray.push(newPollCardObj);
                 updateSaveButtonState();
 
@@ -532,6 +438,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 questionTitle.value = "";
             }
 
+            // Create Poll card
             createPollButton.addEventListener("click", () => {
                 if (questionTitle.value !== "" && optionsHTMLArray.length >= 2) {
                     createPollCard();
@@ -540,29 +447,107 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             // Update save_button status
             function updateSaveButtonState() {
-                const emptyCardExists = pollsCardsArray.some(card => card.options.length === 0);
-                const insufficientOptions = pollsCardsArray.some(card => card.options.length < 2);
+                const poll_cards = document.querySelectorAll(".poll-card")
+                const has_no_poll_cards = poll_cards.length <= 0;
+                let hasinsufficientOptions = false;
 
-                if (emptyCardExists || insufficientOptions || cardsContainer.childElementCount <= 0) {
+                const optionsContainers = document.querySelectorAll(".options-container");
+
+                optionsContainers.forEach((card) => {
+                    const parentNode = card.parentNode;
+                    if (card.childElementCount < 2) {
+                        hasinsufficientOptions = true;
+                        parentNode.style.cssText = "border:1px solid red !important";
+                        const errorTextElement = parentNode.querySelector('.error-text');
+                        errorTextElement.style.cssText = "display:block !important; font-size:11px;"
+                    }
+                })
+
+
+                if (has_no_poll_cards || hasinsufficientOptions || cardsContainer.childElementCount <= 0) {
                     save_button.disabled = true;
+                    console.log("Button is disabled");
                 } else {
                     save_button.disabled = false;
                 }
             }
 
+            // Event listener for removing a poll card
+            document.addEventListener("click", function(event) {
+                if (event.target.classList.contains("fa-trash")) {
+                    const cardId = event.target.getAttribute("data-card-id");
+
+                    const card = document.querySelector(`[data-card-id="${cardId}"]`);
+                    if (card) {
+                        card.remove();
+                        updateButtonStates();
+                        updateSaveButtonState();
+
+                    }
+                }
+            });
+
+            // Event listener for removing an option container
+            document.addEventListener("click", function(event) {
+                if (event.target.classList.contains("fa-minus")) {
+                    const optionId = event.target.getAttribute("data-deleteOption-id");
+
+                    const optionContainer = document.querySelector(`[data-deleteOption-id="${optionId}"]`);
+                    if (optionContainer) {
+                        optionContainer.parentNode.remove();
+                        updateButtonStates();
+                        updateSaveButtonState();
+                    }
+
+                    // Prevent the click event from propagating to the card deletion event listener
+                    event.stopPropagation();
+                }
+            });
+
+            let is_first_button_click = true;
+
             save_button.addEventListener("click", () => {
+
                 // Select all input fields within .options-container
-                let inputs = document.querySelectorAll(".options-container .option-container input");
+                let inputs = document.querySelectorAll(".option-container input");
+
+                const pollCards = document.querySelectorAll(".poll-card");
+                const data = {
+                    pollCards: []
+                };
+
+                pollCards.forEach((card) => {
+                    const questionText = card.querySelector(".question-text").value;
+                    const options = Array.from(card.querySelectorAll("input"))
+                        .map(option => option.value)
+                        .filter(option => option.trim() !== "");
+
+                    data.pollCards.push({
+                        question_text: questionText,
+                        options: options
+                    });
+                });
 
                 // Initialize a flag to track if any empty field is found
                 let isEmptyField = false;
-
                 inputs.forEach((input, index) => {
-                    if (input.value == "") {
+                    if (input.value.trim() == "") {
                         input.style.cssText = "border: 1px solid red !important";
                         isEmptyField = true;
                     } else {
                         input.style.border = "none"; // Remove the red border if the field is not empty
+                    }
+                });
+
+
+                // Check if hacing empty questions 
+                const questions_texts = document.querySelectorAll(".question-text")
+                questions_texts.forEach((textarea, index) => {
+                    if (textarea.value.trim() == "") {
+                        textarea.style.cssText = "border: 1px solid red !important";
+                        isEmptyField = true;
+                    } else {
+                        textarea.style.border = "none"; // Remove the red border if the field is not empty
                     }
                 });
 
@@ -589,80 +574,93 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     });
                 } else {
 
-                    save_button.disabled = true;
-                    save_button.innerHTML =
-                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                    settingObj = {
-                        cta_Text: cta_input.value,
-                        start_date: start_date.value || new Date().toISOString(),
-                        end_date: end_date.value ||
-                            new Date(
-                                new Date().getFullYear() + 100,
-                                11,
-                                31,
-                                23,
-                                59,
-                                59
-                            ).toISOString(),
-                        status: active_plugin.checked,
-                        color: text_color.value,
-                        bgcolor: bg_color.value,
-                        real_time_result_text: show_results_input.value,
-                        real_time_check: show_results.checked,
-                        min_votes: min_votes_input.value,
-                    };
+                    if (is_first_button_click) {
+                        const settings_icon = document.getElementById("settings_icon");
+                        settings_icon.classList.add("shake");
 
-                    finalObj = {
-                        surveyTitle: surveyTitle.value,
-                        type: surveyTitle.getAttribute("data-type"),
-                        poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
-                        pollCards: pollsCardsArray,
-                        settings: settingObj,
-                        template: "Multiple Choice",
-                    };
+                        settings_icon.addEventListener("click", () => {
+                            settings_icon.classList.remove("shake");
+                            is_first_button_click = false
+                        })
 
-                    console.log(finalObj);
+                    } else {
+                        save_button.disabled = true;
+                        save_button.innerHTML =
+                            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                        settingObj = {
+                            cta_Text: cta_input.value,
+                            start_date: start_date.value || new Date().toISOString(),
+                            end_date: end_date.value ||
+                                new Date(
+                                    new Date().getFullYear() + 100,
+                                    11,
+                                    31,
+                                    23,
+                                    59,
+                                    59
+                                ).toISOString(),
+                            status: active_plugin.checked,
+                            color: text_color.value,
+                            bgcolor: bg_color.value,
+                            real_time_result_text: show_results_input.value,
+                            real_time_check: show_results.checked,
+                            min_votes: min_votes_input.value,
+                            button_color: button_color.value,
+                        };
 
-                    jQuery.ajax({
-                        type: "POST",
-                        url: my_ajax_object.ajaxurl,
-                        data: {
-                            action: "PSX_save_poll_Multiple_data",
-                            nonce: nonce, // Pass the nonce
-                            poll_data: JSON.stringify(finalObj),
-                        },
-                        success: function(shortcode) {
-                            console.log("Done");
-                            save_button.textContent = "Save";
-                            save_button.disabled = false;
+                        finalObj = {
+                            surveyTitle: surveyTitle.value,
+                            type: surveyTitle.getAttribute("data-type"),
+                            poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
+                            pollCards: data.pollCards,
+                            settings: settingObj,
+                            template: "Multiple Choice",
+                        };
 
-                            // Create a new toast element
-                            var toast = document.createElement("div");
-                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                            toast.className =
-                                "position-fixed p-2 px-4 bg-success border rounded-2";
-                            toast.innerHTML = `
+                        console.log("FinalObj", finalObj);
+
+                        jQuery.ajax({
+                            type: "POST",
+                            url: my_ajax_object.ajaxurl,
+                            data: {
+                                action: "PSX_save_poll_Multiple_data",
+                                nonce: nonce, // Pass the nonce
+                                poll_data: JSON.stringify(finalObj),
+                            },
+                            success: function(url) {
+                                console.log("Done");
+                                save_button.textContent = "Save";
+                                save_button.disabled = false;
+
+                                // Create a new toast element
+                                var toast = document.createElement("div");
+                                toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                                toast.className =
+                                    "position-fixed p-2 px-4 bg-success border rounded-2";
+                                toast.innerHTML = `
                                 <p class="m-0 fw-bold text-xs text-white">
                                 New survey has been added successfully!
                                 </p>
                             `;
-                            // Append the toast to the document
-                            document.body.appendChild(toast);
+                                // Append the toast to the document
+                                document.body.appendChild(toast);
 
-                            // Initialize the Bootstrap toast
-                            var bootstrapToast = new bootstrap.Toast(toast);
-                            bootstrapToast.show();
+                                // Initialize the Bootstrap toast
+                                var bootstrapToast = new bootstrap.Toast(toast);
+                                bootstrapToast.show();
 
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 500)
-                        },
-                        error: function(error) {
-                            console.error("Error:", error);
-                            save_button.textContent = "Save";
-                            save_button.disabled = false;
-                        },
-                    });
+                                setTimeout(() => {
+                                    window.location.href = url;
+                                }, 500)
+                            },
+                            error: function(error) {
+                                console.error("Error:", error);
+                                save_button.textContent = "Save";
+                                save_button.disabled = false;
+                            },
+                        });
+
+                    }
                 }
             });
         });

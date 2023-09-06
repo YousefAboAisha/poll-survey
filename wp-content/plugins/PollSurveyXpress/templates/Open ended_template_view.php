@@ -89,7 +89,6 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                         </div>
                         <h6 class="ms-2 mt-4 mb-0"><?php _e('Poll/survey Analysis', 'psx-poll-survey-plugin'); ?></h6>
 
-
                         <div class="d-flex align-items-center justify-content-between flex-wrap mt-4">
                             <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
                                 <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Questions', 'psx-poll-survey-plugin'); ?></p>
@@ -110,6 +109,13 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                                 <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Unsigned votes', 'psx-poll-survey-plugin'); ?></p>
                                 <h2 class="font-weight-bolder"> <?php echo ($poll_num_of_unsigned_votes) ?></h2>
                             </div>
+                        </div>
+
+                        <div class="d-flex flex-column gap-2 mt-4">
+                            <button data-bs-toggle="modal" data-bs-target="#deleteModal" type="button" class="align-self-start text-white shadow-none btn bg-danger col-lg-5 col-md-6 col-4 text-sm font-weight-bold m-0">
+                                <?php _e('Reset votes', 'psx-poll-survey-plugin'); ?> <i class="fas fa-trash text-white fa-md ms-2"></i>
+                            </button>
+                            <span style="font-size: 11px;">(Be careful!, This action will reset the votes for the current survey)</span>
                         </div>
                     </div>
                 </div>
@@ -162,6 +168,33 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                 ?>
             </div>
 
+        </div>
+
+        <!-- Reset votes Modal -->
+        <div class="modal fade" id="deleteModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content p-0">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <p class="p-2 m-0">
+                            <?php _e('Are you sure you want reset votes for this survey?', 'psx-poll-survey-plugin'); ?>
+                        </p>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer d-flex justify-content-start">
+                        <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" data-poll-id="<?php echo $poll_id ?>">
+                            <?php _e('Reset', 'psx-poll-survey-plugin'); ?>
+
+                            <i class="fas fa-trash text-xs text-white m-1"></i>
+                        </button>
+                        <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
+                            <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
+
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -357,6 +390,30 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
                     },
                 },
             },
+        });
+
+
+        const confirm_delete = document.getElementById("confirm_delete");
+
+        confirm_delete.addEventListener("click", () => {
+            jQuery.ajax({
+                url: my_ajax_object.ajaxurl,
+                type: "POST",
+                data: {
+                    action: "PSX_delete_poll_response",
+                    poll_id: confirm_delete.getAttribute("data-poll-id"),
+                },
+                success: function() {
+                    console.log('response');
+
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 500)
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
         });
     </script>
 

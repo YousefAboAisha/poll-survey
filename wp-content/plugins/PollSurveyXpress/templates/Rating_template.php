@@ -1,10 +1,10 @@
-<?php 
-global $wpdb ;
-$isItEditPage= false;
-if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
+<?php
+global $wpdb;
+$isItEditPage = false;
+if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
     $isItEditPage = true;
     $poll_id = $_GET['poll_id']; // Get the poll ID from the URL parameter
-    
+
     // Query to fetch poll data
     $query = $wpdb->prepare("
                 SELECT * FROM {$wpdb->prefix}polls_psx_polls
@@ -19,24 +19,25 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                 SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
                 WHERE poll_id = %d
             ", $poll_id);
-    
+
     $questions = $wpdb->get_results($questions_query);
-    
-    
+
+
     $questions_with_answers = array();
-    
+
     foreach ($questions as &$question) {
         $answers_query = $wpdb->prepare("
                 SELECT * FROM {$wpdb->prefix}polls_psx_survey_answers
                 WHERE question_id = %d and poll_id = %d
                 ", $question->question_id, $poll_id);
-    
+
         $question->answers = $wpdb->get_results($answers_query);
         $questions_with_answers[] = $question;
     }
     $poll_data_json = json_encode($poll_data);
     $questions_json = json_encode($questions);
     $questions_with_answers_json = json_encode($questions_with_answers);
+    $jsonDataEncoded = htmlspecialchars($questions_with_answers_json, ENT_QUOTES, 'UTF-8');
 }
 
 ?>
@@ -60,33 +61,50 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
         <div class="d-flex align-items-center gap-2 my-4">
             <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Home', 'psx-poll-survey-plugin'); ?></a>
             <i class="fas fa-angle-right"></i>
-            <?php if ($isItEditPage){?>
+            <?php if ($isItEditPage) { ?>
                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="m-0 text-dark"><?php _e('Surveys', 'psx-poll-survey-plugin'); ?></a>
                 <i class="fas fa-angle-right"></i>
                 <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Rating Survey Edit', 'psx-poll-survey-plugin'); ?></h6>
-                <?php }else{ ?>
+            <?php } else { ?>
                 <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="m-0 text-dark"><?php _e('Templates', 'psx-poll-survey-plugin'); ?></a>
                 <i class="fas fa-angle-right"></i>
                 <h6 class="font-weight-bolder mb-0 p-0 "><?php _e('Rating Survey Add', 'psx-poll-survey-plugin'); ?></h6>
             <?php } ?>
         </div>
 
-
-
-
         <!-- Final output Survey -->
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-
-
             <div class="d-flex justify-content-between align-items-center w-100 mb-4">
-            <input type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="Poll/Survey title" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
-
+                <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]->title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
                 <div id="rateInputs" class="form-check d-flex justify-content-around align-items-center col-8 gap-2">
-                    <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #1" value="Rate #1" />
-                    <input type="text" id="rateInput2" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #2" value="Rate #2" />
-                    <input type="text" id="rateInput3" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #3" value="Rate #3" />
-                    <input type="text" id="rateInput4" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #4" value="Rate #4" />
-                    <input type="text" id="rateInput5" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #5" value="Rate #5" />
+
+                    <?php if (!$isItEditPage) { ?>
+                        <input type="text" id="rateInput1" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #1" value="Rate #1" />
+                        <input type="text" id="rateInput2" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #2" value="Rate #2" />
+                        <input type="text" id="rateInput3" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #3" value="Rate #3" />
+                        <input type="text" id="rateInput4" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #4" value="Rate #4" />
+                        <input type="text" id="rateInput5" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate #5" value="Rate #5" />
+
+                    <?php } else { ?>
+                        <?php
+                        $table_name = $wpdb->prefix . 'polls_psx_survey_answers';
+                        $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d", $poll_id);
+                        $ratings = $wpdb->get_results($query, ARRAY_A);
+
+                        $flag = false;
+                        $flag_text = $ratings[0]["answer_text"];
+
+                        foreach ($ratings as $index => $rating) {
+                            if ($flag_text === $rating["answer_text"] && $flag) {
+                                break;
+                            }
+                        ?>
+                            <input type="text" id="rateInput2_<?php echo $index; ?>" class="w-100 text-lgs p-2 px-0 bg-white border-0 rounded-1" placeholder="Rate_<?php echo $index + 1; ?>" value="<?php echo $rating["answer_text"]; ?>" />
+                        <?php
+                            $flag = true;
+                        }
+                        ?>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -104,9 +122,36 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
 
             <div id="questionsGroup" class="flex flex-column gap-2 w-100">
-                <div class="d-flex justify-content-between align-items-center w-100 mb-1">
 
-                </div>
+                <?php
+                if ($isItEditPage) {
+
+                    // Check if decoding was successful
+                    if ($questions_with_answers !== null) {
+                        foreach ($questions_with_answers as $index => $question) {
+                ?>
+                            <div class="poll-card d-flex justify-content-between align-items-center w-100 mb-3" data-card-id="<?php echo $question->question_id ?>">
+                                <div class="question-container d-flex align-items-center w-100 gap-3">
+                                    <i data-card-id="<?php echo $question->question_id ?>" style="cursor: pointer" class="fas fa-minus text-danger" aria-hidden="true"></i>
+                                    <input type="text" class="question-text form-control border p-2" placeholder="Edit question title" value="<?php echo $question->question_text; ?>">
+                                </div>
+
+                                <div class="form-check d-flex justify-content-around align-items-center col-8">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio1">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio2">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio3">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio4">
+                                    <input class="form-check-input border" type="radio" name="radioGroup_5" id="radio5">
+                                </div>
+                            </div>
+                <?php
+                        }
+                    } else {
+                        echo "Error decoding JSON.";
+                    }
+                }
+                ?>
+
             </div>
         </div>
 
@@ -141,6 +186,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="bg_color" value="<?php echo $isItEditPage ? $poll_data[0]->bgcolor : "#f8f9fa"; ?>" />
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="text_color" value="<?php echo $isItEditPage ? $poll_data[0]->color : "#344767"; ?>" />
+                            <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
+
                         </div>
                     </div>
 
@@ -160,7 +208,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     <div class="card-body pt-sm-3 p-0">
                         <div class="form-group d-flex flex-column">
                             <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data[0]->status === 'active' ? 'checked' : ''; ?> />
+                                <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data[0]->status === 'active' ? 'checked' : ''; ?> />
                                 <label class="form-check-label" for="active_plugin">
                                     <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?>
                                 </label>
@@ -168,7 +216,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
                             <div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? 'checked' : ''; ?>onchange="toggleInputState()" />
+                                <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
@@ -185,10 +233,12 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                            <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
-                            <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                <?php echo $poll_data[0]->cta_Text; ?>
-                            </button>
+                                <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
+                                <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
+                                    <?php echo $poll_data[0]->cta_Text; ?>
+                                </button>
+                                <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
+
                             </div>
                         </div>
                     </div>
@@ -196,31 +246,59 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
             </div>
         </div>
     </div>
+    <script>
+        const ctaInput = document.getElementById("cta_input");
+        const ctaButton = document.getElementById("cta_button");
 
+        ctaInput.addEventListener("keyup", () => {
+            if (ctaInput.value == "") {
+                ctaButton.innerText = "CTA Title";
+            } else {
+                ctaButton.innerText = ctaInput.value;
+            }
+        });
+    </script>
 
     <script>
-        function deleteQuestion(cardId) {
-            const index = questionsArray.findIndex(question => question.id === cardId);
-            if (index !== -1) {
-                questionsArray.splice(index, 1);
-                const questionElement = document.querySelector(`[data-card-id="${cardId}"]`);
-                if (questionElement) {
-                    questionElement.remove();
+        function updateButtonStates() {
+            if (questionsGroup.childElementCount <= 0) {
+                save_button.disabled = true
+            } else {
+                save_button.disabled = false
+            }
+        }
+
+
+        // Event listener for removing a poll question
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("fa-minus")) {
+                const cardId = event.target.getAttribute("data-card-id");
+
+                const card = document.querySelector(`[data-card-id="${cardId}"]`);
+                if (card) {
+                    card.remove();
+                    updateButtonStates();
                 }
             }
-            // finalObj = {
-            //   surveyTitle: pullTitle.value,
-            //   questions: questionsArray,
-            // };
-        }
+        });
+
         const save_button = document.getElementById("save_button");
         const pullTitle = document.getElementById("surveyTitle");
         const addOptionButton = document.getElementById("addQuestion");
         const optionInput = document.getElementById("questionInput");
         const questionsGroup = document.getElementById("questionsGroup");
+        const button_color = document.getElementById("button_color");
+
         let questionsArray = [];
         let counter = 1;
         let finalObj = {};
+
+        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
+
+        // jQuery(document).ready(function(jQuery) {
+        //     console.log(cards_array);
+        // })
+
 
         // Plugin Settings variables
         const bg_color = document.getElementById("bg_color");
@@ -236,7 +314,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
 
         // Rates data
         const rateInputs = document.querySelectorAll("#rateInputs input");
-        const ratesArray = [];
+        let ratesArray = [];
 
         rateInputs.forEach((input, index) => {
             ratesArray[index] = input.value;
@@ -259,15 +337,16 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                 // Create the new HTML element
                 const newQuestionDiv = document.createElement("div");
                 newQuestionDiv.className =
-                    "d-flex justify-content-between align-items-center w-100 mb-3";
-                newQuestionDiv.setAttribute("data-card-id", counter);
+                    "poll-card d-flex justify-content-between align-items-center w-100 mb-3";
+                const UID = new Date().toISOString();
+                newQuestionDiv.setAttribute("data-card-id", UID);
 
                 newQuestionDiv.innerHTML = `
-                <div class="question-container d-flex align-items-center w-100 gap-3">
-                <i onclick="deleteQuestion(${counter})" style="cursor: pointer" class="fas fa-minus text-danger"></i>
+                <div class="question-container d-flex align-items-center w-100 gap-3" >
+                <i data-card-id="${UID}" style="cursor: pointer" class="fas fa-minus text-danger" ></i>
                 <input
                     type="text"
-                    class="form-control border p-2"
+                    class="question-text form-control border p-2"
                     id="questionTitle_${counter}"
                     placeholder="Edit question title"
                     value="${questionTitle}"
@@ -329,6 +408,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
             }
         });
 
+
+
         questionsGroup.addEventListener("input", function(event) {
             const inputElement = event.target;
 
@@ -340,15 +421,39 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     questionsArray[questionIndex].questionTitle = inputElement.value;
                 }
             }
+            updateButtonStates()
 
-            if (questionsArray.length <= 0) {
-                save_button.disabled = true
-            }
         });
+
+        updateButtonStates()
+
 
 
         save_button.addEventListener("click", () => {
             const textFields = document.querySelectorAll(".question-container input")
+
+            // Set the questions fields
+            const pollCards = document.querySelectorAll(".poll-card");
+            const data = {
+                pollCards: []
+            };
+
+            pollCards.forEach((card) => {
+                const questionText = card.querySelector(".question-text").value;
+
+                data.pollCards.push({
+                    question_text: questionText,
+                });
+            });
+
+            // Set the ratings text
+            rateInputs.forEach((input, index) => {
+                ratesArray[index] = input.value;
+                input.addEventListener("input", (event) => {
+                    const inputValue = event.target.value;
+                    ratesArray[index] = inputValue;
+                });
+            });
 
             // Initialize a flag to track if any empty field is found
             let isEmptyField_question = false;
@@ -380,7 +485,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                 pullTitle.style.cssText = "border: 1px solid red !important";
                 pullTitle.scrollIntoView({
                     behavior: "smooth",
-                    top: middleOfElement - window.innerHeight / 2,
                 });
                 return;
             } else {
@@ -421,17 +525,21 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     real_time_result_text: show_results_input.value,
                     real_time_check: show_results.checked,
                     min_votes: min_votes_input.value,
+                    button_color : button_color.value,
                 };
 
                 finalObj = {
                     surveyTitle: pullTitle.value,
-                    questions: questionsArray,
+                    questions: data.pollCards,
                     ratesArray: ratesArray,
                     settings: settingObj,
                     template: "Rating",
                     type: pullTitle.getAttribute("data-type"),
-                    poll_id : pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
+                    poll_id: pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
                 };
+
+                console.log(finalObj);
+
                 jQuery.ajax({
                     type: "POST",
                     url: my_ajax_object.ajaxurl,
@@ -440,7 +548,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                         poll_data: JSON.stringify(finalObj),
                         nonce: nonce,
                     },
-                    success: function(shortcode) {
+                    success: function(url) {
                         console.log("Done");
                         save_button.textContent = "Save";
                         save_button.disabled = false;
@@ -451,10 +559,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                         toast.style = "z-index:1000; right: 10px; bottom: 10px";
                         toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
                         toast.innerHTML = `
-                    <p class="m-0 fw-bold text-xs text-white">
-                    New survey has been added successfully!
-                    </p>
-                `;
+                            <p class="m-0 fw-bold text-xs text-white">
+                            New survey has been added successfully!
+                            </p>
+                        `;
                         // Append the toast to the document
                         document.body.appendChild(toast);
 
@@ -466,7 +574,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                         bootstrapToast.show();
 
                         setTimeout(() => {
-                            window.location.reload();
+                            window.location.href= url;
                         }, 500)
                     },
                     error: function(error) {
@@ -476,7 +584,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')){
                     },
                 });
             }
-
         })
 
         const voteCheckbox = document.getElementById("show_results");

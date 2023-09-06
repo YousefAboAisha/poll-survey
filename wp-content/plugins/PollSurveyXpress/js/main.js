@@ -51,6 +51,18 @@ jQuery(document).ready(function (jQuery) {
   const save_button = document.getElementById("mcq_save_button");
   var nonce = jQuery("#my-ajax-nonce").val();
 
+  function generateRandomHexColor() {
+    // Generate random values for red, green, and blue components
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+
+    // Convert the values to hexadecimal format
+    const hexColor = `#${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
+
+    return hexColor;
+  }
+
   save_button.addEventListener("click", function (event) {
     console.log(poll_count);
 
@@ -100,45 +112,47 @@ jQuery(document).ready(function (jQuery) {
 
         // window.location.reload();
         radio_buttons.forEach((radio) => {
-          radio.disabled = true;
+          radio.style.display = "none";
         });
 
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
 
         const votes = jsonData.votes;
-        // if ((poll_results != null && poll_results != "") || poll_count <= votes)
-        // Now you can work with the decoded data
-        // console.log("JSON Data", jsonData);
+        if (
+          (poll_results != null && poll_results != "") ||
+          poll_count <= votes
+        ) {
+          mcq_container.innerHTML = "";
+          mcq_container.style.cssText = "display:none !important";
+          message.style.cssText = "display:flex !important";
+        } else {
+          show_results_containers.forEach((elem) => {
+            elem.style.cssText = "display:flex !important";
+            var questionId = elem.getAttribute("data-question-id");
+            var answerId = elem.getAttribute("data-answer-id");
+            const percentage_bar = elem.querySelector(
+              ".progress-bar .percentage-bar"
+            );
+            const percentage_value = elem.querySelector(".percentage-value");
 
-        // console.log(show_results_containers);
+            // Check if the percentages data for this question exists
+            if (percentages.hasOwnProperty(questionId)) {
+              var question_data = percentages[questionId];
+              const randomBgColor = generateRandomHexColor();
 
-        // Assuming you have the 'percentages' object available
+              // Check if the percentage data for this answer exists
+              if (question_data.hasOwnProperty(answerId)) {
+                var percentageValue = parseFloat(question_data[answerId]);
+                percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
 
-        show_results_containers.forEach((elem) => {
-          elem.style.cssText = "display:flex !important";
-          var questionId = elem.getAttribute("data-question-id");
-          var answerId = elem.getAttribute("data-answer-id");
-          const percentage_bar = elem.querySelector(
-            ".progress-bar .percentage-bar"
-          );
-          const percentage_value = elem.querySelector(".percentage-value");
-
-          // Check if the percentages data for this question exists
-          if (percentages.hasOwnProperty(questionId)) {
-            var question_data = percentages[questionId];
-
-            // Check if the percentage data for this answer exists
-            if (question_data.hasOwnProperty(answerId)) {
-              var percentageValue = parseFloat(question_data[answerId]);
-              percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
-
-              // Update the percentage bar and value for this specific answer
-              percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5`;
-              percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
+                // Update the percentage bar and value for this specific answer
+                percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5; background-color:${randomBgColor} !important;`;
+                percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
+              }
             }
-          }
-        });
+          });
+        }
       },
       error: function (error) {
         console.error("Error:", error);
@@ -180,14 +194,12 @@ jQuery(document).ready(function (jQuery) {
       let response_obj = {};
       const question_id = elem.getAttribute("data-question-id");
 
-      // if (elem.value != "") {
       response_obj = {
         question_id: question_id, // Use the question_id
         answer_id: question_id, // Use the answer_id for the selected answer
         answer_text: elem.value,
       };
       responses_arr.push(response_obj);
-      // }
     });
 
     finalObj = {
@@ -227,6 +239,7 @@ jQuery(document).ready(function (jQuery) {
     .getElementById("Title")
     .getAttribute("data-show-results");
   const message = document.getElementById("message");
+  const result_chart = document.getElementById("result_chart");
 
   const poll_id = document
     .getElementById("poll_card")
@@ -238,15 +251,14 @@ jQuery(document).ready(function (jQuery) {
   const radio_buttons = document.querySelectorAll(".poll-answer-radio");
 
   save_button.addEventListener("click", function (event) {
+    console.log("Hi");
+
     event.preventDefault(); // Prevent the default form submission behavior
     // Get the user ID if logged in
     save_button.disabled = true;
     save_button.innerHTML =
       '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
-    // Get the session ID from the browser
-    const session_id = sessionStorage.getItem("my_session_id");
-    // Loop through all questions
     let finalObj = {};
     const responses_arr = [];
     var questions = document.querySelectorAll(".poll-answer-radio");
@@ -281,6 +293,54 @@ jQuery(document).ready(function (jQuery) {
         nonce: nonce,
       },
       success: function (response) {
+
+        const jsonData = JSON.parse(JSON.parse(response));
+        const percentages = jsonData.percentages;
+        console.log(percentages);
+
+
+
+        const finalObjects = Object.values(percentages).map(innerObject => {
+          const newObj = {};
+          let letterIndex = 0;
+          const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+          Object.values(innerObject).forEach(value => {
+            const key = alphabet[letterIndex++];
+            newObj[key] = parseFloat(value); // Convert the value to a number if needed
+          });
+          return newObj;
+        });
+
+        console.log("finalObjects", finalObjects);
+
+
+        // Function to calculate percentages for each option and ensure the sum is 100%
+        function calculatePercentages(dataArray) {
+          const totalVotes = dataArray.reduce((acc, dataObject) => {
+            for (const key in dataObject) {
+              acc[key] = (acc[key] || 0) + dataObject[key];
+            }
+            return acc;
+          }, {});
+
+          const percentages = {};
+
+          for (const key in totalVotes) {
+            percentages[key] = `${((totalVotes[key] / (dataArray.length * 100)) * 100).toFixed(2)}`;
+          }
+
+          return percentages;
+        }
+
+        // Calculate percentages for each option and ensure the sum is 100%
+        const inputData = calculatePercentages(finalObjects);
+
+        // Display the result
+        console.log('result', inputData);
+
+
+        // Cal
         save_button.textContent = "DONE!";
         save_button.style.display = "none";
 
@@ -292,6 +352,49 @@ jQuery(document).ready(function (jQuery) {
           rating_container.innerHTML = "";
           rating_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
+        } else {
+          rating_container.innerHTML = "";
+          rating_container.style.cssText = "display:none !important";
+          var chart = new CanvasJS.Chart("result_chart", {
+            animationEnabled: true,
+            title: {
+              text: "Survey results",
+            },
+            data: [
+              {
+                type: "pie",
+                startAngle: 240,
+                yValueFormatString: '##0.00"%"',
+                indexLabel: "{label} {y}",
+                dataPoints: [
+                  {
+                    y: parseFloat(inputData["a"]),
+                    label: "A",
+                  },
+                  {
+                    y: parseFloat(inputData["b"]),
+                    label: "B",
+                  },
+                  {
+                    y: parseFloat(inputData["c"]),
+                    label: "C",
+                  },
+                  {
+                    y: parseFloat(inputData["d"]),
+                    label: "D",
+                  },
+                  {
+                    y: parseFloat(inputData["e"]),
+                    label: "E",
+                  },
+                ],
+              },
+            ],
+          });
+          chart.render();
+          result_chart.style.cssText =
+            "display:block !important;height: 300px; width: 100%;";
+
         }
       },
       error: function (error) {
@@ -399,3 +502,5 @@ jQuery(document).ready(() => {
     }
   }
 });
+
+

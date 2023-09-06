@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
 </head>
 
 
@@ -28,9 +29,15 @@
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
-                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="ashrafweb@gmail.com" placeholder="Enter your email" disabled="" style="display: none;">
+                        <input id="email_input" type="text" class="form-control border rounded-1 text-dark mt-2 mb-4 p-2" value="<?php echo (get_option('PSX_survey_email') != '') ? get_option('PSX_survey_email') : get_option('admin_email'); ?>" placeholder="Enter your email" disabled="" style="display: none;">
                     </div>
 
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="response_email" name="response_email" <?php echo get_option('PSX_response_email') ?  "checked" : '' ?>>
+                        <label class="form-check-label" for="response_email">
+                            <?php _e('Email on receving response for a poll', 'psx-poll-survey-plugin'); ?>
+                        </label>
+                    </div>
                     <div class="form-check mt-2">
                         <input class="form-check-input" type="checkbox" id="gdpr" name="gdpr" <?php echo get_option('PSX_gdpr') ? "checked" : '' ?>>
                         <label class="form-check-label" for="gdpr">
@@ -69,16 +76,16 @@
                 </button>
             </form>
 
-
         </div>
     </main>
-
 
 
     <script>
         const nonce = document.getElementById("my-ajax-nonce").value;
         const emailRadioButton = document.getElementById("email");
         const isEmailChecked = document.getElementById("email").checked;
+        const response_email = document.getElementById("response_email");
+
         const email_input = document.getElementById("email_input");
         const save_changes = document.getElementById("save_changes");
         const status_message = document.getElementById("status_message");
@@ -122,6 +129,7 @@
                 admin_email: email_input.value,
                 expire_message: expire_message.value,
                 status_message: status_message.value,
+                response_email: response_email.checked,
             }
             console.log(finalObj);
             jQuery.ajax({

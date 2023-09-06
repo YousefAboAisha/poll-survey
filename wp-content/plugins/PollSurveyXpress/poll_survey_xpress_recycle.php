@@ -86,7 +86,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                     <tbody>
                                         <?php if (empty($polls)) { ?>
                                             <tr>
-                                                <td colspan="7" class=" text-xss text-center p-4">No archived surveys found!</td>
+                                                <td colspan="7" class=" text-xss text-center p-4"><?php _e('No archived surveys found!', 'psx-poll-survey-plugin'); ?></td>
                                             </tr>
                                         <?php } else { ?>
                                             <?php foreach ($polls as $poll) { ?>
@@ -133,7 +133,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                         <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
                             <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage" <?php _e('Previous', 'psx-poll-survey-plugin'); ?>></button>
-                            <span class="m-0 p-0" id="currentPage"><?php _e('Page 1', 'psx-poll-survey-plugin'); ?></span>
+                            <span class="m-0 p-0" id="currentPage"><?php _e('Page', 'psx-poll-survey-plugin'); ?>1</span>
                             <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                         </div>
 
