@@ -139,7 +139,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                             <i class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
-                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit');?>">
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
                                                             <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
@@ -207,19 +207,19 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="p-2 m-0">
-                    <?php _e('Are you sure you want to move this survey to trash?', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Are you sure you want to move this survey to trash?', 'psx-poll-survey-plugin'); ?>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex justify-content-start">
                     <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" id="moveButton">
-                    <?php _e('Move', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Move', 'psx-poll-survey-plugin'); ?>
 
                         <i class="fas fa-trash text-xs text-white m-1"></i>
                     </button>
                     <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
-                    <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
 
                     </button>
                 </div>

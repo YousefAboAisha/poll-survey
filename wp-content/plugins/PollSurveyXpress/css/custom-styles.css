@@ -46,36 +46,36 @@ input[type="radio"] {
 
 @keyframes shake {
   0% {
-    transform: translateX(0);
+    transform: translateY(0);
   }
 
   10%,
   90% {
-    transform: translateX(-10px);
+    transform: translateY(-7px);
   }
 
   20%,
   80% {
-    transform: translateX(10px);
+    transform: translateY(7px);
   }
 
   30%,
   50%,
   70% {
-    transform: translateX(-10px);
+    transform: translateY(-7px);
   }
 
   40%,
   60% {
-    transform: translateX(10px);
+    transform: translateY(7px);
   }
 
   100% {
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
 /* Apply the animation to the element with the "shake" class */
 .shake {
-  animation: shake 0.5s !important;
+  animation: shake 5s infinite !important;
 }
