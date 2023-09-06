@@ -216,6 +216,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
                                     <?php echo $poll_data[0]->cta_Text; ?>
                                 </button>
+                                <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
+
                             </div>
                         </div>
                     </div>
