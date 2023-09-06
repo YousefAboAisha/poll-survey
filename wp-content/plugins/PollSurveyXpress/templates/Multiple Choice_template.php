@@ -124,11 +124,12 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                                         </div>
                                     <?php } ?>
                                 </div>
+                                <span style="font-size: 11px;" class="error-text position-absolute d-none bottom-3 left-0 text-danger fw-bold ">You need to add two options at least!</span>
                             </div>
                 <?php
                         }
-                    } // This is the missing closing curly brace for the inner if statement
-                } // This is the missing closing curly brace for the outer if statement
+                    }
+                }
                 ?>
             </div>
 
@@ -142,9 +143,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
 
     <!-- Fixed plugin settings ICON -->
-    <div data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-white shadow-sm rounded-circle text-dark">
+    <div title="Edit survey settings" id="settings_icon" data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-primary shadow-sm rounded-circle text-white border">
         <i class="fa fa-cog py-2"> </i>
     </div>
+
 
     <!-- Fixed Plugin settings -->
     <div class="modal fade" id="settingsModal">
@@ -196,7 +198,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                             <div>
                                 <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
+                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
@@ -418,6 +420,14 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 // Append the new poll card to the document
                 newPollCard.setAttribute("data-card-id", newPollCardObj.id);
                 cardsContainer.appendChild(newPollCard);
+
+                // Add the error text span
+                const error_text = document.createElement("span");
+                error_text.className = "error-text position-absolute d-none bottom-3 left-0 text-danger fw-bold "
+                error_text.style.fontSize = "11px";
+                error_text.textContent = "You need to add two options at least!"
+                newPollCard.appendChild(error_text)
+
                 pollsCardsArray.push(newPollCardObj);
                 updateSaveButtonState();
 
@@ -437,11 +447,26 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             // Update save_button status
             function updateSaveButtonState() {
-                const emptyCardExists = pollsCardsArray.some(card => card.options.length === 0);
-                const insufficientOptions = pollsCardsArray.some(card => card.options.length < 2);
+                const poll_cards = document.querySelectorAll(".poll-card")
+                const has_no_poll_cards = poll_cards.length <= 0;
+                let hasinsufficientOptions = false;
 
-                if (emptyCardExists || insufficientOptions || cardsContainer.childElementCount <= 0) {
+                const optionsContainers = document.querySelectorAll(".options-container");
+
+                optionsContainers.forEach((card) => {
+                    const parentNode = card.parentNode;
+                    if (card.childElementCount < 2) {
+                        hasinsufficientOptions = true;
+                        parentNode.style.cssText = "border:1px solid red !important";
+                        const errorTextElement = parentNode.querySelector('.error-text');
+                        errorTextElement.style.cssText = "display:block !important; font-size:11px;"
+                    }
+                })
+
+
+                if (has_no_poll_cards || hasinsufficientOptions || cardsContainer.childElementCount <= 0) {
                     save_button.disabled = true;
+                    console.log("Button is disabled");
                 } else {
                     save_button.disabled = false;
                 }
@@ -456,6 +481,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     if (card) {
                         card.remove();
                         updateButtonStates();
+                        updateSaveButtonState();
+
                     }
                 }
             });
@@ -469,6 +496,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     if (optionContainer) {
                         optionContainer.parentNode.remove();
                         updateButtonStates();
+                        updateSaveButtonState();
                     }
 
                     // Prevent the click event from propagating to the card deletion event listener
@@ -476,8 +504,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 }
             });
 
+            let is_first_button_click = true;
 
             save_button.addEventListener("click", () => {
+
                 // Select all input fields within .options-container
                 let inputs = document.querySelectorAll(".option-container input");
 
@@ -498,18 +528,26 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     });
                 });
 
-                // console.log("Final Data", data); // Output the JSON data to the console
-
-
                 // Initialize a flag to track if any empty field is found
                 let isEmptyField = false;
-
                 inputs.forEach((input, index) => {
-                    if (input.value == "") {
+                    if (input.value.trim() == "") {
                         input.style.cssText = "border: 1px solid red !important";
                         isEmptyField = true;
                     } else {
                         input.style.border = "none"; // Remove the red border if the field is not empty
+                    }
+                });
+
+
+                // Check if hacing empty questions 
+                const questions_texts = document.querySelectorAll(".question-text")
+                questions_texts.forEach((textarea, index) => {
+                    if (textarea.value.trim() == "") {
+                        textarea.style.cssText = "border: 1px solid red !important";
+                        isEmptyField = true;
+                    } else {
+                        textarea.style.border = "none"; // Remove the red border if the field is not empty
                     }
                 });
 
@@ -535,81 +573,94 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         }
                     });
                 } else {
-                    save_button.disabled = true;
-                    save_button.innerHTML =
-                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                    settingObj = {
-                        cta_Text: cta_input.value,
-                        start_date: start_date.value || new Date().toISOString(),
-                        end_date: end_date.value ||
-                            new Date(
-                                new Date().getFullYear() + 100,
-                                11,
-                                31,
-                                23,
-                                59,
-                                59
-                            ).toISOString(),
-                        status: active_plugin.checked,
-                        color: text_color.value,
-                        bgcolor: bg_color.value,
-                        real_time_result_text: show_results_input.value,
-                        real_time_check: show_results.checked,
-                        min_votes: min_votes_input.value,
-                        button_color: button_color.value,
-                    };
 
-                    finalObj = {
-                        surveyTitle: surveyTitle.value,
-                        type: surveyTitle.getAttribute("data-type"),
-                        poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
-                        pollCards: data.pollCards,
-                        settings: settingObj,
-                        template: "Multiple Choice",
-                    };
+                    if (is_first_button_click) {
+                        const settings_icon = document.getElementById("settings_icon");
+                        settings_icon.classList.add("shake");
 
-                    console.log("FinalObj", finalObj);
+                        settings_icon.addEventListener("click", () => {
+                            settings_icon.classList.remove("shake");
+                            is_first_button_click = false
+                        })
 
-                    jQuery.ajax({
-                        type: "POST",
-                        url: my_ajax_object.ajaxurl,
-                        data: {
-                            action: "PSX_save_poll_Multiple_data",
-                            nonce: nonce, // Pass the nonce
-                            poll_data: JSON.stringify(finalObj),
-                        },
-                        success: function(url) {
-                            console.log("Done");
-                            save_button.textContent = "Save";
-                            save_button.disabled = false;
+                    } else {
+                        save_button.disabled = true;
+                        save_button.innerHTML =
+                            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                        settingObj = {
+                            cta_Text: cta_input.value,
+                            start_date: start_date.value || new Date().toISOString(),
+                            end_date: end_date.value ||
+                                new Date(
+                                    new Date().getFullYear() + 100,
+                                    11,
+                                    31,
+                                    23,
+                                    59,
+                                    59
+                                ).toISOString(),
+                            status: active_plugin.checked,
+                            color: text_color.value,
+                            bgcolor: bg_color.value,
+                            real_time_result_text: show_results_input.value,
+                            real_time_check: show_results.checked,
+                            min_votes: min_votes_input.value,
+                            button_color: button_color.value,
+                        };
 
-                            // Create a new toast element
-                            var toast = document.createElement("div");
-                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                            toast.className =
-                                "position-fixed p-2 px-4 bg-success border rounded-2";
-                            toast.innerHTML = `
+                        finalObj = {
+                            surveyTitle: surveyTitle.value,
+                            type: surveyTitle.getAttribute("data-type"),
+                            poll_id: surveyTitle.getAttribute("data-form-id") != null ? surveyTitle.getAttribute("data-form-id") : null,
+                            pollCards: data.pollCards,
+                            settings: settingObj,
+                            template: "Multiple Choice",
+                        };
+
+                        console.log("FinalObj", finalObj);
+
+                        jQuery.ajax({
+                            type: "POST",
+                            url: my_ajax_object.ajaxurl,
+                            data: {
+                                action: "PSX_save_poll_Multiple_data",
+                                nonce: nonce, // Pass the nonce
+                                poll_data: JSON.stringify(finalObj),
+                            },
+                            success: function(url) {
+                                console.log("Done");
+                                save_button.textContent = "Save";
+                                save_button.disabled = false;
+
+                                // Create a new toast element
+                                var toast = document.createElement("div");
+                                toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                                toast.className =
+                                    "position-fixed p-2 px-4 bg-success border rounded-2";
+                                toast.innerHTML = `
                                 <p class="m-0 fw-bold text-xs text-white">
                                 New survey has been added successfully!
                                 </p>
                             `;
-                            // Append the toast to the document
-                            document.body.appendChild(toast);
+                                // Append the toast to the document
+                                document.body.appendChild(toast);
 
-                            // Initialize the Bootstrap toast
-                            var bootstrapToast = new bootstrap.Toast(toast);
-                            bootstrapToast.show();
+                                // Initialize the Bootstrap toast
+                                var bootstrapToast = new bootstrap.Toast(toast);
+                                bootstrapToast.show();
 
-                            setTimeout(() => {
-                                window.location.href = url;
-                            }, 500)
-                        },
-                        error: function(error) {
-                            console.error("Error:", error);
-                            save_button.textContent = "Save";
-                            save_button.disabled = false;
-                        },
-                    });
+                                setTimeout(() => {
+                                    window.location.href = url;
+                                }, 500)
+                            },
+                            error: function(error) {
+                                console.error("Error:", error);
+                                save_button.textContent = "Save";
+                                save_button.disabled = false;
+                            },
+                        });
+
+                    }
                 }
             });
         });
