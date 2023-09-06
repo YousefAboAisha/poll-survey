@@ -118,11 +118,12 @@ jQuery(document).ready(function (jQuery) {
         const jsonData = JSON.parse(JSON.parse(response));
         const percentages = jsonData.percentages;
 
-        const votes = jsonData.votes;
+        const votes = jsonData.min_votes;
+        console.log('already_votes ', votes);
+        console.log('min_votes ', poll_count);
+
         if (
-          (poll_results != null && poll_results != "") ||
-          poll_count <= votes
-        ) {
+          (poll_results != null && poll_results != "") || votes < poll_count) {
           mcq_container.innerHTML = "";
           mcq_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
@@ -235,6 +236,9 @@ jQuery(document).ready(function (jQuery) {
 
 // Rating collect data
 jQuery(document).ready(function (jQuery) {
+  const poll_count = document
+    .getElementById("Title")
+    .getAttribute("data-vote-count");
   const poll_results = document
     .getElementById("Title")
     .getAttribute("data-show-results");
@@ -347,8 +351,12 @@ jQuery(document).ready(function (jQuery) {
         radio_buttons.forEach((radio) => {
           radio.disabled = true;
         });
+        const votes = jsonData.min_votes;
+        console.log('already_votes ', votes);
+        console.log('min_votes ', poll_count);
 
-        if (poll_results != null && poll_results != "") {
+
+        if ((poll_results != null && poll_results != "") || votes < poll_count) {
           rating_container.innerHTML = "";
           rating_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
