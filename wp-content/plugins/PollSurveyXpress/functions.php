@@ -182,8 +182,8 @@ class PollSurveyXpress
 
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
-        update_option('PSX_expire_message', $settings_data['expire_message']);
-        update_option('PSX_status_message', $settings_data['status_message']);
+        update_option('PSX_expire_message', $settings_data['expire_message']!='' ? $settings_data['expire_message'] : "Your survey has expired.");
+        update_option('PSX_status_message', $settings_data['status_message']!='' ? $settings_data['status_message'] : "This survey is expired.");
 
         $admin_email = get_option('admin_email');
         // Get the submitted admin email from the form
@@ -672,7 +672,7 @@ class PollSurveyXpress
                     // If the count is greater than ), the session ID is found in the table
                     if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
-                        $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
+                        $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="alraedy_vote_message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                             <h3 class="m-0 text-dark fw-bolder p-0 text-center">You Can`t Vote another Time</h3>
                             <p class="m-0 text-center" style="font-size: 13px;">You voted before this time</p>
@@ -692,14 +692,13 @@ class PollSurveyXpress
 
                             $output .= '<div class="modal-dialog modal-dialog-centered">';
 
-                            if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
-                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
-                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
-                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
-                                </div>
-                                ';
-                            }
+                            $output .= '<div class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="message">  
+                            <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                            <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                            <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                            </div>
+                            ';
+                            
 
                             $output .= '<div class="modal-content" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;" >';
                             $output .= '<div id="mcq_container"  class="modal-body">';
@@ -906,14 +905,12 @@ class PollSurveyXpress
                         $output = '<div>';
 
                         if ($template_type === 'Multiple Choice') {
-                            if (!empty($poll_data[0]['real_time_result_text'])) {
-                                $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
-                                <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
-                                <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
-                                <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
-                                </div>
-                                ';
-                            }
+                            $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+                            <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
+                            <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . $poll_data[0]['real_time_result_text'] .  '</h3>
+                            <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
+                            </div>
+                            ';
 
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="mcq_container">';
 
@@ -971,7 +968,8 @@ class PollSurveyXpress
 
                             // Fetch questions from the database
                         } else if ($poll_data[0]['template'] === 'Open ended') {
-                            $output = '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
+
+                            $output .= '<div id="message" class="d-none flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" >  
                                 <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                                 <h3 class="m-0 text-dark fw-bolder p-0 text-center">' . ($poll_data[0]['real_time_result_text'] ? $poll_data[0]['real_time_result_text'] : "Thx for submitting!")
                                 .  '</h3>

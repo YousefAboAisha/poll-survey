@@ -42,7 +42,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                             <h4 class="fw-bolder m-0 p-0"><?php _e('Archived Surveys', 'psx-poll-survey-plugin'); ?></h4>
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
-                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="btn btn-dark m-0"> <?php _e('All surveys', 'psx-poll-survey-plugin'); ?>
+                                <a title="All Non-Deleted Polls" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys'); ?>" class="btn btn-dark m-0"> <?php _e('All surveys', 'psx-poll-survey-plugin'); ?>
                                     <i style="cursor: pointer" class="fas fa-chart-bar text-white ms-2 text-lg"></i>
                                 </a>
                             </div>
@@ -100,27 +100,27 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle text-sm text-center">
-                                                        <p class="badge badge-sm m-0 bg-gradient-warning">
+                                                        <p class="badge badge-sm m-0 bg-gradient-warning" title="Status of poll">
                                                             <?php echo ucfirst($poll->status); ?>
                                                         </p>
                                                     </td>
 
-                                                    <td class="align-middle text-sm text-center">
+                                                    <td class="align-middle text-sm text-center" title="When this poll will expired">
                                                         <p class="text-xs font-weight-bold mb-0 m-0">
                                                             <?php echo $poll->end_date; ?>
                                                         </p>
                                                     </td>
 
-                                                    <td class="align-middle text-sm text-center">
+                                                    <td class="align-middle text-sm text-center" title="type of template of poll">
                                                         <p class="text-xs font-weight-bold mb-0 m-0 text-center">
                                                             <?php echo $poll->template; ?>
                                                         </p>
                                                     </td>
 
                                                     <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1">
-                                                        <i id="restore_btn" class="restoreButton fas fa-undo text-sm text-dark" style="cursor: pointer"></i>
+                                                        <i id="restore_btn" class="restoreButton fas fa-undo text-sm text-dark" style="cursor: pointer" title="Restore Poll"></i>
 
-                                                        <i id="delete_btn" style="cursor: pointer" class="deleteButton fas fa-trash text-sm text-danger" data-card-id=<?php echo $poll->poll_id; ?> data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
+                                                        <i id="delete_btn" style="cursor: pointer" class="deleteButton fas fa-trash text-sm text-danger" title="Delete Poll permenently" data-card-id=<?php echo $poll->poll_id; ?> data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -132,9 +132,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         </div>
 
                         <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage" <?php _e('Previous', 'psx-poll-survey-plugin'); ?>></button>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage" title="Previous Polls"> <?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
                             <span class="m-0 p-0" id="currentPage"><?php _e('Page', 'psx-poll-survey-plugin'); ?>1</span>
-                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
+                            <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage" title="Next Polls"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                         </div>
 
                     </div>
@@ -150,18 +150,18 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="p-2 m-0">
-                        Are you sure you want to permenently delete this survey?
+                    <?php _e('Are you sure you want to permenently delete this survey?', 'psx-poll-survey-plugin'); ?>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex justify-content-start">
                     <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">
-                        Delete
+                    <?php _e('Delete', 'psx-poll-survey-plugin'); ?>
                         <i class="fas fa-trash text-xs text-white m-1"></i>
                     </button>
                     <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
-                        Cancel
+                    <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
                     </button>
                 </div>
             </div>
