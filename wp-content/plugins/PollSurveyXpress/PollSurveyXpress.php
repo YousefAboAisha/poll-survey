@@ -86,7 +86,6 @@ function PSX_add_database_tables()
             sharing enum('true', 'false'),
             real_time_result_text varchar(255),
             min_votes int,
-            deleted_at datetime,
             PRIMARY KEY (poll_id)
         ) $charset_collate;
     ";
@@ -120,6 +119,7 @@ function PSX_add_database_tables()
         ip_address varchar(255),
         user_id int(11),
         session_id varchar(255),
+        answerd_at datetime,
         PRIMARY KEY (response_id),
         FOREIGN KEY (poll_id) REFERENCES {$wpdb->prefix}polls_psx_polls(poll_id)
     ) $charset_collate;

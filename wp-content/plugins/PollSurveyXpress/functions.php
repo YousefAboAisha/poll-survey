@@ -1220,6 +1220,7 @@ class PollSurveyXpress
                 'ip_address' => $userIP,
                 'user_id' => $user_id,
                 'session_id' => $session_id,
+                'answerd_at' => date('Y-m-d H:i:s'),
             ));
             $response_id = $wpdb->insert_id;
 
