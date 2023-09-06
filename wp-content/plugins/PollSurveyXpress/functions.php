@@ -45,7 +45,7 @@ class PollSurveyXpress
 
         wp_enqueue_script('jquery');
         wp_enqueue_script('Piechart', plugin_dir_url(__FILE__) . 'js/Piechart.js');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.4', true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.5', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
@@ -305,6 +305,8 @@ class PollSurveyXpress
                 }
             }
         }
+        $url = admin_url('admin.php?page=poll-survey-xpress-add&template=Multiple+Choice&poll_id=' . $poll_id . '&action=edit');
+        echo ($url);
         wp_die();
     }
 
@@ -415,6 +417,8 @@ class PollSurveyXpress
                 }
             }
         }
+        $url = admin_url('admin.php?page=poll-survey-xpress-add&template=Rating&poll_id=' . $poll_id . '&action=edit');
+        echo ($url);
         wp_die();
     }
 
@@ -524,6 +528,8 @@ class PollSurveyXpress
                 $wpdb->insert($wpdb->prefix . 'polls_psx_survey_answers', $answer_data);
             }
         }
+        $url = admin_url('admin.php?page=poll-survey-xpress-add&template=Open+ended&poll_id=' . $poll_id . '&action=edit');
+        echo ($url);
         wp_die();
     }
 

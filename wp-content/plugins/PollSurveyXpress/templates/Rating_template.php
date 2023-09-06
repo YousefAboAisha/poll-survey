@@ -546,7 +546,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         poll_data: JSON.stringify(finalObj),
                         nonce: nonce,
                     },
-                    success: function(shortcode) {
+                    success: function(url) {
                         console.log("Done");
                         save_button.textContent = "Save";
                         save_button.disabled = false;
@@ -572,7 +572,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         bootstrapToast.show();
 
                         setTimeout(() => {
-                            window.location.reload();
+                            window.location.href= url;
                         }, 500)
                     },
                     error: function(error) {
