@@ -182,8 +182,8 @@ class PollSurveyXpress
 
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
-        update_option('PSX_expire_message', $settings_data['expire_message']);
-        update_option('PSX_status_message', $settings_data['status_message']);
+        update_option('PSX_expire_message', $settings_data['expire_message']!='' ? $settings_data['expire_message'] : "Your survey has expired.");
+        update_option('PSX_status_message', $settings_data['status_message']!='' ? $settings_data['status_message'] : "This survey is expired.");
 
         $admin_email = get_option('admin_email');
         // Get the submitted admin email from the form

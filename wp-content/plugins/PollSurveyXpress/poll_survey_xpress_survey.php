@@ -44,10 +44,10 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                             <h4 class="fw-bolder col-4 m-0 p-0"> <?php _e('Recent Surveys', 'psx-poll-survey-plugin'); ?></h4>
 
                             <div class="d-flex gap-2 align-items-center m-0 p-0">
-                                <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0"><?php _e('New Survey', 'psx-poll-survey-plugin'); ?>
+                                <a title="Add New Poll" href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add'); ?>" class="btn btn-dark m-0"><?php _e('New Survey', 'psx-poll-survey-plugin'); ?>
                                     <i style="cursor: pointer" class="fas fa-plus text-white ms-2"></i>
                                 </a>
-                                <a href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0"><?php _e('Recycle Bin', 'psx-poll-survey-plugin'); ?> <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
+                                <a title="Archived Polls" href="<?php echo (admin_url('admin.php?page=poll-survey-xpress-recycle')); ?>" class="btn btn-danger m-0"><?php _e('Recycle Bin', 'psx-poll-survey-plugin'); ?> <i style="cursor: pointer" class="fas fa-trash text-white ms-2"></i></a>
                             </div>
                         </div>
 
@@ -111,24 +111,24 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <span class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
+                                                        <span title="Status of poll" class="badge badge-sm bg-gradient-<?php echo ($poll->status == 'active') ? 'success' : 'danger'; ?>">
                                                             <?php echo ucfirst($poll->status); ?>
                                                         </span>
                                                     </td>
 
                                                     <td class="align-middle">
                                                         <input title="Normal Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[<?php echo $poll->Short_Code; ?>]'>
-                                                        <input title="Button Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[<?php echo $poll->Short_Code; ?> btn]'>
+                                                        <input title="Modal Shortcode" style="width: 180px;" type="text" readonly class="pollInput form-control text-xs mb-0 border-0 bg-transparent" value='[<?php echo $poll->Short_Code; ?> btn]'>
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p class="text-xs mb-0">
+                                                        <p class="text-xs mb-0" title="When will the poll expired">
                                                             <?php echo $poll->end_date; ?>
                                                         </p>
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p class="text-xs mb-0">
+                                                        <p class="text-xs mb-0"  title="type of template of poll">
                                                             <?php echo $poll->template; ?>
                                                         </p>
                                                     </td>
@@ -136,17 +136,17 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
 
                                                     <td class="text-center d-flex align-items-center justify-content-center px-0 p-4 gap-lg-3 gap-md-2 gap-1" style="height: 77px;">
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id); ?>">
-                                                            <i class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
+                                                            <i title="Analysis Of Poll" class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit');?>">
-                                                            <i class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
+                                                            <i title="Edit Page For Poll" class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
-                                                            <i class="fa fa-gear text-sm text-dark" style="cursor: pointer"></i>
+                                                            <i title="Edit Settings For Poll" class="fa fa-gear text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
-                                                        <i style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
+                                                        <i title="Move Poll to Trash (Archive it)" style="cursor: pointer" class="fas fa-trash text-sm text-danger archiveButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-poll-id="<?php echo $poll->poll_id; ?>"></i>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -158,9 +158,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                     </div>
 
                     <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                        <button class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"><?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
+                        <button  title="Previous Polls" class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"><?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
                         <span class="m-0 p-0" id="currentPage"><?php _e('Page', 'psx-poll-survey-plugin'); ?> 1</span>
-                        <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
+                        <button  class="btn btn-white text-primary shadow-none m-0 border" id="nextPage" title="Next Polls"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                     </div>
                 </div>
             </div>

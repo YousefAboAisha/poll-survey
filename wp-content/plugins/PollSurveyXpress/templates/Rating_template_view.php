@@ -69,6 +69,43 @@ $poll_num_of_unsigned_votes = $wpdb->get_var(
         $poll_id
     )
 );
+$end_date = current_time('mysql'); // Get the current date and time in MySQL format
+$start_date = date('Y-m-d H:i:s', strtotime('-7 days', strtotime($end_date))); // Calculate the start date as 7 days ago
+
+// Create an array of all dates in the last week
+$all_dates = [];
+$current_date = strtotime($start_date);
+$end_timestamp = strtotime($end_date);
+
+while ($current_date <= $end_timestamp) {
+    $all_dates[] = date('Y-m-d', $current_date);
+    $current_date = strtotime('+1 day', $current_date);
+}
+
+// Create a query to retrieve the vote counts for each date
+$votes_query = $wpdb->prepare("
+    SELECT DATE(answerd_at) AS date, COUNT(*) AS vote_count
+    FROM {$wpdb->prefix}polls_psx_survey_responses
+    WHERE poll_id = %d
+    AND answerd_at BETWEEN %s AND %s
+    GROUP BY DATE(answerd_at)
+", $poll_id, $start_date, $end_date);
+
+$votes_data = $wpdb->get_results($votes_query);
+
+// Create an associative array to store the vote counts for each date
+$vote_counts = [];
+foreach ($votes_data as $row) {
+    $vote_counts[$row->date] = $row->vote_count;
+}
+
+// Fill in missing dates with zero votes
+$result_data = [];
+foreach ($all_dates as $date) {
+    $vote_count = isset($vote_counts[$date]) ? $vote_counts[$date] : 0;
+    $result_data[] = ['date' => $date, 'vote_count' => $vote_count];
+}
+var_dump($result_data);
 ?>
 
 <!DOCTYPE html>
