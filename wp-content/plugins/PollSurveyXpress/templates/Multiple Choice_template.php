@@ -148,9 +148,10 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
     </div>
 
 
+
     <!-- Fixed Plugin settings -->
     <div class="modal fade" id="settingsModal">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered rounded-3">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
@@ -159,7 +160,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 </div>
 
                 <!-- Modal body -->
-                <form class="modal-body card">
+                <div onsubmit="(e) => e.preventDefault()" class="modal-body card rounded">
                     <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                     <div>
                         <label><?php _e('Change plugin Theme', 'psx-poll-survey-plugin'); ?></label>
@@ -216,14 +217,14 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                    <?php echo $poll_data[0]->cta_Text; ?>
+                                    <?php echo ($poll_data[0]->cta_Text != '' ? $poll_data[0]->cta_Text : "Do The Survey Now!"); ?>
                                 </button>
                                 <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
-
                             </div>
                         </div>
                     </div>
-                </form>
+                    <button id="save_settings_button" onclick="(e)=> e.preventDefault();" class="btn btn-primary w-100" data-bs-dismiss="modal"><?php _e('SAVE', 'psx-poll-survey-plugin'); ?></button>
+                </div>
             </div>
         </div>
     </div>
@@ -236,7 +237,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             ctaInput.addEventListener("keyup", () => {
                 if (ctaInput.value == "") {
-                    ctaButton.innerText = "CTA Title";
+                    ctaButton.innerText = "Do The Survey Now!";
                 } else {
                     ctaButton.innerText = ctaInput.value;
                 }
@@ -289,10 +290,18 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             const save_button = document.getElementById("save_button");
             const nonce = jQuery("#my-ajax-nonce").val();
 
+            const save_settings_button = document.getElementById("save_settings_button")
+
+            save_settings_button.addEventListener("click", () => {
+                save_button.scrollIntoView({
+                    behavior: "smooth"
+                })
+                save_button.classList.add("pulse")
+            })
+
             if (cardsContainer.childElementCount > 0) {
                 save_button.disabled = false
             }
-
 
             function createOption(optionTitle) {
                 const newOption = document.createElement("div");
@@ -505,6 +514,18 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             });
 
             let is_first_button_click = true;
+            const settings_icon = document.getElementById("settings_icon");
+
+            const popoverContent = document.createElement("div");
+            popoverContent.style.cssText = "bottom:20px; right:20px";
+            popoverContent.innerHTML = "Click here to edit the survey settings";
+
+            const popoverInstance = new bootstrap.Popover(settings_icon, {
+                content: popoverContent,
+                trigger: "focus",
+                html: true, // Enable HTML content in the popover
+            });
+
 
             save_button.addEventListener("click", () => {
 
@@ -575,14 +596,15 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 } else {
 
                     if (is_first_button_click) {
-                        const settings_icon = document.getElementById("settings_icon");
                         settings_icon.classList.add("shake");
+                        popoverInstance.show(); // Show the popover
 
                         settings_icon.addEventListener("click", () => {
                             settings_icon.classList.remove("shake");
                             is_first_button_click = false
-                        })
+                            popoverInstance.hide(); // Show the popover
 
+                        })
                     } else {
                         save_button.disabled = true;
                         save_button.innerHTML =

@@ -162,12 +162,14 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
     </main>
 
     <!-- Fixed plugin settings ICON -->
-    <div data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-white shadow-sm rounded-circle text-dark">
+    <div title="Edit survey settings" id="settings_icon" data-bs-toggle="modal" data-bs-target="#settingsModal" style="cursor: pointer" class="position-fixed bottom-4 end-2 px-3 py-2 bg-primary shadow-sm rounded-circle text-white border">
         <i class="fa fa-cog py-2"> </i>
     </div>
+
+
     <!-- Fixed Plugin settings -->
     <div class="modal fade" id="settingsModal">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered rounded-3">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
@@ -176,7 +178,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 </div>
 
                 <!-- Modal body -->
-                <form class="modal-body card">
+                <div onsubmit="(e) => e.preventDefault()" class="modal-body card rounded">
                     <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
                     <div>
                         <label><?php _e('Change plugin Theme', 'psx-poll-survey-plugin'); ?></label>
@@ -188,7 +190,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="text_color" value="<?php echo $isItEditPage ? $poll_data[0]->color : "#344767"; ?>" />
                             <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
-
                         </div>
                     </div>
 
@@ -216,7 +217,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                             <div>
                                 <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
+                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
@@ -227,7 +228,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
                                     <?php _e('Show results after', 'psx-poll-survey-plugin'); ?>
-
                                 </label>
                                 <input type="number" class="form-control border rounded-1 p-1 w-55" placeholder="Number of votes" id="min_votes_input" value="<?php echo $poll_data[0]->min_votes; ?>" />
                             </div>
@@ -235,24 +235,25 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                                 <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                    <?php echo $poll_data[0]->cta_Text; ?>
+                                    <?php echo ($poll_data[0]->cta_Text != '' ? $poll_data[0]->cta_Text : "Do The Survey Now!"); ?>
                                 </button>
                                 <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
-
                             </div>
                         </div>
                     </div>
-                </form>
+                    <button id="save_settings_button" onclick="(e)=> e.preventDefault();" class="btn btn-primary w-100" data-bs-dismiss="modal"><?php _e('SAVE', 'psx-poll-survey-plugin'); ?></button>
+                </div>
             </div>
         </div>
     </div>
+
     <script>
         const ctaInput = document.getElementById("cta_input");
         const ctaButton = document.getElementById("cta_button");
 
         ctaInput.addEventListener("keyup", () => {
             if (ctaInput.value == "") {
-                ctaButton.innerText = "CTA Title";
+                ctaButton.innerText = "Do The Survey Now!";
             } else {
                 ctaButton.innerText = ctaInput.value;
             }
@@ -311,6 +312,15 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
         var nonce = jQuery('#my-ajax-nonce').val();
+
+        const save_settings_button = document.getElementById("save_settings_button")
+
+        save_settings_button.addEventListener("click", () => {
+            save_button.scrollIntoView({
+                behavior: "smooth"
+            })
+            save_button.classList.add("pulse")
+        })
 
         // Rates data
         const rateInputs = document.querySelectorAll("#rateInputs input");
@@ -388,10 +398,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     id="radio5"
                     />
             `;
-
                 questionsGroup.appendChild(newQuestionDiv);
                 counter++;
-
             }
 
             if (questionsArray.length > 0) {
@@ -422,11 +430,11 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 }
             }
             updateButtonStates()
-
         });
 
         updateButtonStates()
 
+        let is_first_button_click = true;
 
 
         save_button.addEventListener("click", () => {
@@ -512,78 +520,101 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     }
                 });
             } else {
-                save_button.disabled = true;
-                save_button.innerHTML =
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                settingObj = {
-                    cta_Text: cta_input.value,
-                    start_date: start_date.value,
-                    end_date: end_date.value,
-                    status: active_plugin.checked,
-                    color: text_color.value,
-                    bgcolor: bg_color.value,
-                    real_time_result_text: show_results_input.value,
-                    real_time_check: show_results.checked,
-                    min_votes: min_votes_input.value,
-                    button_color : button_color.value,
-                };
+                if (is_first_button_click) {
+                    settings_icon.classList.add("shake");
+                    var popoverContent = document.createElement("div");
+                    popoverContent.style.cssText = "bottom:20px; right:20px";
+                    popoverContent.innerHTML = "Click here to edit the survey settings";
 
-                finalObj = {
-                    surveyTitle: pullTitle.value,
-                    questions: data.pollCards,
-                    ratesArray: ratesArray,
-                    settings: settingObj,
-                    template: "Rating",
-                    type: pullTitle.getAttribute("data-type"),
-                    poll_id: pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
-                };
+                    const popoverInstance = new bootstrap.Popover(settings_icon, {
+                        content: popoverContent,
+                        trigger: "focus",
+                        html: true, // Enable HTML content in the popover
+                    });
+                    popoverInstance.show(); // Show the popover
 
-                console.log(finalObj);
+                    settings_icon.addEventListener("click", () => {
+                        settings_icon.classList.remove("shake");
+                        is_first_button_click = false
+                        popoverInstance.hide(); // Show the popover
 
-                jQuery.ajax({
-                    type: "POST",
-                    url: my_ajax_object.ajaxurl,
-                    data: {
-                        action: "PSX_save_poll_rating_data",
-                        poll_data: JSON.stringify(finalObj),
-                        nonce: nonce,
-                    },
-                    success: function(url) {
-                        console.log("Done");
-                        save_button.textContent = "Save";
-                        save_button.disabled = false;
+                    })
+                } else {
+                    save_button.disabled = true;
+                    save_button.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                    settingObj = {
+                        cta_Text: cta_input.value,
+                        start_date: start_date.value,
+                        end_date: end_date.value,
+                        status: active_plugin.checked,
+                        color: text_color.value,
+                        bgcolor: bg_color.value,
+                        real_time_result_text: show_results_input.value,
+                        real_time_check: show_results.checked,
+                        min_votes: min_votes_input.value,
+                        button_color: button_color.value,
+                    };
+
+                    finalObj = {
+                        surveyTitle: pullTitle.value,
+                        questions: data.pollCards,
+                        ratesArray: ratesArray,
+                        settings: settingObj,
+                        template: "Rating",
+                        type: pullTitle.getAttribute("data-type"),
+                        poll_id: pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
+                    };
+
+                    console.log(finalObj);
+
+                    jQuery.ajax({
+                        type: "POST",
+                        url: my_ajax_object.ajaxurl,
+                        data: {
+                            action: "PSX_save_poll_rating_data",
+                            poll_data: JSON.stringify(finalObj),
+                            nonce: nonce,
+                        },
+                        success: function(url) {
+                            console.log("Done");
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
 
 
-                        // Create a new toast element
-                        var toast = document.createElement("div");
-                        toast.style = "z-index:1000; right: 10px; bottom: 10px";
-                        toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
-                        toast.innerHTML = `
+                            // Create a new toast element
+                            var toast = document.createElement("div");
+                            toast.style = "z-index:1000; right: 10px; bottom: 10px";
+                            toast.className = "position-fixed p-2 px-4 bg-success border rounded-2";
+                            toast.innerHTML = `
                             <p class="m-0 fw-bold text-xs text-white">
                             New survey has been added successfully!
                             </p>
                         `;
-                        // Append the toast to the document
-                        document.body.appendChild(toast);
+                            // Append the toast to the document
+                            document.body.appendChild(toast);
 
-                        // Initialize the Bootstrap toast with custom options
-                        var bootstrapToast = new bootstrap.Toast(toast, {
-                            autohide: true, // Set to true to enable automatic hiding
-                            delay: 2000,
-                        });
-                        bootstrapToast.show();
+                            // Initialize the Bootstrap toast with custom options
+                            var bootstrapToast = new bootstrap.Toast(toast, {
+                                autohide: true, // Set to true to enable automatic hiding
+                                delay: 2000,
+                            });
+                            bootstrapToast.show();
 
-                        setTimeout(() => {
-                            window.location.href= url;
-                        }, 500)
-                    },
-                    error: function(error) {
-                        console.error("Error:", error);
-                        save_button.textContent = "Save";
-                        save_button.disabled = false;
-                    },
-                });
+                            setTimeout(() => {
+                                window.location.href = url;
+                            }, 500)
+                        },
+                        error: function(error) {
+                            console.error("Error:", error);
+                            save_button.textContent = "Save";
+                            save_button.disabled = false;
+                        },
+                    });
+
+                }
             }
+
         })
 
         const voteCheckbox = document.getElementById("show_results");

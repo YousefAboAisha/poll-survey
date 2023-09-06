@@ -110,7 +110,7 @@ if (!$poll_data) {
                     <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                         <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add CTA Button Title', 'psx-poll-survey-plugin'); ?>" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
                         <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                            <?php echo $poll_data->cta_Text == "" ? "CTA title" : $poll_data->cta_Text; ?>
+                            <?php echo $poll_data->cta_Text == "" ? "Open survey" : $poll_data->cta_Text; ?>
                         </button>
                         <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
 
@@ -257,7 +257,7 @@ if (!$poll_data) {
 
         ctaInput.addEventListener("keyup", () => {
             if (ctaInput.value == "") {
-                ctaButton.innerText = "CTA Title";
+                ctaButton.innerText = "Open survey";
             } else {
                 ctaButton.innerText = ctaInput.value;
             }
