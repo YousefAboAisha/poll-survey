@@ -434,7 +434,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
         updateButtonStates()
 
-        let is_first_button_click = true
+        let is_first_button_click = true;
+
+
         save_button.addEventListener("click", () => {
             const textFields = document.querySelectorAll(".question-container input")
 
@@ -519,16 +521,25 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 });
             } else {
                 if (is_first_button_click) {
-                    const settings_icon = document.getElementById("settings_icon");
                     settings_icon.classList.add("shake");
+                    var popoverContent = document.createElement("div");
+                    popoverContent.style.cssText = "bottom:20px; right:20px";
+                    popoverContent.innerHTML = "Click here to edit the survey settings";
+
+                    const popoverInstance = new bootstrap.Popover(settings_icon, {
+                        content: popoverContent,
+                        trigger: "focus",
+                        html: true, // Enable HTML content in the popover
+                    });
+                    popoverInstance.show(); // Show the popover
 
                     settings_icon.addEventListener("click", () => {
                         settings_icon.classList.remove("shake");
                         is_first_button_click = false
+                        popoverInstance.hide(); // Show the popover
+
                     })
-
                 } else {
-
                     save_button.disabled = true;
                     save_button.innerHTML =
                         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
