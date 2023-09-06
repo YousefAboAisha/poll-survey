@@ -96,6 +96,125 @@ foreach ($all_dates as $date) {
     $result_data[] = ['date' => $date, 'vote_count' => $vote_count];
 }
 var_dump($result_data);
+
+//Adding code to get perecentage of each answer
+
+
+    $poll_questions = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT question_id FROM {$wpdb->prefix}polls_psx_survey_questions WHERE poll_id = %d",
+            $poll_id
+        )
+    );
+    $response_ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT response_id FROM {$wpdb->prefix}polls_psx_survey_responses WHERE poll_id = %d",
+            $poll_id
+        )
+    );
+    $responses_data = array();
+    foreach ($response_ids as $id) {
+        $response_data = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT question_id, answer_id FROM {$wpdb->prefix}polls_psx_survey_responses_data WHERE response_id = %s",
+                $id
+            )
+        );
+        $responses_data[] = $response_data;
+    }
+    $answers_for_each_question = array();
+    foreach ($poll_questions as $question) {
+        //get the answers for each question
+        $question_id = $question->question_id;
+        $question_answers = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT answer_id FROM {$wpdb->prefix}polls_psx_survey_answers WHERE question_id = %d",
+                $question_id
+            )
+        );
+        $answers_for_each_question[$question_id] = $question_answers;
+    }
+    $allAnswerChoices = array();
+    foreach ($poll_questions as $question) {
+        $questionId = $question->question_id;
+        $questionAnswers = $answers_for_each_question[$questionId];
+        $allAnswerChoices[$questionId] = array_column($questionAnswers, 'answer_id');
+    }
+    $chosenAnswerChoices = array();
+    foreach ($responses_data as $response) {
+        foreach ($response as $answer) {
+            $questionId = $answer->question_id;
+            $answerId = $answer->answer_id;
+            $chosenAnswerChoices[$questionId][$answerId] = true;
+        }
+    }
+
+
+    $answerCounts = array();
+    $answeredQuestions = array();
+    foreach ($responses_data as $response) {
+        foreach ($response as $answer) {
+            $questionId = $answer->question_id;
+            $answerId = $answer->answer_id;
+
+            if (!isset($answerCounts[$questionId])) {
+                $answerCounts[$questionId] = array();
+                $answeredQuestions[$questionId] = array(); // Keep track of answered questions
+            }
+
+            if (!isset($answerCounts[$questionId][$answerId])) {
+                $answerCounts[$questionId][$answerId] = 0;
+                $answeredQuestions[$questionId][] = $answerId;
+            }
+
+            $answerCounts[$questionId][$answerId]++;
+        }
+    }
+
+    $questions = array();
+    foreach ($answerCounts as $questionId => $answerData) {
+        if (!isset($questions[$questionId])) {
+            $questions[$questionId] = array();
+        }
+
+        $answeredAnswers = $answeredQuestions[$questionId]; // Maintain order of creation
+        foreach ($answeredAnswers as $answerId) {
+            if (!isset($questions[$questionId][$answerId])) {
+                $questions[$questionId][$answerId] = 0;
+            }
+
+            $questions[$questionId][$answerId] += $answerCounts[$questionId][$answerId];
+        }
+    }
+
+    // Calculate the total response count
+    $totalResponses = count($responses_data);
+
+    // Calculate percentages including unanswered questions
+    $percentages = array();
+    foreach ($allAnswerChoices as $questionId => $answerChoices) {
+        $totalAnswers = count($answerChoices);
+        $percentages[$questionId] = array();
+
+        foreach ($answerChoices as $answerId) {
+            if (isset($chosenAnswerChoices[$questionId][$answerId])) {
+                $count = isset($answerCounts[$questionId][$answerId]) ? $answerCounts[$questionId][$answerId] : 0;
+            } else {
+                $count = 0;
+            }
+
+            $percentage = ($totalResponses > 0) ? (($count / $totalResponses) * 100) : 0;
+            $formattedPercentage = number_format($percentage, 2);
+            $percentages[$questionId][$answerId] = $formattedPercentage;
+        }
+    }
+
+    // Calculate the total percentage for each question
+    $totalPercentages = array();
+    foreach ($percentages as $questionId => $answerData) {
+        $totalPercentage = array_sum($answerData);
+        $totalPercentages[$questionId] = number_format($totalPercentage, 2);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -169,7 +288,13 @@ var_dump($result_data);
 
                     </div>
                 </div>
-
+                <div id="result-container" class="position-absolute align-items-center justify-content-between gap-2 w-75 bottom-0" data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '">
+                    <div class="progress-bar bg-transparent transition-progress-bar">
+                        <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                        <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
+                    </div>
+                    <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                </div>
                 <div class="col">
                     <div class="z-index-2">
                         <div class="card-header pb-0">
@@ -480,6 +605,32 @@ var_dump($result_data);
             });
         });
     </script>
+
+    <script> 
+    
+        var questionId = elem.getAttribute("data-question-id");
+            var answerId = elem.getAttribute("data-answer-id");
+            const percentage_bar = elem.querySelector(
+              ".progress-bar .percentage-bar"
+            );
+            const percentage_value = elem.querySelector(".percentage-value");
+
+            // Check if the percentages data for this question exists
+            if (percentages.hasOwnProperty(questionId)) {
+              var question_data = percentages[questionId];
+              const randomBgColor = generateRandomHexColor();
+
+              // Check if the percentage data for this answer exists
+              if (question_data.hasOwnProperty(answerId)) {
+                var percentageValue = parseFloat(question_data[answerId]);
+                percentageValue = !isNaN(percentageValue) ? percentageValue : 0;
+
+                // Update the percentage bar and value for this specific answer
+                percentage_bar.style.cssText = `width:${percentageValue}% !important; z-index:5; background-color:${randomBgColor} !important;`;
+                percentage_value.textContent = `${percentageValue.toFixed(2)}%`;
+              }
+            }
+        </script>
 </body>
 
 </html>
