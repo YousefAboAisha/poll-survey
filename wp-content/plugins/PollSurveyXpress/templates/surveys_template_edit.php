@@ -15,7 +15,6 @@ if (!$poll_data) {
     return;
 }
 
-$poll_data_json = json_encode($poll_data);
 
 ?>
 
@@ -47,7 +46,7 @@ $poll_data_json = json_encode($poll_data);
                     <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                     <input type="color" class="form-control form-control-color border-0 p-0 w-8" id="text_color" value="<?php echo $poll_data->color; ?>" />
                     <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-8 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
+                    <input type="color" class="form-control form-control-color border-0 p-0 w-8 me-2" id="button_color" value="<?php echo $poll_data->button_color ?>" />
                 </div>
             </div>
 
@@ -67,37 +66,39 @@ $poll_data_json = json_encode($poll_data);
 
             <div class="px-2">
                 <div class="form-group d-flex flex-column">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data->status === 'active' ? 'checked' : ''; ?> />
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data->status == "active" ? "checked" : ""; ?> />
                         <label class="form-check-label" for="active_plugin">
                             <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?>
-
                         </label>
                     </div>
 
-                    <div>
+                    <div class="mt-2">
 
-                        <div>
-                            <label for="show_results">
-                                <?php _e('Thanking Message', 'psx-poll-survey-plugin'); ?>
-                            </label>
-                        </div>
-                        <?php if (!($poll_data->template == 'Open ended')){
-                            ?>
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
-                            <label class="form-check-label" for="show_results">
-                                <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
-                            </label>
-                        </div>
-                        <?php
-                        } else{
-                            
+
+                        <?php if (($poll_data->template == 'Open ended')) {
                         ?>
-                        <input class="form-check-input d-none" type="checkbox" id="show_results" <?php echo empty($poll_data->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
+                            <div>
+                                <label for="show_results">
+                                    <?php _e('Thanking Message', 'psx-poll-survey-plugin'); ?>
+                                </label>
+                                <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add Thank Message', 'psx-poll-survey-plugin'); ?>" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" />
+                            </div>
+
+                        <?php
+                        } else {
+                        ?>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="show_results" onchange="toggleInputState()" />
+                                <label class="form-check-label" for="show_results">
+                                    <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
+                                </label>
+                            </div>
+
+                            <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add Thank Message', 'psx-poll-survey-plugin'); ?>" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" />
                         <?php
                         } ?>
-                        <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="<?php _e('Add Thank Message', 'psx-poll-survey-plugin'); ?>" value="<?php echo $poll_data->real_time_result_text; ?>" id="show_results_input" <?php echo empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
+
                     </div>
 
                     <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
@@ -109,7 +110,7 @@ $poll_data_json = json_encode($poll_data);
                     <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
                         <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add CTA Button Title', 'psx-poll-survey-plugin'); ?>" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
                         <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                            <?php echo $poll_data->cta_Text; ?>
+                            <?php echo $poll_data->cta_Text == "" ? "CTA title" : $poll_data->cta_Text; ?>
                         </button>
                     </div>
                 </div>
@@ -134,10 +135,12 @@ $poll_data_json = json_encode($poll_data);
             }
         }
 
-        // Call the function initially to set the input state based on checkbox status
-        toggleInputState();
-    </script>
+        jQuery(document).ready(function(jQuery) {
+            toggleInputState();
+        })
 
+        // Call the function initially to set the input state based on checkbox status
+    </script>
 
     <script>
         jQuery(document).ready(function(jQuery) {
@@ -156,6 +159,7 @@ $poll_data_json = json_encode($poll_data);
             const cta_input = document.getElementById("cta_input");
             const save_button = document.getElementById("save_button");
             const button_color = document.getElementById("button_color");
+
             let settingObj = {}
             var nonce = jQuery('#my-ajax-nonce').val();
             save_button.addEventListener("click", (e) => {
@@ -181,10 +185,9 @@ $poll_data_json = json_encode($poll_data);
                     color: text_color.value,
                     bgcolor: bg_color.value,
                     real_time_result_text: show_results_input.value,
-                    real_time_check: show_results.checked,
+                    real_time_check: show_results ? show_results.checked : false,
                     min_votes: min_votes_input.value,
                     button_color: button_color.value,
-
                 };
 
                 console.log(settingObj);
@@ -215,7 +218,6 @@ $poll_data_json = json_encode($poll_data);
                             // Append the toast to the document
                             document.body.appendChild(toast);
 
-                            // Initialize the Bootstrap toast
                             // Initialize the Bootstrap toast with custom options
                             var bootstrapToast = new bootstrap.Toast(toast, {
                                 autohide: true, // Set to true to enable automatic hiding
@@ -234,7 +236,7 @@ $poll_data_json = json_encode($poll_data);
         });
     </script>
 
-    <!-- Disable vote Input -->
+    <!-- Show resulst type toggle -->
     <script>
         const voteCheckbox = document.getElementById("show_results");
         const limitsInput = document.getElementById("show_results_input");
@@ -243,6 +245,19 @@ $poll_data_json = json_encode($poll_data);
                 limitsInput.disabled = false;
             } else {
                 limitsInput.disabled = true;
+            }
+        });
+    </script>
+
+    <script>
+        const ctaInput = document.getElementById("cta_input");
+        const ctaButton = document.getElementById("cta_button");
+
+        ctaInput.addEventListener("keyup", () => {
+            if (ctaInput.value == "") {
+                ctaButton.innerText = "CTA Title";
+            } else {
+                ctaButton.innerText = ctaInput.value;
             }
         });
     </script>

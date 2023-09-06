@@ -135,7 +135,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             <span class="text-sm fw-bold"><?php _e('Text color', 'psx-poll-survey-plugin'); ?> </span>
                             <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="text_color" value="<?php echo $isItEditPage ? $poll_data[0]->color : "#344767"; ?>" />
                             <span class="text-sm fw-bold"><?php _e('Button color', 'psx-poll-survey-plugin'); ?> </span>
-                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />                        
+                            <input type="color" class="form-control form-control-color border-0 p-0 w-10 me-2" id="button_color" value="<?php echo $isItEditPage ? $poll_data[0]->button_color : "#cb0c9f"; ?>" />
                         </div>
                     </div>
 
@@ -162,22 +162,20 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             </div>
 
                             <div>
-                                
                                 <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data[0]->real_time_result_text; ?>" id="show_results_input" <?php echo !empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
                             </div>
 
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
                                     <?php _e('Show results after', 'psx-poll-survey-plugin'); ?>
-
                                 </label>
                                 <input type="number" class="form-control border rounded-1 p-1 w-55" placeholder="Number of votes" id="min_votes_input" value="<?php echo $poll_data[0]->min_votes; ?>" />
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                                <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
+                                <input type="text" class="form-control border rounded-1 p-1" placeholder="<?php _e('Add CTA Button Title', 'psx-poll-survey-plugin'); ?>" id="cta_input" value="<?php echo $poll_data->cta_Text; ?>" />
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                    <?php echo $poll_data[0]->cta_Text; ?>
+                                    <?php echo $poll_data->cta_Text == "" ? "CTA title" : $poll_data->cta_Text; ?>
                                 </button>
                             </div>
                         </div>
@@ -407,7 +405,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         })
     </script>
 
-    <!-- Disable vote Input -->
+    <!-- CTA button preview -->
     <script>
         const ctaInput = document.getElementById("cta_input");
         const ctaButton = document.getElementById("cta_button");
