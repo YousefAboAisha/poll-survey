@@ -229,6 +229,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         </div>
     </div>
 
+    
     <script>
         // Multiple Choice Template Add Poll
         jQuery(document).ready(function(jQuery) {
@@ -594,7 +595,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         }
                     });
                 } else {
-
                     if (is_first_button_click) {
                         settings_icon.classList.add("shake");
                         popoverInstance.show(); // Show the popover

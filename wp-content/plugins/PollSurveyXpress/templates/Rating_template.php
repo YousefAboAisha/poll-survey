@@ -435,6 +435,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         updateButtonStates()
 
         let is_first_button_click = true;
+        let flag = false;
 
 
         save_button.addEventListener("click", () => {
@@ -521,17 +522,23 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 });
             } else {
                 if (is_first_button_click) {
-                    settings_icon.classList.add("shake");
-                    var popoverContent = document.createElement("div");
+                    const popoverContent = document.createElement("div");
                     popoverContent.style.cssText = "bottom:20px; right:20px";
                     popoverContent.innerHTML = "Click here to edit the survey settings";
+
 
                     const popoverInstance = new bootstrap.Popover(settings_icon, {
                         content: popoverContent,
                         trigger: "focus",
                         html: true, // Enable HTML content in the popover
                     });
-                    popoverInstance.show(); // Show the popover
+
+                    settings_icon.classList.add("shake");
+                    if (!flag) {
+                        popoverInstance.show(); // Show the popover
+                    }
+
+                    flag = true
 
                     settings_icon.addEventListener("click", () => {
                         settings_icon.classList.remove("shake");
