@@ -1431,7 +1431,6 @@ class PollSurveyXpress
     {
         global $wpdb;
         $poll_id = intval($_POST['poll_id']); // Use intval to ensure it's treated as an integer
-        var_dump($poll_id);
 
 
         $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";
