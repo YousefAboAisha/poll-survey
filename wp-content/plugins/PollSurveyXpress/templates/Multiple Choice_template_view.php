@@ -253,7 +253,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                     </div>
                 </div>
 
-
                 <div class="d-flex align-items-center justify-content-between flex-wrap mt-4 col-10">
                     <div class="d-flex flex-column align-items-center justify-content-center gap-2 mb-2">
                         <p class="text-xs mt-1 mb-0 font-weight-bold"><?php _e('Questions', 'psx-poll-survey-plugin'); ?></p>
@@ -286,6 +285,7 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
             </div>
         </div>
 
+
         <div class="mt-6 p-0 pb-4">
             <h4 class="mb-4 align-self-start p-0">
                 <?php echo ((json_decode(($poll_data_json), true)['title'])); ?></h4>
@@ -301,7 +301,7 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                 ?>
                         <div class="col">
                             <div class="position-relative flex-column gap-2 border rounded-3 bg-white m-0 p-4 ">
-                                <h6 class="mt-2">
+                                <h6 class="mt-2 text-lg fw-bolder">
                                     <?php echo $index + 1 . ") " . $question['question_text']; ?>
                                 </h6>
                                 <?php
@@ -315,13 +315,19 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                                 $questions_with_answers_json = json_encode($answers);
                                 $answers = json_decode(($questions_with_answers_json), true); ?>
 
-                                <ul>
-                                    <?php foreach ($answers as $answer) { ?>
-                                        <li class="alpha-numeric m-0 text-sm ">
-                                            <?php echo $answer['answer_text'];  ?>
-                                        </li>
-                                    <?php } ?>
-                                </ul>
+
+                                <?php foreach ($answers as $answer) { ?>
+                                    <label class="m-0"> <?php echo $answer['answer_text'];  ?></label>
+                                    <div class="poll-answer position-relative d-flex align-items-center mb-2 py-2 gap-3">
+                                        <div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" style="display: flex !important;">
+                                            <div class="progress-bar bg-transparent transition-progress-bar">
+                                                <p style="z-index: 5; width: 100% !important;" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                                                <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
+                                            </div>
+                                            <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder">100.00%</p>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
                 <?php
