@@ -672,7 +672,7 @@ class PollSurveyXpress
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (!($count > 0 || $isUserVoted)) {
+                    if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="alraedy_vote_message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
