@@ -59,13 +59,13 @@
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
                         <p class="m-0"><?php _e('When poll status is (inactive)', 'psx-poll-survey-plugin'); ?></p>
                         <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is inactive) ', 'psx-poll-survey-plugin'); ?></p>
-                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="<?php echo get_option('PSX_status_message') ?>" >
+                        <input id="status_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" placeholder="Enter inactive message..." value="<?php echo get_option('PSX_status_message') ?>">
                     </div>
 
                     <div class="col-12 col-sm-8 col-md-6 col-lg-5 ">
                         <p class="m-0"><?php _e('When poll is (expired)', 'psx-poll-survey-plugin'); ?></p>
                         <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This message will be shown to the user, when the poll is date expired)', 'psx-poll-survey-plugin'); ?> </p>
-                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="<?php echo get_option('PSX_expire_message')?>" placeholder="Enter expire message...">
+                        <input id="expire_message" type="text" class="form-control border rounded-1 text-dark mb-2 p-2" value="<?php echo get_option('PSX_expire_message') ?>" placeholder="Enter expire message...">
                     </div>
 
                 </div>
@@ -131,7 +131,6 @@
                 status_message: status_message.value,
                 response_email: response_email.checked,
             }
-            console.log(finalObj);
             jQuery.ajax({
                 type: "POST",
                 url: my_ajax_object.ajaxurl,
@@ -141,7 +140,6 @@
                     nonce: nonce,
                 },
                 success: function(data) {
-                    console.log(data);
                     save_changes.textContent = "Save changes";
                     save_changes.disabled = false;
 

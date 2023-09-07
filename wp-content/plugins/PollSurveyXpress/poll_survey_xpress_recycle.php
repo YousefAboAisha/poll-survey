@@ -150,18 +150,18 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="p-2 m-0">
-                    <?php _e('Are you sure you want to permenently delete this survey?', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Are you sure you want to permenently delete this survey?', 'psx-poll-survey-plugin'); ?>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex justify-content-start">
                     <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">
-                    <?php _e('Delete', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Delete', 'psx-poll-survey-plugin'); ?>
                         <i class="fas fa-trash text-xs text-white m-1"></i>
                     </button>
                     <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
-                    <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
                     </button>
                 </div>
             </div>
@@ -174,7 +174,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
             const deleteButtons = document.querySelectorAll(".deleteButton");
             const confirm_delete = document.getElementById("confirm_delete");
             let rowsCount = document.querySelector("tr[data-count]").getAttribute("data-count")
-            console.log(rowsCount);
 
             restoreButtons.forEach(button => {
                 button.addEventListener("click", function(event) {
@@ -238,7 +237,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
             deleteButtons.forEach(button => {
                 button.addEventListener("click", function(event) {
                     const dataCardId = button.getAttribute("data-card-id");
-                    console.log("Delete data-card-id:", dataCardId);
                     id = dataCardId;
                 });
             });
@@ -253,7 +251,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                         poll_id: id
                     },
                     success: function() {
-                        console.log("Deleted");
                         const deletePollId = parseInt(id);
                         const rowToRemove = document.querySelector(
                             `tr[data-card-id="${deletePollId}"]`);

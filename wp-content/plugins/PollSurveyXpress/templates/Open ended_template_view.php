@@ -110,7 +110,7 @@ $questions = $wpdb->get_results($questions_query);
 // Step 2: Loop through the questions and retrieve their corresponding answers
 foreach ($questions as $question) {
     $question_id = $question->question_id;
-    
+
     // Query to get the answer text for each question
     $answers_query = $wpdb->prepare("
         SELECT srd.open_text_response
@@ -120,18 +120,17 @@ foreach ($questions as $question) {
         WHERE srd.question_id = %d
         AND sr.poll_id = %d
     ", $question_id, $poll_id);
-    
+
     $answers = $wpdb->get_results($answers_query);
-    
+
     // Create an array to store the answers for the current question
     $questionAnswers[$question_id] = array();
-    
+
     foreach ($answers as $answer) {
         // Add the answer to the array
         $questionAnswers[$question_id][] = $answer->open_text_response;
     }
 }
-var_dump($questionAnswers);
 ?>
 
 <!DOCTYPE html>
@@ -213,13 +212,26 @@ var_dump($questionAnswers);
                 // Check if decoding was successful
                 if ($questions_decoded !== null) {
                     foreach ($questions_decoded as $index => $question) {
+                        $answers_for_question = $questionAnswers[$question['question_id']];
                 ?>
                         <div class="col">
-                            <div class="m-0 p-4 rounded-3 border bg-white">
+                            <div class="poll-card d-flex flex-column m-0 p-4 rounded-3 border bg-white">
                                 <h6 class="mt-2">
                                     <?php echo $index + 1 . ") " . $question['question_text']; ?>
                                 </h6>
+
+                                <button title="Show answers" class="btn btn-white text-primary shadow-none m-0 border mt-2 mb-4 col-lg-4 col-md-5 col-4" id="toggle_button"><?php _e('Show answers', 'psx-poll-survey-plugin'); ?></button>
+
+
+                                <div id="answers_container" class="d-none flex-column gap-3">
+                                    <?php foreach ($answers_for_question as $index => $anwser) { ?>
+                                        <p class="m-0"><?php echo  $index + 1 . ") " . $anwser; ?></p>
+                                    <?php
+                                    } ?>
+                                </div>
+
                             </div>
+
                         </div>
                 <?php
                     }
@@ -228,7 +240,6 @@ var_dump($questionAnswers);
                 }
                 ?>
             </div>
-
         </div>
 
         <!-- Reset votes Modal -->
@@ -263,10 +274,6 @@ var_dump($questionAnswers);
         const chart_container = document.getElementById("chart-container")
         const totalPercentages_json = JSON.parse(chart_container.getAttribute("data-json-data"));
 
-        jQuery(document).ready(function(jQuery) {
-            console.log("Data", totalPercentages_json);
-            // Extract 'date' values into a separate array
-        })
 
         const datesArray = totalPercentages_json.map(item => item.date);
 
@@ -280,9 +287,6 @@ var_dump($questionAnswers);
 
         // Extract 'vote_count' values into a separate array
         const voteCountArray = totalPercentages_json.map(item => parseInt(item.vote_count));
-
-        console.log(datesArray);
-        console.log(voteCountArray);
 
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -365,8 +369,6 @@ var_dump($questionAnswers);
                     poll_id: confirm_delete.getAttribute("data-poll-id"),
                 },
                 success: function() {
-                    console.log('response');
-
                     setTimeout(() => {
                         window.location.reload()
                     }, 500)
@@ -376,7 +378,25 @@ var_dump($questionAnswers);
                 }
             });
         });
+
+        // toggle answers
+
+        // Get references to the button and the answers container
+        const pollCards = document.querySelectorAll('.poll-card');
+
+        pollCards.forEach((card) => {
+            const toggleButton = card.querySelector('#toggle_button');
+            const answersContainer = card.querySelector('#answers_container');
+
+            // Add a click event listener to the button
+            toggleButton.addEventListener('click', function() {
+                // Toggle the 'hidden-answers' class on the answers container to show/hide it
+                answersContainer.classList.toggle('hidden-answers');
+            });
+        });
     </script>
+
+
 
 </body>
 

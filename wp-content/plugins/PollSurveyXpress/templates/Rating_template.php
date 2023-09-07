@@ -289,16 +289,9 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const optionInput = document.getElementById("questionInput");
         const questionsGroup = document.getElementById("questionsGroup");
         const button_color = document.getElementById("button_color");
-
         let questionsArray = [];
         let counter = 1;
         let finalObj = {};
-
-        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
-
-        // jQuery(document).ready(function(jQuery) {
-        //     console.log(cards_array);
-        // })
 
 
         // Plugin Settings variables
@@ -573,8 +566,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                         poll_id: pullTitle.getAttribute("data-form-id") != null ? pullTitle.getAttribute("data-form-id") : null,
                     };
 
-                    console.log(finalObj);
-
                     jQuery.ajax({
                         type: "POST",
                         url: my_ajax_object.ajaxurl,
@@ -584,11 +575,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             nonce: nonce,
                         },
                         success: function(url) {
-                            console.log("Done");
                             save_button.textContent = "Save";
                             save_button.disabled = false;
-
-
                             // Create a new toast element
                             var toast = document.createElement("div");
                             toast.style = "z-index:1000; right: 10px; bottom: 10px";
