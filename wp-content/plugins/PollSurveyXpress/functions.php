@@ -45,7 +45,7 @@ class PollSurveyXpress
 
         wp_enqueue_script('jquery');
         wp_enqueue_script('Piechart', plugin_dir_url(__FILE__) . 'js/Piechart.js');
-        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.5', true);
+        wp_enqueue_script('plugin-custom', plugin_dir_url(__FILE__) . '/js/main.js', array('jquery'), '1.7', true);
         wp_enqueue_script('bootstrap-min-script', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('popper-extension-script', plugin_dir_url(__FILE__) . 'js/popper.min.js');
         wp_localize_script('plugin-custom', 'my_ajax_object', array(
@@ -78,11 +78,13 @@ class PollSurveyXpress
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('my_ajax_nonce'),
             ));
+            wp_enqueue_script('canvasjs', 'https://cdn.canvasjs.com/canvasjs.min.js', array(), null, true);
+
 
             //enqueue Style files
             wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
             wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
-            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.5");
+            wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.6");
         }
     }
 
@@ -182,8 +184,8 @@ class PollSurveyXpress
 
         update_option('PSX_clear_data', $settings_data['clear_data']);
         update_option('PSX_email', $settings_data['email']);
-        update_option('PSX_expire_message', $settings_data['expire_message']!='' ? $settings_data['expire_message'] : "Your survey has expired.");
-        update_option('PSX_status_message', $settings_data['status_message']!='' ? $settings_data['status_message'] : "This survey is expired.");
+        update_option('PSX_expire_message', $settings_data['expire_message'] != '' ? $settings_data['expire_message'] : "Your survey has expired.");
+        update_option('PSX_status_message', $settings_data['status_message'] != '' ? $settings_data['status_message'] : "This survey is expired.");
 
         $admin_email = get_option('admin_email');
         // Get the submitted admin email from the form
@@ -670,7 +672,7 @@ class PollSurveyXpress
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (($count > 0 || $isUserVoted)) {
+                    if (!($count > 0 || $isUserVoted)) {
                         $output = '<div>';
                         $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="alraedy_vote_message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
@@ -698,7 +700,7 @@ class PollSurveyXpress
                             <p class="m-0 text-center" style="font-size: 13px;">You have successfully added your votes</p>
                             </div>
                             ';
-                            
+
 
                             $output .= '<div class="modal-content" style="background-color:' . $poll_data[0]['bgcolor'] . ' !important;" >';
                             $output .= '<div id="mcq_container"  class="modal-body">';
@@ -725,7 +727,7 @@ class PollSurveyXpress
                                 $answers = $wpdb->get_results($query, ARRAY_A);
 
                                 foreach ($answers as $answer) {
-                                    $output .= '<div class="poll-answer position-relative d-flex align-items-center mb-2 p-2 gap-3">';
+                                    $output .= '<div class="poll-answer position-relative d-flex align-items-center mb-2 py-2 gap-3">';
                                     $output .= '<div class="d-flex align-items-center justify-content-center">';
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio m-0"  name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
                                     $output .= '</div>';
@@ -736,7 +738,7 @@ class PollSurveyXpress
                                             <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
                                             <p style="width: 100%;   background-color: #DDD;" class="m-0 rounded-2"></p>
                                         </div>
-                                        <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                                        <p style="font-size: 12px; width:50px" class="percentage-value text-primary m-0 fw-bolder"></p>
                                     </div>';
 
                                     $output .= '</div>';
@@ -914,7 +916,6 @@ class PollSurveyXpress
 
                             $output .= '<div class="mt-4 container-fluid bg-transparent" id="mcq_container">';
 
-
                             $output .= '<input type="hidden" id="my-ajax-nonce" value="' . wp_create_nonce('my_ajax_nonce') . '"/>';
                             // Start generating the poll structure
                             // Fetch questions from the database
@@ -937,7 +938,7 @@ class PollSurveyXpress
                                 $answers = $wpdb->get_results($query, ARRAY_A);
 
                                 foreach ($answers as $answer) {
-                                    $output .= '<div class="poll-answer position-relative d-flex align-items-center mb-2 p-2 gap-3">';
+                                    $output .= '<div class="poll-answer position-relative d-flex align-items-center mb-2 py-2 gap-3">';
                                     $output .= '<div class="d-flex align-items-center justify-content-center">';
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio m-0"  name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
                                     $output .= '</div>';
@@ -948,7 +949,7 @@ class PollSurveyXpress
                                         <p style="width: 0%;" class="percentage-bar m-0 bg-primary rounded-2"></p>
                                         <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
                                     </div>
-                                    <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder"></p>
+                                    <p style="font-size: 12px; width:50px" class="percentage-value text-primary m-0 fw-bolder"></p>
                                 </div>';
 
                                     $output .= '</div>';
@@ -1293,7 +1294,7 @@ class PollSurveyXpress
             foreach ($response_ids as $id) {
                 $response_data = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT question_id, answer_id FROM {$wpdb->prefix}polls_psx_survey_responses_data WHERE response_id = %s",
+                        "SELECT question_id, answer_id  FROM {$wpdb->prefix}polls_psx_survey_responses_data WHERE response_id = %s",
                         $id
                     )
                 );
@@ -1323,6 +1324,24 @@ class PollSurveyXpress
                     $questionId = $answer->question_id;
                     $answerId = $answer->answer_id;
                     $chosenAnswerChoices[$questionId][$answerId] = true;
+                }
+            }
+
+            $flag = false;
+            $all_answers = array();
+            foreach ($allAnswerChoices as $answer) {
+                foreach ($answer as $answer_text) {
+                    $question_answers = $wpdb->get_results(
+                        $wpdb->prepare(
+                            "SELECT answer_text FROM {$wpdb->prefix}polls_psx_survey_answers WHERE answer_id = %d",
+                            $answer_text
+                        )
+                    );
+                    $all_answers[] = $question_answers;
+                    $flag = true;
+                }
+                if ($flag) {
+                    break;
                 }
             }
 
@@ -1400,7 +1419,7 @@ class PollSurveyXpress
 
             // If the count is greater than 0, the session ID is found in the table
 
-            $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"min_votes":' . json_encode($votes) . '}';
+            $jsonResponse = '{"percentages":' . json_encode($percentages) . ',"min_votes":' . json_encode($votes) . ',  "answers":' . json_encode($all_answers) . '}';
 
             echo json_encode($jsonResponse);
         }

@@ -264,11 +264,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             let surveyTitle = document.getElementById("surveyTitle");
             const button_color = document.getElementById("button_color");
             let optionsHTMLArray = [];
-            // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
-
-            // jQuery(document).ready(function(jQuery) {
-            //     console.log(cards_array);
-            // })
 
             // Data will be sent
             let optionsArray = [];
@@ -313,7 +308,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 `;
                 optionsGroup.appendChild(newOption);
                 optionsArray.push(optionTitle);
-                console.log(optionsArray);
                 optionsHTMLArray.push(newOption);
             }
 
@@ -476,7 +470,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                 if (has_no_poll_cards || hasinsufficientOptions || cardsContainer.childElementCount <= 0) {
                     save_button.disabled = true;
-                    console.log("Button is disabled");
                 } else {
                     save_button.disabled = false;
                 }
@@ -639,8 +632,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             template: "Multiple Choice",
                         };
 
-                        console.log("FinalObj", finalObj);
-
                         jQuery.ajax({
                             type: "POST",
                             url: my_ajax_object.ajaxurl,
@@ -650,7 +641,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                                 poll_data: JSON.stringify(finalObj),
                             },
                             success: function(url) {
-                                console.log("Done");
                                 save_button.textContent = "Save";
                                 save_button.disabled = false;
 

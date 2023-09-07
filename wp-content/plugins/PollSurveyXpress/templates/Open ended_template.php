@@ -217,14 +217,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
         const button_color = document.getElementById("button_color");
-
-        var nonce = jQuery('#my-ajax-nonce').val();
-        // const cards_array = JSON.parse(surveyTitle.getAttribute("data-json-data"));
-
-        // jQuery(document).ready(function(jQuery) {
-        //     console.log(cards_array);
-        // })
-
+      var nonce = jQuery('#my-ajax-nonce').val();
+  
         const save_settings_button = document.getElementById("save_settings_button")
 
         save_settings_button.addEventListener("click", () => {
@@ -315,8 +309,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
             pollCards.forEach((card) => {
                 const questionText = card.querySelector("textarea").value;
-                console.log(card);
-
                 data.pollCards.push({
                     question_text: questionText,
                 });
@@ -409,7 +401,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                     };
 
-                    console.log(finalObj);
                     jQuery.ajax({
                         type: "POST",
                         url: my_ajax_object.ajaxurl,
@@ -419,7 +410,6 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                             nonce: nonce,
                         },
                         success: function(url) {
-                            console.log("Done");
                             save_button.textContent = "Save";
                             save_button.disabled = false;
 

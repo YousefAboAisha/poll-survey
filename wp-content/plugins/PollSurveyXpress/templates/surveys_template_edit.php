@@ -192,8 +192,6 @@ if (!$poll_data) {
                     button_color: button_color.value,
                 };
 
-                console.log(settingObj);
-
                 if (settingObj != {} || !settingObj) {
                     jQuery.ajax({
                         type: "POST",
@@ -204,7 +202,6 @@ if (!$poll_data) {
                             nonce: nonce,
                         },
                         success: function() {
-                            console.log("Done");
                             save_button.textContent = "Save";
                             save_button.disabled = false;
 

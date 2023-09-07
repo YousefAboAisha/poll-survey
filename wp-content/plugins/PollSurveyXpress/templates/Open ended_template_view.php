@@ -1,4 +1,3 @@
-<?php ?>
 <?php
 global $wpdb;
 
@@ -95,6 +94,43 @@ $questions_json = json_encode($questions);
 $result_data_json = json_encode($result_data);
 $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
 
+// Query to fetch question answers data to analyze
+
+// Create an array to store the questions and their answers
+$questionAnswers = array();
+
+// Step 1: Get the questions for the given poll
+$questions_query = $wpdb->prepare("
+    SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
+    WHERE poll_id = %d
+", $poll_id);
+
+$questions = $wpdb->get_results($questions_query);
+
+// Step 2: Loop through the questions and retrieve their corresponding answers
+foreach ($questions as $question) {
+    $question_id = $question->question_id;
+
+    // Query to get the answer text for each question
+    $answers_query = $wpdb->prepare("
+        SELECT srd.open_text_response
+        FROM {$wpdb->prefix}polls_psx_survey_responses_data AS srd
+        JOIN {$wpdb->prefix}polls_psx_survey_responses AS sr
+        ON srd.response_id = sr.response_id
+        WHERE srd.question_id = %d
+        AND sr.poll_id = %d
+    ", $question_id, $poll_id);
+
+    $answers = $wpdb->get_results($answers_query);
+
+    // Create an array to store the answers for the current question
+    $questionAnswers[$question_id] = array();
+
+    foreach ($answers as $answer) {
+        // Add the answer to the array
+        $questionAnswers[$question_id][] = $answer->open_text_response;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -176,13 +212,26 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                 // Check if decoding was successful
                 if ($questions_decoded !== null) {
                     foreach ($questions_decoded as $index => $question) {
+                        $answers_for_question = $questionAnswers[$question['question_id']];
                 ?>
                         <div class="col">
-                            <div class="m-0 p-4 rounded-3 border bg-white">
+                            <div class="poll-card d-flex flex-column m-0 p-4 rounded-3 border bg-white">
                                 <h6 class="mt-2">
                                     <?php echo $index + 1 . ") " . $question['question_text']; ?>
                                 </h6>
+
+                                <button title="Show answers" class="btn btn-white text-primary shadow-none m-0 border mt-2 mb-4 col-lg-4 col-md-5 col-4" id="toggle_button"><?php _e('Show answers', 'psx-poll-survey-plugin'); ?></button>
+
+
+                                <div id="answers_container" class="d-none flex-column gap-3">
+                                    <?php foreach ($answers_for_question as $index => $anwser) { ?>
+                                        <p class="m-0"><?php echo  $index + 1 . ") " . $anwser; ?></p>
+                                    <?php
+                                    } ?>
+                                </div>
+
                             </div>
+
                         </div>
                 <?php
                     }
@@ -191,7 +240,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                 }
                 ?>
             </div>
-
         </div>
 
         <!-- Reset votes Modal -->
@@ -226,10 +274,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
         const chart_container = document.getElementById("chart-container")
         const totalPercentages_json = JSON.parse(chart_container.getAttribute("data-json-data"));
 
-        jQuery(document).ready(function(jQuery) {
-            console.log("Data", totalPercentages_json);
-            // Extract 'date' values into a separate array
-        })
 
         const datesArray = totalPercentages_json.map(item => item.date);
 
@@ -243,9 +287,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
 
         // Extract 'vote_count' values into a separate array
         const voteCountArray = totalPercentages_json.map(item => parseInt(item.vote_count));
-
-        console.log(datesArray);
-        console.log(voteCountArray);
 
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -328,8 +369,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                     poll_id: confirm_delete.getAttribute("data-poll-id"),
                 },
                 success: function() {
-                    console.log('response');
-
                     setTimeout(() => {
                         window.location.reload()
                     }, 500)
@@ -339,7 +378,25 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                 }
             });
         });
+
+        // toggle answers
+
+        // Get references to the button and the answers container
+        const pollCards = document.querySelectorAll('.poll-card');
+
+        pollCards.forEach((card) => {
+            const toggleButton = card.querySelector('#toggle_button');
+            const answersContainer = card.querySelector('#answers_container');
+
+            // Add a click event listener to the button
+            toggleButton.addEventListener('click', function() {
+                // Toggle the 'hidden-answers' class on the answers container to show/hide it
+                answersContainer.classList.toggle('hidden-answers');
+            });
+        });
     </script>
+
+
 
 </body>
 

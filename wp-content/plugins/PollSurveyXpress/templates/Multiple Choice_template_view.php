@@ -300,7 +300,7 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                     foreach ($questions_decoded as $index => $question) {
                 ?>
                         <div class="col">
-                            <div class="position-relative flex-column gap-2 border rounded-3 bg-white m-0 p-4 ">
+                            <div class="position-relative flex-column flex-stretch h-100 gap-2 border rounded-3 bg-white m-0 p-4 ">
                                 <h6 class="mt-2 text-lg fw-bolder">
                                     <?php echo $index + 1 . ") " . $question['question_text']; ?>
                                 </h6>
@@ -313,18 +313,24 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
 
                                 $answers = $wpdb->get_results($answers_query);
                                 $questions_with_answers_json = json_encode($answers);
-                                $answers = json_decode(($questions_with_answers_json), true); ?>
-
+                                $answers = json_decode(($questions_with_answers_json), true);
+                                $question_percentages = $percentages[$question['question_id']];
+                                ?>
 
                                 <?php foreach ($answers as $answer) { ?>
                                     <label class="m-0"> <?php echo $answer['answer_text'];  ?></label>
+
+                                    <?php
+                                    $percent_for_question = $question_percentages[$answer['answer_id']];
+                                    ?>
+
                                     <div class="poll-answer position-relative d-flex align-items-center mb-2 py-2 gap-3">
                                         <div id="result-container" class="position-absolute d-none align-items-center justify-content-between gap-2 w-100 bottom-0" style="display: flex !important;">
                                             <div class="progress-bar bg-transparent transition-progress-bar">
-                                                <p style="z-index: 5; width: 100% !important;" class="percentage-bar m-0 bg-primary rounded-2"></p>
+                                                <p style="z-index: 5; width: <?php echo ($percent_for_question) ?>% !important;" class="percentage-bar m-0 bg-primary rounded-2"></p>
                                                 <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
                                             </div>
-                                            <p style="font-size: 12px" class="percentage-value text-primary m-0 fw-bolder">100.00%</p>
+                                            <p style="font-size: 12px; min-width:50px" class="percentage-value text-primary m-0 fw-bolder"><?php echo ($percent_for_question) ?>%</p>
                                         </div>
                                     </div>
                                 <?php } ?>
@@ -371,12 +377,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
     <script>
         const chart_container = document.getElementById("chart-container")
         const totalPercentages_json = JSON.parse(chart_container.getAttribute("data-json-data"));
-
-        jQuery(document).ready(function(jQuery) {
-            console.log("Data", totalPercentages_json);
-            // Extract 'date' values into a separate array
-        })
-
         const datesArray = totalPercentages_json.map(item => item.date);
 
         const dayStrings = datesArray.map(dateString => {
@@ -389,9 +389,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
 
         // Extract 'vote_count' values into a separate array
         const voteCountArray = totalPercentages_json.map(item => parseInt(item.vote_count));
-
-        console.log(datesArray);
-        console.log(voteCountArray);
 
         var ctx = document.getElementById("chart-bars").getContext("2d");
 
@@ -474,8 +471,6 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                     poll_id: confirm_delete.getAttribute("data-poll-id"),
                 },
                 success: function() {
-                    console.log('response');
-
                     setTimeout(() => {
                         window.location.reload()
                     }, 500)

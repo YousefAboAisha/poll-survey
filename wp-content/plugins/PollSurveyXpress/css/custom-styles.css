@@ -39,8 +39,8 @@ input[type="radio"] {
   z-index: 10;
 }
 
-.transition-progress-bar .percentage-bar {
-  transition: width 1.5s ease-in-out;
+.transition-progress-bar {
+  transition: width 1.2s linear !important;
   /* Adjust duration and easing as needed */
 }
 
@@ -95,4 +95,12 @@ input[type="radio"] {
 /* Apply the animation to the element with the "pulse" class */
 .pulse {
   animation: pulse 2s 3 !important;
+}
+
+.hidden-answers {
+  display: flex !important;
+}
+
+.canvasjs-chart-credit {
+  display: none !important;
 }

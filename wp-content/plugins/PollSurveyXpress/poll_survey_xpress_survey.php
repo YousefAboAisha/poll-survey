@@ -128,7 +128,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                     </td>
 
                                                     <td class="align-middle">
-                                                        <p class="text-xs mb-0"  title="type of template of poll">
+                                                        <p class="text-xs mb-0" title="type of template of poll">
                                                             <?php echo $poll->template; ?>
                                                         </p>
                                                     </td>
@@ -139,7 +139,7 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                                             <i title="Analysis Of Poll" class="fas fa-chart-bar text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
 
-                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit');?>">
+                                                        <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-add&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
                                                             <i title="Edit Page For Poll" class="fas fa-pen text-sm text-dark" style="cursor: pointer"></i>
                                                         </a>
                                                         <a href="<?php echo admin_url('admin.php?page=poll-survey-xpress-surveys&template=' . $poll->template . '&poll_id=' . $poll->poll_id . '&action=edit'); ?>">
@@ -158,9 +158,9 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                     </div>
 
                     <div class="d-flex align-items-center mt-4 gap-2" id="pagination">
-                        <button  title="Previous Polls" class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"><?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
+                        <button title="Previous Polls" class="btn btn-white text-primary shadow-none m-0 border" id="prevPage"><?php _e('Previous', 'psx-poll-survey-plugin'); ?></button>
                         <span class="m-0 p-0" id="currentPage"><?php _e('Page', 'psx-poll-survey-plugin'); ?> 1</span>
-                        <button  class="btn btn-white text-primary shadow-none m-0 border" id="nextPage" title="Next Polls"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
+                        <button class="btn btn-white text-primary shadow-none m-0 border" id="nextPage" title="Next Polls"><?php _e('Next', 'psx-poll-survey-plugin'); ?></button>
                     </div>
                 </div>
             </div>
@@ -207,19 +207,19 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="p-2 m-0">
-                    <?php _e('Are you sure you want to move this survey to trash?', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Are you sure you want to move this survey to trash?', 'psx-poll-survey-plugin'); ?>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer d-flex justify-content-start">
                     <button id="confirm_delete" type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" id="moveButton">
-                    <?php _e('Move', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Move', 'psx-poll-survey-plugin'); ?>
 
                         <i class="fas fa-trash text-xs text-white m-1"></i>
                     </button>
                     <button type="button" class="btn bg-transparent text-danger border-danger shadow-none border" data-bs-dismiss="modal">
-                    <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
+                        <?php _e('Cancel', 'psx-poll-survey-plugin'); ?>
 
                     </button>
                 </div>
@@ -231,7 +231,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let rowsCount = document.querySelector("tr[data-count]").getAttribute("data-count")
-            console.log(rowsCount);
 
             const archiveButtons = document.querySelectorAll(".archiveButton");
             let id;
@@ -284,7 +283,6 @@ $polls = $wpdb->get_results("SELECT * FROM $table_name WHERE status IN ('" . imp
                                 }, 500)
                             }
                             rowToRemove.remove(); // Remove the row from the table
-                            console.log("Minus count", rowsCount);
                         } else {
                             console.log(`Row with data-card-id ${archivedPollId} not found.`);
                         }
