@@ -211,11 +211,13 @@ foreach ($percentages as $questionId => $answerData) {
     $totalPercentage = array_sum($answerData);
     $totalPercentages[$questionId] = number_format($totalPercentage, 2);
 }
+$totalPercentages_jsaon = json_encode($percentages);
+var_dump($totalPercentages_jsaon); 
 
 $result_data_json = json_encode($result_data);
 $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 

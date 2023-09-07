@@ -1,4 +1,3 @@
-<?php ?>
 <?php
 global $wpdb;
 
@@ -95,6 +94,44 @@ $questions_json = json_encode($questions);
 $result_data_json = json_encode($result_data);
 $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
 
+// Query to fetch question answers data to analyze
+
+// Create an array to store the questions and their answers
+$questionAnswers = array();
+
+// Step 1: Get the questions for the given poll
+$questions_query = $wpdb->prepare("
+    SELECT * FROM {$wpdb->prefix}polls_psx_survey_questions
+    WHERE poll_id = %d
+", $poll_id);
+
+$questions = $wpdb->get_results($questions_query);
+
+// Step 2: Loop through the questions and retrieve their corresponding answers
+foreach ($questions as $question) {
+    $question_id = $question->question_id;
+    
+    // Query to get the answer text for each question
+    $answers_query = $wpdb->prepare("
+        SELECT srd.open_text_response
+        FROM {$wpdb->prefix}polls_psx_survey_responses_data AS srd
+        JOIN {$wpdb->prefix}polls_psx_survey_responses AS sr
+        ON srd.response_id = sr.response_id
+        WHERE srd.question_id = %d
+        AND sr.poll_id = %d
+    ", $question_id, $poll_id);
+    
+    $answers = $wpdb->get_results($answers_query);
+    
+    // Create an array to store the answers for the current question
+    $questionAnswers[$question_id] = array();
+    
+    foreach ($answers as $answer) {
+        // Add the answer to the array
+        $questionAnswers[$question_id][] = $answer->open_text_response;
+    }
+}
+var_dump($questionAnswers);
 ?>
 
 <!DOCTYPE html>
