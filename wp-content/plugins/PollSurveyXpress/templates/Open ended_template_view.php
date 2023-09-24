@@ -220,8 +220,9 @@ foreach ($questions as $question) {
                                     <?php echo $index + 1 . ") " . $question['question_text']; ?>
                                 </h6>
 
-                                <button title="Show answers" class="btn btn-white text-primary shadow-none m-0 border mt-2 mb-4 col-lg-4 col-md-5 col-4" id="toggle_button"><?php _e('Show answers', 'psx-poll-survey-plugin'); ?></button>
-
+                                <?php if (!empty($answers_for_question)) : ?>
+                                    <button title="Show answers" class="btn btn-white text-primary shadow-none m-0 border mt-2 mb-4 col-lg-4 col-md-5 col-4" id="toggle_button"><?php _e('Show answers', 'psx-poll-survey-plugin'); ?></button>
+                                <?php endif; ?>
 
                                 <div id="answers_container" class="d-none flex-column gap-3">
                                     <?php foreach ($answers_for_question as $index => $anwser) { ?>

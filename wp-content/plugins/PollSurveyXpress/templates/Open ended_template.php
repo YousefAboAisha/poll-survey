@@ -72,7 +72,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
 
         <div class="d-flex flex-column align-items-start my-3 p-4 rounded-3 border bg-white">
-            <input data-json-data="<?php echo $jsonDataEncoded ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo $poll_data[0]->title ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
+            <input data-json-data="<?php echo ($isItEditPage ? $jsonDataEncoded : '') ?>" type="text" class="w-100 border text-lg rounded-1 p-1 rounded-1 bg-white mb-3" placeholder="Poll/Survey title" id="surveyTitle" value="<?php echo ($isItEditPage ? $poll_data[0]->title : '') ?>" data-type="<?php echo ($isItEditPage ? "Edit" : "Add"); ?>" data-form-id="<?php echo ($isItEditPage ? $poll_id : null); ?>" />
             <input type="hidden" id="my-ajax-nonce" value="<?php echo wp_create_nonce('my_ajax_nonce'); ?>" />
 
             <div class="d-flex w-100 flex-column gap-2 rounded-3 bg-white mt-2 mb-2">
@@ -157,7 +157,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     <div class="card-body pt-sm-3 p-0">
                         <div class="form-group d-flex flex-column">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo $poll_data[0]->status === 'active' ? 'checked' : ''; ?> />
+                                <input class="form-check-input" type="checkbox" id="active_plugin" <?php echo ($isItEditPage ? $poll_data[0]->status === 'active' ? 'checked' : '' : ''); ?> />
                                 <label class="form-check-label" for="active_plugin">
                                     <?php _e('Activate the survey', 'psx-poll-survey-plugin'); ?>
                                 </label>
@@ -165,31 +165,31 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
 
                             <div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo empty($poll_data[0]->real_time_result_text) ? "checked" : ""; ?> onchange="toggleInputState()" />
+                                    <input class="form-check-input" type="checkbox" id="show_results" <?php echo ($isItEditPage ? empty($poll_data[0]->real_time_result_text) ? "checked" : "" : ''); ?> onchange="toggleInputState()" />
                                     <label class="form-check-label" for="show_results">
                                         <?php _e('Show real-time results', 'psx-poll-survey-plugin'); ?>
                                     </label>
                                 </div>
-                                <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo $poll_data[0]->real_time_result_text; ?>" id="show_results_input" <?php echo !empty($poll_data->real_time_result_text) ? 'disabled' : ''; ?> />
+                                <input type="text" class="form-control border rounded-1 p-1 mt-2" placeholder="Add Thank Meesage" value="<?php echo ($isItEditPage ? $poll_data[0]->real_time_result_text : ''); ?>" id="show_results_input" <?php echo ($isItEditPage ? !empty($poll_data->real_time_result_text) ? 'disabled' : '' : ''); ?> />
                             </div>
 
                             <div class="d-flex align-items-center justify-content-start gap-2 mt-3">
                                 <label class="form-check-label w-45">
                                     <?php _e('Show results after', 'psx-poll-survey-plugin'); ?>
                                 </label>
-                                <input type="number" class="form-control border rounded-1 p-1 w-55" placeholder="Number of votes" id="min_votes_input" value="<?php echo $poll_data[0]->min_votes; ?>" />
+                                <input type="number" class="form-control border rounded-1 p-1 w-55" placeholder="Number of votes" id="min_votes_input" value="<?php echo ($isItEditPage ? $poll_data[0]->min_votes : ''); ?>" />
                             </div>
 
                             <div class="w-100 d-flex flex-column align-items-start mt-2 gap-2">
-                                <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo $poll_data[0]->cta_Text; ?>" />
+                                <input type="text" class="form-control border rounded-1 p-1" placeholder="Add CTA button title" id="cta_input" value="<?php echo ($isItEditPage ? $poll_data[0]->cta_Text  : ''); ?>" />
                                 <button onclick="(e)=> e.preventDefault();" id="cta_button" type="button" class="btn btn-dark m-0 mt-1">
-                                    <?php echo ($poll_data[0]->cta_Text != '' ? $poll_data[0]->cta_Text : "Do The Survey Now!"); ?>
+                                    <?php echo ($isItEditPage ? ($poll_data[0]->cta_Text != '' ? $poll_data[0]->cta_Text : "Do The Survey Now!") : ''); ?>
                                 </button>
                                 <p class="m-0 mb-2" style="font-size:10px"><?php _e('(This button is a preview for a cta button in the modal view)', 'psx-poll-survey-plugin'); ?> </p>
                             </div>
                         </div>
                     </div>
-                    <button id="save_settings_button" onclick="(e)=> e.preventDefault();" class="btn btn-primary w-100" data-bs-dismiss="modal"><?php _e('SAVE', 'psx-poll-survey-plugin'); ?></button>
+                    <button id="save_settings_button" onclick="(e)=> e.preventDefault();" class="btn btn-primary w-100" data-bs-dismiss="modal"><?php _e('Continue to save', 'psx-poll-survey-plugin'); ?></button>
                 </div>
             </div>
         </div>
@@ -217,8 +217,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
         const min_votes_input = document.getElementById("min_votes_input");
         const cta_input = document.getElementById("cta_input");
         const button_color = document.getElementById("button_color");
-      var nonce = jQuery('#my-ajax-nonce').val();
-  
+        var nonce = jQuery('#my-ajax-nonce').val();
+
         const save_settings_button = document.getElementById("save_settings_button")
 
         save_settings_button.addEventListener("click", () => {
@@ -293,12 +293,8 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
             }
         });
 
-        let is_first_button_click = true;
         let flag = false;
-
         const settings_icon = document.getElementById("settings_icon");
-
-
 
         save_button.addEventListener("click", () => {
             // Set the questions fields
@@ -350,7 +346,7 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                 });
             } else {
 
-                if (is_first_button_click) {
+                if (!localStorage.getItem("isFreshUser")) {
                     const popoverContent = document.createElement("div");
                     popoverContent.style.cssText = "bottom:20px; right:20px";
                     popoverContent.innerHTML = "Click here to edit the survey settings";
@@ -365,15 +361,15 @@ if (isset($_GET['action']) && ($_GET['action'] == 'edit')) {
                     settings_icon.classList.add("shake");
                     if (!flag) {
                         popoverInstance.show(); // Show the popover
-                    }
+                        localStorage.setItem("isFreshUser", true);
 
+                    }
                     flag = true
 
                     settings_icon.addEventListener("click", () => {
                         settings_icon.classList.remove("shake");
-                        is_first_button_click = false
+                        localStorage.setItem("isFreshUser", false);
                         popoverInstance.hide(); // Show the popover
-
                     })
                 } else {
                     save_button.disabled = true;

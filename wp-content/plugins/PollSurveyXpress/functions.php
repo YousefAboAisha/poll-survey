@@ -58,7 +58,7 @@ class PollSurveyXpress
         //enqueue Style files
         wp_enqueue_style('bootstrap-style', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
         wp_enqueue_style('soft-style', plugin_dir_url(__FILE__) . 'css/soft-ui-dashboard.css');
-        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "1.9");
+        wp_enqueue_style('dashboard-styles', plugin_dir_url(__FILE__) . 'css/custom-styles.css', array(), "2.0");
     }
 
     // Enqueue scripts and styles for the admin area
@@ -662,19 +662,17 @@ class PollSurveyXpress
                     // Concatenate and hash the attributes to create a unique fingerprint
                     $check = sha1($userAgent . $ipAddress . $acceptLanguage . $encoding);
 
-
                     $table_name = $wpdb->prefix . 'polls_psx_survey_responses';
 
-
-                    //check if the session ID is alrea=dy voted for this poll
+                    //check if the session ID is already voted for this poll
                     $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d AND session_id = %s", $poll_id, $check);
                     $count = $wpdb->get_var($query);
                     $output = '<div>';
 
                     // If the count is greater than ), the session ID is found in the table
-                    if (!($count > 0 || $isUserVoted)) {
+                    if (($count > 0 || $isUserVoted)) {
                         $output = '<div>';
-                        $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="alraedy_vote_message">  
+                        $output .= '<div class="d-flex flex-column justify-content-center align-items-center gap-3 rounded-3 p-5 col-11 mx-auto modal-content" id="already_vote_message">  
                             <p class="m-0 mb-3" style="font-size: 60px; max-height:60px">✅</p> 
                             <h3 class="m-0 text-dark fw-bolder p-0 text-center">You Can`t Vote another Time</h3>
                             <p class="m-0 text-center" style="font-size: 13px;">You voted before this time</p>
@@ -848,7 +846,7 @@ class PollSurveyXpress
                             $ratings = $wpdb->get_results($query, ARRAY_A);
 
                             // Start of rating buttons div
-                            $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
+                            $output .= '<div class="d-flex justify-content-around align-items-center col-6 gap-2">';
                             $flag = false;
                             $flag_text = $ratings[0]["answer_text"];
 
@@ -875,7 +873,7 @@ class PollSurveyXpress
                                 $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
                                 $answers = $wpdb->get_results($query, ARRAY_A);
 
-                                $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+                                $output .= '<div class="d-flex justify-content-around align-items-center col-6 gap-2">'; // Start the answers container
 
                                 foreach ($answers as $answer) {
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
@@ -1039,7 +1037,7 @@ class PollSurveyXpress
                             $ratings = $wpdb->get_results($query, ARRAY_A);
 
                             // Start of rating buttons div
-                            $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">';
+                            $output .= '<div class="d-flex justify-content-around align-items-center col-6 gap-2">';
                             $flag = false;
                             $flag_text = $ratings[0]["answer_text"];
 
@@ -1066,7 +1064,7 @@ class PollSurveyXpress
                                 $query = $wpdb->prepare("SELECT * FROM $table_name WHERE poll_id = %d and question_id = %d", $poll_id, $question['question_id']);
                                 $answers = $wpdb->get_results($query, ARRAY_A);
 
-                                $output .= '<div class="d-flex justify-content-around align-items-center col-8 gap-2">'; // Start the answers container
+                                $output .= '<div class="d-flex justify-content-around align-items-center col-6 gap-2">'; // Start the answers container
 
                                 foreach ($answers as $answer) {
                                     $output .= '<input data-question-id="' . $question['question_id'] . '" data-answer-id="' . $answer['answer_id'] . '" type="radio" class="poll-answer-radio" name="poll_answers_' . $question['question_id'] . '" value="' . $answer['answer_id'] . '" id="poll_answer_' . $question['question_id'] . '_' . $answer['answer_id'] . '">';
@@ -1431,7 +1429,6 @@ class PollSurveyXpress
     {
         global $wpdb;
         $poll_id = intval($_POST['poll_id']); // Use intval to ensure it's treated as an integer
-        var_dump($poll_id);
 
 
         $table_survey_responses = $wpdb->prefix . "polls_psx_survey_responses";

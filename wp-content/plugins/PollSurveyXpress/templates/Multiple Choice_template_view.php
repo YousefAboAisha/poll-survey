@@ -211,11 +211,12 @@ foreach ($percentages as $questionId => $answerData) {
     $totalPercentage = array_sum($answerData);
     $totalPercentages[$questionId] = number_format($totalPercentage, 2);
 }
+$totalPercentages_jsaon = json_encode($percentages);
 
 $result_data_json = json_encode($result_data);
 $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -330,7 +331,7 @@ $jsonDataEncoded = htmlspecialchars($result_data_json, ENT_QUOTES, 'UTF-8');
                                                 <p style="z-index: 5; width: <?php echo ($percent_for_question) ?>% !important;" class="percentage-bar m-0 bg-primary rounded-2"></p>
                                                 <p style="width: 100%; background-color: #DDD;" class="m-0 rounded-2"></p>
                                             </div>
-                                            <p style="font-size: 12px; min-width:50px" class="percentage-value text-primary m-0 fw-bolder"><?php echo ($percent_for_question) ?>%</p>
+                                            <p style="font-size: 12px; min-width:50px" class="percentage-value m-0 fw-bolder"><?php echo ($percent_for_question) ?>%</p>
                                         </div>
                                     </div>
                                 <?php } ?>
