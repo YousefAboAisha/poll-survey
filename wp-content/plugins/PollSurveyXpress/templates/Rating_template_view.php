@@ -310,8 +310,8 @@ $jsonPercentages = htmlspecialchars($percentages_json, ENT_QUOTES, 'UTF-8');
                 if ($questions_decoded !== null) {
                     foreach ($questions_decoded as $index => $question) {
                 ?>
-                        <div class="d-flex justify-content-between align-items-center w-100 rounded-3 border bg-white p-4">
-                            <h6 class="mt-2 ">
+                        <div class="position-relative d-flex justify-content-between align-items-center w-100 rounded-3 border bg-white p-4">
+                            <h6 style="word-wrap: break-word;" class="mt-2 col-4">
                                 <?php echo $index + 1 . ") " . $question['question_text']; ?>
                             </h6>
 
@@ -328,9 +328,7 @@ $jsonPercentages = htmlspecialchars($percentages_json, ENT_QUOTES, 'UTF-8');
                                 $percentage_for_question = $percentages[$question['question_id']];
                                 $answers_json = json_encode($answers);
                                 $answers_lables = htmlspecialchars($answers_json, ENT_QUOTES, 'UTF-8');
-
                                 ?>
-
 
                                 <?php foreach ($answers as $answer) { ?>
                                     <div id="answers-labels" data-labels="<?php echo $answers_lables ?>" class="d-flex flex-column align-items-center justify-content-center gap-1 ">
@@ -386,14 +384,13 @@ $jsonPercentages = htmlspecialchars($percentages_json, ENT_QUOTES, 'UTF-8');
         window.onload = function() {
             const chart_container2 = document.getElementById("chart-container2")
             const pieChartData = JSON.parse(chart_container2.getAttribute("data-json-data"));
-
             const answers_labels = JSON.parse(document.getElementById("answers-labels").getAttribute("data-labels"))
 
             const labels = answers_labels.map((elem) => {
                 return elem.answer_text;
             })
 
-            const sorted_labels_array = labels.reverse()
+            const sorted_labels_array = labels
             const finalObjects = Object.values(pieChartData).map(innerObject => {
                 const newObj = {};
                 let letterIndex = 0;
@@ -440,24 +437,24 @@ $jsonPercentages = htmlspecialchars($percentages_json, ENT_QUOTES, 'UTF-8');
                     toolTipContent: "{name}: <strong>{y}%</strong>",
                     indexLabel: "{name}. {y}%",
                     dataPoints: [{
-                            y: parseInt(inputData["a"]),
+                            y: (inputData["a"]),
                             name: sorted_labels_array[0],
                             exploded: true
                         },
                         {
-                            y: parseInt(inputData["b"]),
+                            y: (inputData["b"]),
                             name: sorted_labels_array[1],
                         },
                         {
-                            y: parseInt(inputData["c"]),
+                            y: (inputData["c"]),
                             name: sorted_labels_array[2],
                         },
                         {
-                            y: parseInt(inputData["d"]),
+                            y: (inputData["d"]),
                             name: sorted_labels_array[3],
                         },
                         {
-                            y: parseInt(inputData["e"]),
+                            y: (inputData["e"]),
                             name: sorted_labels_array[4],
                         },
                     ],

@@ -299,7 +299,7 @@ jQuery(document).ready(function (jQuery) {
           (answerObj) => answerObj[0].answer_text
         );
 
-        const reversed_labels_array = answerTextsArray.reverse();
+        // const reversed_labels_array = answerTextsArray.reverse();
 
         const finalObjects = Object.values(percentages).map((innerObject) => {
           const newObj = {};
@@ -354,6 +354,8 @@ jQuery(document).ready(function (jQuery) {
           rating_container.style.cssText = "display:none !important";
           message.style.cssText = "display:flex !important";
         } else {
+          console.log(inputData, "Input data");
+          console.log(inputData, "Input data");
           rating_container.innerHTML = "";
           rating_container.style.cssText = "display:none !important";
           var chart = new CanvasJS.Chart("result_chart", {
@@ -370,23 +372,23 @@ jQuery(document).ready(function (jQuery) {
                 dataPoints: [
                   {
                     y: parseFloat(inputData["a"]),
-                    label: reversed_labels_array[0],
+                    label: answerTextsArray[0],
                   },
                   {
                     y: parseFloat(inputData["b"]),
-                    label: reversed_labels_array[1],
+                    label: answerTextsArray[1],
                   },
                   {
                     y: parseFloat(inputData["c"]),
-                    label: reversed_labels_array[2],
+                    label: answerTextsArray[2],
                   },
                   {
                     y: parseFloat(inputData["d"]),
-                    label: reversed_labels_array[3],
+                    label: answerTextsArray[3],
                   },
                   {
                     y: parseFloat(inputData["e"]),
-                    label: reversed_labels_array[4],
+                    label: answerTextsArray[4],
                   },
                 ],
               },
